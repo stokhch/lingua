@@ -5,6 +5,7 @@ import * as G from '../game.js';
 import { speak, canSpeak } from '../speech.js';
 import { GRADES, intervalLabel } from '../srs.js';
 import { DICT } from '../data/dictionary.js';
+import { EXTRA, EXTRA_INFO, extraPlan, EXTRA_QUESTIONS } from './train-extra.js';
 
 const SESSION = 10;
 export const TRAIN_INFO = {
@@ -13,12 +14,30 @@ export const TRAIN_INFO = {
   au: { title: 'Аудирование', desc: 'Прослушайте слово и напишите его', ic: 'ear' },
   co: { title: 'Конструктор слов', desc: 'Соберите слово из букв', ic: 'puzzle' },
   cards: { title: 'Карточки', desc: 'Интервальное повторение изученных слов', ic: 'cards' },
-  sprint: { title: 'Спринт', desc: '60 секунд: верно или неверно?', ic: 'bolt' }
+  sprint: { title: 'Спринт', desc: '60 секунд: верно или неверно?', ic: 'bolt' },
+  ...EXTRA_INFO
 };
+
+// План тренировки: список шагов { word, q }, где q — тип вопроса
+function buildPlan(kind) {
+  const extra = extraPlan(kind);
+  if (extra !== undefined) return extra;
+  let pool, practice = false;
+  if (kind === 'cards') {
+    pool = G.dueWords().slice(0, 20);
+    if (!pool.length) { pool = shuffle(G.allWords().filter(w => !w.srs)).slice(0, SESSION); practice = 'learn'; }
+  } else {
+    pool = G.wordsFor(kind).slice(0, SESSION);
+    if (kind === 'co') pool = pool.filter(w => w.w.replace(/[^a-z]/g, '').length <= 14);
+  }
+  if (!pool.length && G.allWords().length >= 4) { pool = shuffle(G.allWords()).slice(0, SESSION); practice = 'free'; }
+  if ((G.allWords().length < 4 && kind !== 'cards') || !pool.length) return null;
+  return { steps: shuffle(pool).map(word => ({ word, q: kind })), practice };
+}
 
 export function renderTrainings(main) {
   const c = G.counts();
-  const n = k => k === 'cards' ? c.due : k === 'sprint' ? null : G.wordsFor(k).length;
+  const n = k => k === 'cards' ? c.due : G.TRAININGS.includes(k) ? G.wordsFor(k).length : k === 'storm' ? c.new + c.learning : null;
   main.innerHTML = `
   <section class="band">
     <h1>Тренировки</h1>
@@ -32,7 +51,7 @@ export function renderTrainings(main) {
 }
 
 // варианты ответа: перевод другого слова из словаря пользователя или встроенного словаря
-function distractors(word, field, n = 4) {
+export function distractors(word, field, n = 4) {
   const own = G.allWords().filter(w => w.w !== word.w).map(w => field === 't' ? w.t : w.w);
   const pool = shuffle([...new Set(own)]);
   const extra = shuffle([...DICT.entries()]).map(([w, t]) => field === 't' ? t : w);
@@ -45,20 +64,13 @@ export function renderTraining(main, kind) {
   const info = TRAIN_INFO[kind]; if (!info) { location.hash = 'train'; return; }
   if (kind === 'sprint') return sprint(main);
 
-  let pool, practice = false;
-  if (kind === 'cards') {
-    pool = G.dueWords().slice(0, 20);
-    if (!pool.length) { pool = shuffle(G.allWords().filter(w => !w.srs)).slice(0, SESSION); practice = 'learn'; }
-  } else {
-    pool = G.wordsFor(kind).slice(0, SESSION);
-    if (kind === 'co') pool = pool.filter(w => w.w.replace(/[^a-z]/g, '').length <= 14);
-  }
-  if (!pool.length && G.allWords().length >= 4) { pool = shuffle(G.allWords()).slice(0, SESSION); practice = 'free'; }
-  if (G.allWords().length < 4 && kind !== 'cards' || !pool.length) {
-    main.innerHTML = `<section class="band narrow"><a class="back" href="#train">${icon('back')} Тренировки</a><h1>${info.title}</h1><div class="empty"><p>${kind === 'cards' ? 'Сейчас нечего повторять. Изученные слова появятся здесь, когда придёт их время.' : 'Добавьте в словарь хотя бы 4 слова.'}</p><a class="btn" href="#sets">Выбрать набор слов</a></div></section>`;
+  if (EXTRA[kind]) return EXTRA[kind](main);
+  const plan = buildPlan(kind);
+  if (!plan) {
+    main.innerHTML = `<section class="band narrow"><a class="back" href="#train">${icon('back')} Тренировки</a><h1>${info.title}</h1><div class="empty"><p>${kind === 'cards' ? 'Сейчас нечего повторять. Изученные слова появятся здесь, когда придёт их время.' : kind === 'ctx' ? 'Для этой тренировки нужны слова, которые встречаются в текстах или фразах. Добавьте слова из раздела «Тексты» или наборов.' : 'Добавьте в словарь хотя бы 4 слова.'}</p><a class="btn" href="#sets">Выбрать набор слов</a></div></section>`;
     return;
   }
-  pool = shuffle(pool);
+  const { steps, practice } = plan;
 
   const results = [];
   let i = 0, timer;
@@ -74,7 +86,8 @@ export function renderTraining(main, kind) {
   const answer = (word, ok, extra = '') => {
     results.push({ word, ok });
     G.recordAnswer(ok);
-    if (ok) { if (!practice && kind !== 'cards') G.markTrained(word.w, kind); G.addXp(practice ? 1 : 2); }
+    const q = steps[i].q;
+    if (ok) { if (practice !== 'free' && G.TRAININGS.includes(q) && G.hasWord(word.w)) G.markTrained(word.w, q); G.addXp(practice === 'free' ? 1 : 2); }
     stage.classList.add(ok ? 'right' : 'wrong');
     const fb = document.createElement('div');
     fb.className = 'feedback ' + (ok ? 'ok' : 'bad');
@@ -89,7 +102,7 @@ export function renderTraining(main, kind) {
   const next = () => {
     clearTimeout(timer);
     i++;
-    if (i >= pool.length) return finish();
+    if (i >= steps.length) return finish();
     show();
   };
 
@@ -107,11 +120,11 @@ export function renderTraining(main, kind) {
   };
 
   const show = () => {
-    const word = pool[i];
-    $('#cnt').textContent = `${i + 1} / ${pool.length}`;
-    $('#progress').style.width = `${(i / pool.length) * 100}%`;
+    const { word, q } = steps[i];
+    $('#cnt').textContent = `${i + 1} / ${steps.length}`;
+    $('#progress').style.width = `${(i / steps.length) * 100}%`;
     stage.className = 'stage';
-    QUESTIONS[kind](stage, word, answer);
+    QUESTIONS[q](stage, word, answer, next);
   };
   show();
 
@@ -126,7 +139,7 @@ export function renderTraining(main, kind) {
   return () => { clearTimeout(timer); document.removeEventListener('keydown', onKey); };
 }
 
-const QUESTIONS = {
+export const QUESTIONS = {
   wt(stage, word, answer) { choice(stage, word, 't', answer, `<button class="big-word say">${esc(word.w)} ${icon('sound')}</button>`); speak(word.w, store.state.rate); },
   tw(stage, word, answer) { choice(stage, word, 'w', answer, `<div class="big-word">${esc(word.t)}</div>`); },
 
@@ -201,7 +214,9 @@ const QUESTIONS = {
   }
 };
 
-function choice(stage, word, field, answer, head) {
+Object.assign(QUESTIONS, EXTRA_QUESTIONS);
+
+export function choice(stage, word, field, answer, head) {
   const right = word[field];
   const opts = shuffle([right, ...distractors(word, field)]);
   stage.innerHTML = `${head}<div class="opts">${opts.map((o, k) => `<button class="opt" data-v="${esc(o)}"><i>${k + 1}</i>${esc(o)}</button>`).join('')}</div>
