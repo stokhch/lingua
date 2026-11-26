@@ -43,6 +43,7 @@ export function renderReader(main, id) {
       <h1>${esc(t.title)}</h1>
       ${t.note ? `<p class="text-note">${esc(t.note)}${t.link ? ` <a href="${esc(t.link.href)}" target="_blank" rel="noopener">${esc(t.link.label)}</a>` : ''}</p>` : ''}
       ${t.summary ? `<p class="text-note"><b>О чём ${t.kind === 'song' ? 'песня' : t.kind === 'poem' ? 'стихотворение' : 'текст'}:</b> ${esc(t.summary)}</p>` : ''}
+      ${t.translation ? `<details class="text-note"><summary><b>Перевод</b></summary><p style="white-space:pre-line;margin:8px 0 0">${esc(t.translation)}</p></details>` : ''}
       ${t.links?.length ? `<p class="text-note"><b>Полный текст и запись:</b> ${t.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener nofollow">${esc(l.label)}</a>`).join(' · ')}</p>` : ''}
       ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
       ${src ? `<p class="muted small">Источник: <a href="${esc(src)}" target="_blank" rel="noopener nofollow">${esc(src.replace(/^https?:[/][/](www[.])?/, '').slice(0, 60))}</a></p>` : ''}
