@@ -1,0 +1,13 @@
+{
+  "name": "lingva",
+  "version": "1.0.0",
+  "description": "Лингва — сайт для изучения английского: личный словарь, тренировки, интервальные повторения, тексты, грамматика.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js"
+  }
+}

@@ -1,0 +1,202 @@
+// Лингва — сервер без внешних зависимостей (Node.js 18+).
+// Раздаёт статику из ./public и предоставляет JSON API:
+//   POST /api/register {email, name, password}   -> {token, user}
+//   POST /api/login    {email, password}         -> {token, user}
+//   POST /api/logout
+//   GET  /api/me                                  -> {user}
+//   GET  /api/state  / PUT /api/state {state}     -> прогресс пользователя
+//   GET  /api/leaderboard                         -> топ по XP за неделю и всего
+//   GET  /api/translate?q=word                    -> перевод слова, которого нет во встроенном словаре
+// Данные хранятся в ./data/db.json (запись атомарная, через временный файл).
+
+import http from 'node:http';
+import fs from 'node:fs';
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const PUBLIC = path.join(ROOT, 'public');
+const DATA_DIR = process.env.LINGVA_DATA || path.join(ROOT, 'data');
+const DB_FILE = path.join(DATA_DIR, 'db.json');
+const PORT = Number(process.env.PORT || 3000);
+const MAX_BODY = 2 * 1024 * 1024;
+const SESSION_TTL = 1000 * 60 * 60 * 24 * 30; // 30 дней
+
+// ---------- хранилище ----------
+let db = { users: {}, sessions: {} };
+try { db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch { fs.mkdirSync(DATA_DIR, { recursive: true }); }
+let saveTimer = null;
+function persist() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    const tmp = DB_FILE + '.tmp';
+    await fsp.writeFile(tmp, JSON.stringify(db));
+    await fsp.rename(tmp, DB_FILE);
+  }, 200);
+}
+
+// ---------- пароли и сессии ----------
+function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
+function checkPassword(password, stored) {
+  const [salt, hash] = stored.split(':');
+  const probe = crypto.scryptSync(password, salt, 64);
+  return crypto.timingSafeEqual(probe, Buffer.from(hash, 'hex'));
+}
+function newSession(userId) {
+  const token = crypto.randomBytes(32).toString('base64url');
+  db.sessions[token] = { userId, expires: Date.now() + SESSION_TTL };
+  persist();
+  return token;
+}
+function auth(req) {
+  const h = req.headers.authorization || '';
+  const token = h.startsWith('Bearer ') ? h.slice(7) : '';
+  const s = token && db.sessions[token];
+  if (!s || s.expires < Date.now()) return null;
+  return { token, user: db.users[s.userId] };
+}
+const publicUser = u => ({ id: u.id, email: u.email, name: u.name, createdAt: u.createdAt });
+
+// ---------- простейший лимит запросов на вход ----------
+const attempts = new Map();
+function limited(ip) {
+  const now = Date.now();
+  const list = (attempts.get(ip) || []).filter(t => now - t < 60_000);
+  list.push(now);
+  attempts.set(ip, list);
+  return list.length > 20;
+}
+
+// ---------- помощники HTTP ----------
+function send(res, status, data) {
+  const body = JSON.stringify(data);
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+  res.end(body);
+}
+function readJson(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0; const chunks = [];
+    req.on('data', c => { size += c.length; if (size > MAX_BODY) { reject(new Error('too large')); req.destroy(); } else chunks.push(c); });
+    req.on('end', () => { try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); } catch (e) { reject(e); } });
+    req.on('error', reject);
+  });
+}
+
+const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
+  '.svg': 'image/svg+xml', '.json': 'application/json', '.png': 'image/png', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json' };
+
+async function serveStatic(req, res, pathname) {
+  let file = path.normalize(path.join(PUBLIC, decodeURIComponent(pathname)));
+  if (!file.startsWith(PUBLIC)) { res.writeHead(403); return res.end(); }
+  try {
+    const st = await fsp.stat(file);
+    if (st.isDirectory()) file = path.join(file, 'index.html');
+    const data = await fsp.readFile(file);
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+    res.end(data);
+  } catch {
+    const data = await fsp.readFile(path.join(PUBLIC, 'index.html'));
+    res.writeHead(200, { 'Content-Type': MIME['.html'] });
+    res.end(data);
+  }
+}
+
+// ---------- статистика для рейтинга ----------
+function weekXp(state) {
+  const log = state?.xpLog || {};
+  const now = new Date();
+  let sum = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now); d.setDate(now.getDate() - i);
+    sum += log[d.toISOString().slice(0, 10)] || 0;
+  }
+  return sum;
+}
+
+// ---------- перевод неизвестных слов (MyMemory, бесплатный публичный API) ----------
+const translateCache = new Map();
+async function translate(q) {
+  if (translateCache.has(q)) return translateCache.get(q);
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|ru`;
+  const r = await fetch(url, { signal: AbortSignal.timeout(6000) });
+  const j = await r.json();
+  const t = (j?.responseData?.translatedText || '').trim();
+  const out = t && t.toLowerCase() !== q.toLowerCase() ? t.toLowerCase() : '';
+  translateCache.set(q, out);
+  return out;
+}
+
+// ---------- маршруты API ----------
+async function api(req, res, url) {
+  const route = `${req.method} ${url.pathname}`;
+  const ip = req.socket.remoteAddress;
+
+  if (route === 'GET /api/health') return send(res, 200, { ok: true, mode: 'server' });
+
+  if (route === 'POST /api/register') {
+    if (limited(ip)) return send(res, 429, { error: 'Слишком много попыток, подождите минуту' });
+    const { email = '', name = '', password = '' } = await readJson(req);
+    const em = String(email).trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return send(res, 400, { error: 'Введите корректный e-mail' });
+    if (String(password).length < 6) return send(res, 400, { error: 'Пароль должен быть не короче 6 символов' });
+    if (Object.values(db.users).some(u => u.email === em)) return send(res, 409, { error: 'Такой e-mail уже зарегистрирован' });
+    const id = crypto.randomUUID();
+    const user = { id, email: em, name: String(name).trim().slice(0, 40) || em.split('@')[0], password: hashPassword(String(password)), createdAt: Date.now(), state: null };
+    db.users[id] = user; persist();
+    return send(res, 201, { token: newSession(id), user: publicUser(user) });
+  }
+
+  if (route === 'POST /api/login') {
+    if (limited(ip)) return send(res, 429, { error: 'Слишком много попыток, подождите минуту' });
+    const { email = '', password = '' } = await readJson(req);
+    const user = Object.values(db.users).find(u => u.email === String(email).trim().toLowerCase());
+    if (!user || !checkPassword(String(password), user.password)) return send(res, 401, { error: 'Неверный e-mail или пароль' });
+    return send(res, 200, { token: newSession(user.id), user: publicUser(user) });
+  }
+
+  if (route === 'GET /api/leaderboard') {
+    const me = auth(req)?.user?.id;
+    const rows = Object.values(db.users).map(u => ({ me: u.id === me, name: u.name, xp: u.state?.xp || 0, week: weekXp(u.state), streak: u.state?.streak || 0 }));
+    return send(res, 200, { week: [...rows].sort((a, b) => b.week - a.week).slice(0, 20), total: [...rows].sort((a, b) => b.xp - a.xp).slice(0, 20) });
+  }
+
+  if (route === 'GET /api/translate') {
+    const q = (url.searchParams.get('q') || '').trim().toLowerCase().slice(0, 60);
+    if (!/^[a-z' -]+$/.test(q)) return send(res, 400, { error: 'bad word' });
+    try { return send(res, 200, { word: q, translation: await translate(q) }); }
+    catch { return send(res, 200, { word: q, translation: '' }); }
+  }
+
+  const session = auth(req);
+  if (!session) return send(res, 401, { error: 'Нужно войти' });
+
+  if (route === 'POST /api/logout') { delete db.sessions[session.token]; persist(); return send(res, 200, { ok: true }); }
+  if (route === 'GET /api/me') return send(res, 200, { user: publicUser(session.user) });
+  if (route === 'GET /api/state') return send(res, 200, { state: session.user.state });
+  if (route === 'PUT /api/state') {
+    const { state } = await readJson(req);
+    if (!state || typeof state !== 'object') return send(res, 400, { error: 'state required' });
+    session.user.state = state; persist();
+    return send(res, 200, { ok: true });
+  }
+  return send(res, 404, { error: 'Not found' });
+}
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://localhost');
+  try {
+    if (url.pathname.startsWith('/api/')) return await api(req, res, url);
+    if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); return res.end(); }
+    return await serveStatic(req, res, url.pathname);
+  } catch (e) {
+    console.error(e);
+    if (!res.headersSent) send(res, 500, { error: 'Ошибка сервера' });
+  }
+});
+
+server.listen(PORT, () => console.log(`Лингва запущена: http://localhost:${PORT}`));
