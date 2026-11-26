@@ -80,3 +80,14 @@ export function fernBush(size = 180, seed = 5, side = 'left', palette = ['#1f6e3
     <span style="transform:rotate(40deg)">${fern(size * 0.85, seed + 3, palette[0], true)}</span>
   </div>`;
 }
+
+// Подлесок: ряд крупных папоротников вдоль низа страницы, разной высоты и оттенков.
+export function fernRow(count = 9, seed = 41) {
+  const r = rng(seed);
+  const palettes = [['#1f6e35', '#2f9a4c', '#4cb562'], ['#175a2b', '#237a3b', '#3aa856'], ['#2b7d3a', '#6f9a2e', '#4cb562']];
+  return `<div class="fern-row" aria-hidden="true">${Array.from({ length: count }, (_, i) => {
+    const size = Math.round(190 + r() * 120), left = (i + 0.5) / count * 100 + (r() - 0.5) * 6;
+    const flip = r() > 0.5 ? ' flip' : '';
+    return `<span class="fr${flip}" style="left:${left.toFixed(1)}%;--d:${(-r() * 6).toFixed(2)}s;z-index:${1 + (i % 3)}">${fernBush(size, seed + i * 7, 'row', palettes[i % 3])}</span>`;
+  }).join('')}</div>`;
+}
