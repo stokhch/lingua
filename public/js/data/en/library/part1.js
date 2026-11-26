@@ -310,7 +310,7 @@ park|парк
 ball|мяч
 vacuum cleaner|пылесос
 vacuum|вакуум
-cleaner|уборщик; очиститель (vacuum cleaner — пылесос)
+cleaner|уборщик; очиститель (vacuum cleaner — пылесос); чище (от clean)
 dad|папа
 basket|корзина
 jump|прыгать
