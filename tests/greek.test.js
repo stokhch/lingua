@@ -5,8 +5,10 @@ import { TEXTS } from '../public/js/data/el/texts.js';
 import { PHRASES } from '../public/js/data/el/phrases.js';
 import { ALL_LESSONS } from '../public/js/data/el/grammar.js';
 import { BANKS } from '../public/js/data/leveltest.js';
+import { SHELVES, shelfOf } from '../public/js/materials.js';
 
-const TOKEN = /[\p{L}’'-]+/gu;
+// только греческие слова: в пословицах рядом стоит русский перевод
+const TOKEN = /[\u0370-\u03ff\u1f00-\u1fff’'-]+/gu;
 const NAMES = new Set(['Νίκο', 'Άννα', 'Μαρία', 'Ελένη', 'Γιώργος', 'Σοφία']);
 
 test('Греческий: строчные буквы, конечная сигма и сравнение без ударений', () => {
@@ -64,4 +66,11 @@ test('Греческий: уроки грамматики и тест на ур�
   for (const id of ['el-alphabet', 'el-digraphs', 'el-stress']) assert.ok(ids.has(id), id);
   assert.ok(BANKS.el);
   for (const lv of BANKS.el.levels) for (const [w] of BANKS.el.items[lv]) assert.ok(/[α-ω]/.test(w), w);
+});
+
+test('Греческий: библиотека разложена по полкам, у материалов уникальные id', () => {
+  const ids = new Set();
+  for (const t of TEXTS) { assert.ok(!ids.has(t.id), t.id); ids.add(t.id); assert.ok(t.title && t.body && t.level, t.id); }
+  const shelves = new Set(TEXTS.map(shelfOf));
+  for (const sh of SHELVES.filter(s => s.id !== 'own')) assert.ok(shelves.has(sh.id), sh.id);
 });
