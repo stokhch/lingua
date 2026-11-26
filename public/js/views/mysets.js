@@ -59,6 +59,7 @@ export function focusBar() {
     <label>${icon('sets')}<span>Тренировать:</span>
     <select id="focus" aria-label="Какие слова тренировать">
       <option value="">все слова словаря (${G.allWords().length})</option>
+      ${f?.id.startsWith('trail:') ? `<option value="${esc(f.id)}" selected>${esc(f.title)} (${f.keys.size})</option>` : ''}
       ${own.length ? `<optgroup label="Мои наборы">${own.map(s => `<option value="my:${s.id}" ${f?.id === 'my:' + s.id ? 'selected' : ''}>${esc(s.title)} (${s.words.filter(w => G.hasWord(w)).length})</option>`).join('')}</optgroup>` : ''}
       ${builtin.length ? `<optgroup label="Готовые наборы">${builtin.map(([id, s, n]) => `<option value="set:${id}" ${f?.id === 'set:' + id ? 'selected' : ''}>${esc(s.title)} (${n})</option>`).join('')}</optgroup>` : ''}
     </select></label>

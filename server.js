@@ -6,10 +6,12 @@
 //   GET  /api/me                                  -> {user}
 //   GET  /api/state  / PUT /api/state {state}     -> прогресс пользователя
 //   GET  /api/leaderboard                         -> топ по XP за неделю и всего
+//   GET  /api/students                            -> все ученики: имя, уровень, XP, стрик, языки (кроме скрывшихся; students.js)
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
 //   GET  /api/lookup, /api/inbox, POST /api/inbox(/clear), GET /lingva-extension.zip -> расширение браузера (extension-api.js)
 //   GET  /api/invite (без входа), GET /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
+//   GET/POST /api/classes…, /api/join, /api/teacher/enable -> учитель, классы и соревнования (teacher.js)
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
 import http from 'node:http';
@@ -19,6 +21,8 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { openStore } from './storage.js';
 import { createSocial } from './social.js';
+import { createTeacher } from './teacher.js';
+import { studentsList } from './students.js';
 import { createExtensionApi } from './extension-api.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -167,6 +171,7 @@ async function translate(q, lang = 'en', sentence = false) {
 }
 
 const social = createSocial({ getDb: () => db, persist, send, readJson, weekXp });
+const teacher = createTeacher({ getDb: () => db, persist, send, readJson });
 const ext = createExtensionApi({ root: ROOT, send, readJson, translate, persist });
 
 // ---------- маршруты API ----------
@@ -199,9 +204,11 @@ async function api(req, res, url) {
 
   if (route === 'GET /api/leaderboard') {
     const me = auth(req)?.user?.id;
-    const rows = Object.values(db.users).map(u => ({ me: u.id === me, name: u.name, xp: u.state?.xp || 0, week: weekXp(u.state), streak: u.state?.streak || 0 }));
+    const rows = Object.values(db.users).filter(u => u.id === me || !u.state?.hideFromAll).map(u => ({ me: u.id === me, name: u.name, xp: u.state?.xp || 0, week: weekXp(u.state), streak: u.state?.streak || 0 }));
     return send(res, 200, { week: [...rows].sort((a, b) => b.week - a.week).slice(0, 20), total: [...rows].sort((a, b) => b.xp - a.xp).slice(0, 20) });
   }
+
+  if (route === 'GET /api/students') return send(res, 200, studentsList(db.users, auth(req)?.user?.id, weekXp));
 
   if (route === 'GET /api/translate') {
     const lang = ONLINE_LANGS.has(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'en';
@@ -236,6 +243,7 @@ async function api(req, res, url) {
     return send(res, 200, { ok: true });
   }
   if (await social.handle(route, req, res, session) !== false) return;
+  if (await teacher.handle(route, req, res, session, url) !== false) return;
   if (await ext.handleAuthed(route, req, res, session) !== false) return;
   return send(res, 404, { error: 'Not found' });
 }

@@ -59,3 +59,11 @@ test('Карачаево-балкарский: у текстов уникаль�
   const ids = TEXTS.map(t => t.id);
   assert.equal(new Set(ids).size, ids.length);
 });
+
+test('Карачаево-балкарский: у чужих песен есть пересказ и ссылки на полный текст', () => {
+  for (const t of TEXTS.filter(x => x.kind === 'song')) {
+    assert.ok(t.summary && t.summary.length > 80, t.id);
+    assert.ok(t.links?.length >= 1, t.id);
+    for (const l of t.links) assert.match(l.href, /^https:\/\//, t.id);
+  }
+});

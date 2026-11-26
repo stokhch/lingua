@@ -31,7 +31,7 @@ export function renderFriends(main) {
     const done = duels.filter(d => d.result);
     main.innerHTML = `
     <section class="band">
-      <div class="toolbar"><h1>Друзья и дуэли</h1></div>
+      <div class="toolbar"><h1>Друзья и дуэли</h1><span class="row gap"><a class="btn ghost small" href="#students">${icon('chart')} Все ученики</a><a class="btn ghost small" href="#classes">${icon('user')} Классы</a></span></div>
       <p class="lead">Учитесь вместе: сравнивайте опыт за неделю и вызывайте друзей на дуэль по словам. Кто ответит верно на больше слов, тот и победил, а при равенстве побеждает тот, кто быстрее.</p>
       <div class="friend-code">
         <div><span class="muted">Ваш код для друзей</span><b id="my-code">${esc(code)}</b></div>

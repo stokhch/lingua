@@ -8,6 +8,8 @@ import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderMySet } from './views/mysets.js';
 import { renderVerbs } from './views/verbs.js';
 import { renderFriends } from './views/friends.js';
+import { renderClasses, renderClass, renderJoin, resumeJoin } from './views/teacher.js';
+import { renderStudents } from './views/students.js';
 import { renderExtension } from './views/extension.js';
 import { renderExam } from './views/exam.js';
 import { pullInbox } from './inbox.js';
@@ -17,6 +19,7 @@ import { renderTrainings, renderTraining } from './views/train.js';
 import { renderShelf } from './views/library.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
+import { renderPath } from './views/path.js';
 import { renderGrammarTraining, grammarState } from './views/grammar-train.js';
 import { grammarPlan } from './grammar-drill.js';
 import { satiety, appleRow, APPLES, plea } from './pim.js';
@@ -131,7 +134,7 @@ function route() {
   const param = rest.join('-');
   cleanup?.(); cleanup = null;
   const main = $('#view');
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (['read', 'shelf'].includes(view) && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar')));
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (['read', 'shelf'].includes(view) && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar') || (view === 'path' && a.dataset.nav === 'progress')));
   const views = {
     home: () => renderHome(main),
     dictionary: () => renderDictionary(main),
@@ -140,6 +143,10 @@ function route() {
     myset: () => renderMySet(main, param),
     verbs: () => renderVerbs(main),
     friends: () => renderFriends(main),
+    classes: () => renderClasses(main),
+    class: () => renderClass(main, param),
+    join: () => renderJoin(main, param),
+    students: () => renderStudents(main),
     extension: () => renderExtension(main),
     exam: () => renderExam(main, param),
     train: () => (param ? renderTraining(main, param) : renderTrainings(main)),
@@ -151,6 +158,7 @@ function route() {
     gtrain: () => renderGrammarTraining(main, param),
     profile: () => renderProfile(main),
     progress: () => renderProgress(main),
+    path: () => renderPath(main),
     test: () => renderPlacement(main)
   };
   cleanup = (views[view] || views.home)() || null;
@@ -282,7 +290,7 @@ function renderProfile(main) {
     <h2>Достижения</h2>
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
-  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
+  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
   <section class="band" id="leaders"></section>
   <section class="band">
     <h2>Настройки</h2>
@@ -291,6 +299,7 @@ function renderProfile(main) {
       <label>Дневная цель<select name="goal">${[20, 50, 100, 150, 250].map(g => `<option value="${g}" ${g === s.goal ? 'selected' : ''}>${g} XP — ${g <= 20 ? 'спокойно' : g <= 50 ? 'обычно' : g <= 100 ? 'серьёзно' : 'интенсив'}</option>`).join('')}</select></label>
       <label>Изучаемый язык<select name="lang">${Object.values(LANGS).map(l => `<option value="${l.id}" ${l.id === L().id ? 'selected' : ''}>${l.name}</option>`).join('')}</select></label>
       <label>Скорость озвучки<select name="rate">${[[0.7, 'медленно'], [0.9, 'обычно'], [1.1, 'быстро']].map(([v, t]) => `<option value="${v}" ${v === s.rate ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+      ${store.mode === 'server' ? `<label class="check"><input type="checkbox" name="shown" ${s.hideFromAll ? '' : 'checked'}> Показывать мой прогресс в списке «Все ученики» и рейтинге недели (видны только имя и учебные цифры)</label>` : ''}
       <button class="btn" type="submit">Сохранить</button>
     </form>
     <div class="row gap">
@@ -310,6 +319,7 @@ function renderProfile(main) {
   $('#settings').onsubmit = e => {
     e.preventDefault(); const f = new FormData(e.target);
     s.name = String(f.get('name')).trim() || s.name; s.goal = Number(f.get('goal')); s.rate = Number(f.get('rate'));
+    if (store.mode === 'server') { if (f.get('shown')) delete s.hideFromAll; else s.hideFromAll = true; }
     switchLang(String(f.get('lang')));
     store.save(); updateHud(); toast('Настройки сохранены'); renderProfile(main);
   };
@@ -345,6 +355,7 @@ function start() {
   G.checkBadges();
   initPim();
   window.onhashchange = route;
+  resumeJoin(); // приглашение в класс, открытое до входа
   route();
   pullInbox();
   acceptInvite().then(name => { if (name && location.hash === '#friends') route(); });

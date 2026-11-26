@@ -10,6 +10,7 @@ import * as D from '../grammar-drill.js';
 
 const TRAIN_INFO = { ...WORD_TRAIN_INFO, ...GRAMMAR_STATS_INFO };
 import * as Pim from '../pim.js';
+import { viewToggle } from './path.js';
 
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
 const WD = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -29,7 +30,7 @@ export function renderProgress(main) {
 
   main.innerHTML = `
   <section class="band prog-head">
-    <h1>Прогресс</h1>
+    <div class="sec-head"><h1>Прогресс</h1>${viewToggle('stats')}</div>
     <p class="lead">Всё, чего вы добились: слова, опыт, серии занятий и тренировки${langs.length > 1 ? ' — по всем языкам сразу и по каждому отдельно' : ''}.</p>
     <div class="kpis">
       <div class="kpi gold">${icon('star')}<b>${n0(s.xp)}</b><span>XP всего</span></div>
