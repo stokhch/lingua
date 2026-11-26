@@ -609,6 +609,17 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .opt.picked{border-color:var(--brand);background:var(--brand-soft)}
 @media (max-width:640px){.leaders.friends li{grid-template-columns:28px minmax(0,1fr) auto;gap:6px 10px}.leaders.friends li>span:nth-child(3){display:none!important}.fr-act{grid-column:2/-1;justify-content:flex-end}}
 .text-note{margin:-4px 0 14px;padding:10px 14px;border-radius:12px;background:var(--bg2);color:var(--ink);font-size:15px;line-height:1.5}
+
+/* расширение */
+.friends-link+.friends-link{margin-top:12px}
+.ext-demo{position:relative;padding:18px 20px 70px;border-radius:var(--r);background:var(--card);border:2px dashed var(--line);font:19px/1.6 Georgia,serif;margin-bottom:16px}
+.ext-demo p{margin:0}.ext-demo mark{background:var(--sun);border-radius:4px;padding:0 2px}
+.ext-pop{position:absolute;left:150px;top:52px;display:grid;gap:2px;padding:8px 12px;border-radius:12px;background:var(--card);border:2px solid var(--line);box-shadow:var(--shadow);font:14px Nunito,sans-serif}
+.ext-pop b{font-size:16px}.ext-pop i{font-style:normal;font-weight:800;color:#fff;background:var(--brand);border-radius:8px;padding:3px 8px;justify-self:start;margin-top:4px}
+.ext-list{list-style:none;padding:0;display:grid;gap:6px;margin:0 0 18px}.ext-list li{display:flex;gap:8px;align-items:flex-start}.ext-list .ic{color:var(--ok);flex:none}
+.ext-steps{display:grid;gap:6px;padding-left:22px}.ext-page h2{margin-top:26px}
+.ext-page code{background:var(--bg2);padding:1px 6px;border-radius:6px;font-size:14px}
+@media (max-width:640px){.ext-pop{left:20px}}
 /* флаги в карточках выбора языка */
 .lang-opt .lang-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
 .lang-opt .flags{display:inline-flex;gap:6px}
