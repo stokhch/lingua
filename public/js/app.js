@@ -6,6 +6,7 @@ import * as G from './game.js';
 import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderMySet } from './views/mysets.js';
 import { renderVerbs } from './views/verbs.js';
+import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
@@ -76,6 +77,7 @@ function updateHud() {
   $('#hud-streak').textContent = G.currentStreak();
   $('#hud-xp').textContent = `${G.todayXp()}/${store.state.goal}`;
   $('#hud-avatar').textContent = (store.state.name || '?').slice(0, 1).toUpperCase();
+  $('#hud-avatar').title = `Профиль · ${rankFor(G.levelInfo().level).title}`;
   const sync = $('#sync');
   sync.textContent = store.mode === 'server'
     ? ({ saved: 'Прогресс сохранён в аккаунте.', saving: 'Сохраняем…', error: 'Нет связи с сервером — изменения не сохранены.' })[store.syncState]
@@ -199,7 +201,7 @@ function renderProfile(main) {
   <section class="band">
     <div class="profile-head">
       <div class="avatar big">${esc((s.name || '?').slice(0, 1).toUpperCase())}</div>
-      <div><h1>${esc(s.name)}</h1><p class="muted">${store.mode === 'server' ? esc(store.user?.email) : 'Режим без регистрации'}</p>
+      <div><h1>${esc(s.name)}</h1>${(() => { const r = rankFor(lv.level); return `<button class="rank" id="rank" title="Все звания">${icon('trophy')}<b>${r.title}</b></button>${r.next ? `<p class="muted small">До звания «${r.next.title}» — ${r.next.from - lv.level} ${plural(r.next.from - lv.level, 'уровень', 'уровня', 'уровней')}</p>` : ''}`; })()}<p class="muted">${store.mode === 'server' ? esc(store.user?.email) : 'Режим без регистрации'}</p>
       ${hasPlacement() ? `<p class="muted">${L().name}: ${myLevel() ? `уровень <b>${myLevel()}</b> · ` : ''}<a href="#test">${myLevel() ? 'пройти тест заново' : 'определить уровень'}</a></p>` : ''}
       <div class="level"><b>Уровень ${lv.level}</b><i class="bar"><i style="width:${lv.pct}%"></i></i><span>${lv.into} / ${lv.need} XP</span></div></div>
     </div>
@@ -239,6 +241,12 @@ function renderProfile(main) {
     </div>
   </section>`;
 
+  $('#rank').onclick = () => {
+    const cur = rankFor(lv.level).index;
+    modal(`<h2>Звания</h2><p class="muted">Звание растёт вместе с уровнем: опыт дают тренировки, тексты, уроки и тест на уровень.</p>
+      <ol class="ranks">${RANKS.map((r, i) => `<li class="${i < cur ? 'got' : i === cur ? 'now' : ''}"><span>${r.from}+</span><b>${r.title}</b>${i === cur ? '<em>вы здесь</em>' : i < cur ? icon('check') : ''}</li>`).join('')}</ol>
+      <button class="btn ghost" data-close>Закрыть</button>`);
+  };
   $('#settings').onsubmit = e => {
     e.preventDefault(); const f = new FormData(e.target);
     s.name = String(f.get('name')).trim() || s.name; s.goal = Number(f.get('goal')); s.rate = Number(f.get('rate'));
