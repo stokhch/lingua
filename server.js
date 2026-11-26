@@ -7,34 +7,44 @@
 //   GET  /api/state  / PUT /api/state {state}     -> прогресс пользователя
 //   GET  /api/leaderboard                         -> топ по XP за неделю и всего
 //   GET  /api/translate?q=word                    -> перевод слова, которого нет во встроенном словаре
-// Данные хранятся в ./data/db.json (запись атомарная, через временный файл).
+// Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
 import http from 'node:http';
-import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { openStore } from './storage.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(ROOT, 'public');
 const DATA_DIR = process.env.LINGVA_DATA || path.join(ROOT, 'data');
-const DB_FILE = path.join(DATA_DIR, 'db.json');
 const PORT = Number(process.env.PORT || 3000);
 const MAX_BODY = 2 * 1024 * 1024;
 const SESSION_TTL = 1000 * 60 * 60 * 24 * 30; // 30 дней
 
 // ---------- хранилище ----------
-let db = { users: {}, sessions: {} };
-try { db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch { fs.mkdirSync(DATA_DIR, { recursive: true }); }
-let saveTimer = null;
+const store = await openStore({ databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR });
+let db = await store.load();
+for (const [t, s] of Object.entries(db.sessions)) if (s.expires < Date.now()) delete db.sessions[t];
+console.log(`Хранилище: ${store.kind === 'postgres' ? 'PostgreSQL (DATABASE_URL)' : DATA_DIR + '/db.json'}`);
+
+// Изменения копятся в памяти и сохраняются не чаще раза в 200 мс; записи идут строго по очереди.
+let saveTimer = null, dirty = false, saving = Promise.resolve();
+function flush() {
+  clearTimeout(saveTimer); saveTimer = null;
+  if (!dirty) return saving;
+  dirty = false;
+  const snapshot = JSON.stringify(db);
+  saving = saving.then(() => store.save(snapshot)).catch(e => {
+    console.error('Не удалось сохранить базу:', e.message);
+    dirty = true; saveTimer = setTimeout(flush, 5000);
+  });
+  return saving;
+}
 function persist() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(async () => {
-    const tmp = DB_FILE + '.tmp';
-    await fsp.writeFile(tmp, JSON.stringify(db));
-    await fsp.rename(tmp, DB_FILE);
-  }, 200);
+  dirty = true;
+  if (!saveTimer) saveTimer = setTimeout(flush, 200);
 }
 
 // ---------- пароли и сессии ----------
@@ -136,7 +146,7 @@ async function api(req, res, url) {
   const route = `${req.method} ${url.pathname}`;
   const ip = req.socket.remoteAddress;
 
-  if (route === 'GET /api/health') return send(res, 200, { ok: true, mode: 'server' });
+  if (route === 'GET /api/health') return send(res, 200, { ok: true, mode: 'server', storage: store.kind });
 
   if (route === 'POST /api/register') {
     if (limited(ip)) return send(res, 429, { error: 'Слишком много попыток, подождите минуту' });
@@ -200,3 +210,11 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => console.log(`Лингва запущена: http://localhost:${PORT}`));
+
+// При остановке (деплой, засыпание на хостинге) дописываем несохранённые изменения.
+for (const sig of ['SIGTERM', 'SIGINT']) process.on(sig, async () => {
+  server.close();
+  await flush();
+  await store.close().catch(() => {});
+  process.exit(0);
+});
