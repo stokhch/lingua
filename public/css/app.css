@@ -189,6 +189,8 @@ button.big-word{cursor:pointer}.big-word .ic{width:28px;height:28px;color:var(--
 .lessons a:hover{border-color:var(--brand)}.lessons a span{flex:1}.lessons em{font-style:normal;color:var(--muted);font-size:14px}
 .lessons .dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);flex:none}.lessons .passed .ic{color:var(--ok)}
 .theory{font-size:17px;padding:20px 22px;border-radius:var(--r);background:var(--brand-soft);margin-bottom:20px}.theory p{margin:0 0 .8em}.theory p:last-child{margin:0}
+.theory table{width:100%;border-collapse:collapse;margin:0 0 .8em;font-size:15px}.theory th,.theory td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid rgba(0,0,0,.1)}.theory th{font-weight:800}
+@media (max-width:600px){.theory table{font-size:13px}.theory th,.theory td{padding:4px 5px}}
 .exercise{margin-top:22px;padding:22px;border-radius:var(--r);border:2px solid var(--line);display:grid;gap:14px}
 .exercise .q{font-size:22px;font-weight:800;margin:0}
 .gap-fill{display:inline-block;min-width:60px;padding:0 6px;border-bottom:3px solid var(--brand);color:var(--brand-ink)}
