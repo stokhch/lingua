@@ -6,8 +6,9 @@ import * as p2 from './part2.js';
 import * as p3 from './part3.js';
 import * as p4 from './part4.js';
 import * as p5 from './part5.js';
+import * as p6 from './part6.js';
 
-const PARTS = [p1, p2, p3, p4, p5];
+const PARTS = [p1, p2, p3, p4, p5, p6];
 export const LIBRARY = PARTS.flatMap(p => p.TEXTS);
 // FORMS: трудные формы без ударений → словарная форма (έπεσε → πέφτω)
 export const LIBRARY_FORMS = Object.assign({}, ...PARTS.map(p => p.FORMS || {}));
