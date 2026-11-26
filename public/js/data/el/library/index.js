@@ -2,8 +2,9 @@
 // пословицы, культура и история, стихи. Все тексты написаны специально для Лингвы (мифы и басни — пересказ).
 // У каждой части свои слова (WORDS: «слово|перевод»), чтобы перевод по клику находил всё.
 import * as p1 from './part1.js';
+import * as p2 from './part2.js';
 
-const PARTS = [p1];
+const PARTS = [p1, p2];
 export const LIBRARY = PARTS.flatMap(p => p.TEXTS);
 // FORMS: трудные формы без ударений → словарная форма (έπεσε → πέφτω)
 export const LIBRARY_FORMS = Object.assign({}, ...PARTS.map(p => p.FORMS || {}));
