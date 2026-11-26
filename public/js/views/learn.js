@@ -46,6 +46,7 @@ export function renderReader(main, id) {
     <article class="reader">
       <div class="meta"><span class="lv">${t.level}</span> ${esc(t.topic)}</div>
       <h1>${esc(t.title)}</h1>
+      ${t.note ? `<p class="text-note">${esc(t.note)}${t.link ? ` <a href="${esc(t.link.href)}" target="_blank" rel="noopener">${esc(t.link.label)}</a>` : ''}</p>` : ''}
       <div class="legend"><span class="mine">в словаре</span><span class="known">изучено</span><span>нажмите на слово для перевода</span></div>
       <div class="body" id="body">${tokenized}</div>
       <div class="done-row">${store.state.readTexts[t.id] ? `<p class="muted">${icon('check')} Текст прочитан</p>` : '<button class="btn big" id="done">Я прочитал(а) текст · +10 XP</button>'}</div>
