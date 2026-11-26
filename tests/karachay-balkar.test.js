@@ -45,3 +45,12 @@ test('Карачаево-балкарский: в упражнениях с вы
     }
   }
 });
+
+test('Карачаево-балкарский: полезные ресурсы — https-ссылки с описанием', async () => {
+  const { RESOURCES } = await import('../public/js/data/krc/resources.js');
+  assert.ok(RESOURCES.length >= 3);
+  for (const g of RESOURCES) for (const r of g.items) {
+    assert.match(r.href, /^https:\/\//, r.title);
+    assert.ok(r.title && r.desc, r.href);
+  }
+});

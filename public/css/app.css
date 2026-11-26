@@ -746,3 +746,5 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 @media (max-width:760px){.trainer-pim{height:80px;margin-top:4px}.trainer-pim .mascot{width:68px;height:68px}}
 @media (prefers-reduced-motion:reduce){.trainer-pim.jump .tp-body,.trainer-pim.jump.big .tp-body{animation:pim-hop-soft .5s ease-out}.trainer-pim.oops .tp-body{animation:none}}
 @keyframes pim-hop-soft{50%{transform:translateY(-8px)}}
+
+.resources h3{margin:18px 0 8px;font-size:17px}.res-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}.res-list li{display:grid;gap:2px;padding:12px 14px;border-radius:var(--r);border:2px solid var(--line);overflow-wrap:anywhere}.res-list a{font-weight:800}.res-list span{opacity:.75;font-size:15px}
