@@ -608,3 +608,4 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .duel summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--brand-ink)}
 .opt.picked{border-color:var(--brand);background:var(--brand-soft)}
 @media (max-width:640px){.leaders.friends li{grid-template-columns:28px minmax(0,1fr) auto;gap:6px 10px}.leaders.friends li>span:nth-child(3){display:none!important}.fr-act{grid-column:2/-1;justify-content:flex-end}}
+.text-note{margin:-4px 0 14px;padding:10px 14px;border-radius:12px;background:var(--bg2);color:var(--ink);font-size:15px;line-height:1.5}
