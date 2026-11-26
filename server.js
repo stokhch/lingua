@@ -9,7 +9,7 @@
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
 //   GET  /api/lookup, /api/inbox, POST /api/inbox(/clear), GET /lingva-extension.zip -> расширение браузера (extension-api.js)
-//   GET  /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
+//   GET  /api/invite (без входа), GET /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
 import http from 'node:http';
@@ -213,6 +213,7 @@ async function api(req, res, url) {
   }
 
   if (await ext.handlePublic(route, req, res, url) !== false) return;
+  if (social.handlePublic(route, req, res, url) !== false) return;
 
   if (route === 'GET /api/translate-sentence') {
     const lang = ONLINE_LANGS.has(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'en';

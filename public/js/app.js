@@ -11,6 +11,7 @@ import { renderFriends } from './views/friends.js';
 import { renderExtension } from './views/extension.js';
 import { renderExam } from './views/exam.js';
 import { pullInbox } from './inbox.js';
+import { captureInvite, pendingInvite, inviter, acceptInvite } from './invite.js';
 import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderShelf } from './views/library.js';
@@ -216,6 +217,7 @@ function renderAuth() {
   <div class="auth">
     <div class="auth-pic">${lianas(7, 13)}${fernBush(160, 4)}${fernBush(140, 17, 'right')}${mascot('happy', 220)}<h1>Лингва</h1><p>Личный словарь, тренировки, тексты и грамматика — английский и турецкий каждый день по 15 минут.</p></div>
     <form class="auth-form" id="auth-form" novalidate>
+      <p class="invite-note" id="invite-note" hidden></p>
       <div class="tabs" role="tablist"><button type="button" class="on" data-k="login">Вход</button><button type="button" data-k="register">Регистрация</button></div>
       <label class="reg-only" hidden>Имя<input name="name" autocomplete="nickname" maxlength="40"></label>
       <label>E-mail<input name="email" type="email" autocomplete="email" required></label>
@@ -230,6 +232,13 @@ function renderAuth() {
     kind = b.dataset.k; $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
     $('.reg-only').hidden = kind !== 'register';
     $('#auth-submit').textContent = kind === 'login' ? 'Войти' : 'Создать аккаунт';
+  });
+  // Открыли ссылку-приглашение: показываем, кто зовёт, и сразу предлагаем регистрацию
+  if (pendingInvite()) inviter().then(name => {
+    const note = $('#invite-note'); if (!name || !note) return;
+    note.innerHTML = `${icon('heart')}<span><b>${esc(name)}</b> приглашает вас в Лингву. Войдите или создайте аккаунт — и вы сразу станете друзьями.</span>`;
+    note.hidden = false;
+    $('.tabs [data-k="register"]').click();
   });
   $('#auth-form').onsubmit = async e => {
     e.preventDefault();
@@ -338,9 +347,11 @@ function start() {
   window.onhashchange = route;
   route();
   pullInbox();
+  acceptInvite().then(name => { if (name && location.hash === '#friends') route(); });
 }
 
 async function boot() {
+  captureInvite();
   app.innerHTML = `<div class="loading">${mascot('calm', 120)}<p>Загрузка…</p></div>`;
   const ok = await store.init();
   if (ok) start(); else renderAuth();
