@@ -8,6 +8,7 @@
 //   GET  /api/leaderboard                         -> топ по XP за неделю и всего
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
+//   GET  /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
 import http from 'node:http';
@@ -16,6 +17,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { openStore } from './storage.js';
+import { createSocial } from './social.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(ROOT, 'public');
@@ -161,6 +163,8 @@ async function translate(q, lang = 'en', sentence = false) {
   return out;
 }
 
+const social = createSocial({ getDb: () => db, persist, send, readJson, weekXp });
+
 // ---------- маршруты API ----------
 async function api(req, res, url) {
   const route = `${req.method} ${url.pathname}`;
@@ -224,6 +228,7 @@ async function api(req, res, url) {
     session.user.state = state; persist();
     return send(res, 200, { ok: true });
   }
+  if (await social.handle(route, req, res, session) !== false) return;
   return send(res, 404, { error: 'Not found' });
 }
 

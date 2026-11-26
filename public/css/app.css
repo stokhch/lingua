@@ -588,3 +588,23 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .ranks li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--bg2);color:var(--muted)}
 .ranks li span{font-weight:900;font-size:13px}.ranks li.got{color:var(--ink)}.ranks li.got .ic{color:var(--ok)}
 .ranks li.now{background:linear-gradient(180deg,#ffe9a8,var(--sun));color:#2b1d00}.ranks li em{font-style:normal;font-size:12px;font-weight:800}
+
+/* друзья и дуэли */
+.friends-link{max-width:620px}
+.friend-code{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:16px;border-radius:var(--r);background:var(--card);border:2px solid var(--line);max-width:820px}
+.friend-code>div{display:grid}.friend-code b{font-size:28px;font-weight:900;letter-spacing:.12em;color:var(--gold-ink)}
+.add-f{display:flex;gap:8px;flex:1 1 260px}.add-f input{text-transform:uppercase;letter-spacing:.08em}
+.leaders.friends{max-width:820px}
+.leaders.friends li{grid-template-columns:36px minmax(0,1fr) auto auto auto}
+.fr-name{display:grid!important;gap:0!important}.fr-name span{font-size:13px;color:var(--muted);font-weight:600}
+.fr-act{gap:4px!important}.fr-act .icon-btn .ic{color:var(--muted)}
+.duels{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.duel{display:grid;gap:8px;padding:16px;border-radius:var(--r);background:var(--card);border:2px solid var(--line)}
+.duel.todo{border-color:var(--gold);background:color-mix(in srgb,var(--sun) 12%,var(--card))}
+.duel.win{border-color:#18a564}.duel.lose{border-color:var(--coral)}
+.duel-head{display:flex;align-items:center;gap:8px}.duel-head b{flex:1;font-size:17px}
+.duel-head em{font-style:normal;font-weight:900;font-size:14px}.duel-head em.win{color:var(--ok)}.duel-head em.lose{color:var(--bad)}
+.duel-score{display:grid;gap:2px;font-size:14px;color:var(--muted)}.duel-score b{color:var(--ink)}
+.duel summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--brand-ink)}
+.opt.picked{border-color:var(--brand);background:var(--brand-soft)}
+@media (max-width:640px){.leaders.friends li{grid-template-columns:28px minmax(0,1fr) auto;gap:6px 10px}.leaders.friends li>span:nth-child(3){display:none!important}.fr-act{grid-column:2/-1;justify-content:flex-end}}
