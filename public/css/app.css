@@ -747,4 +747,26 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 @media (prefers-reduced-motion:reduce){.trainer-pim.jump .tp-body,.trainer-pim.jump.big .tp-body{animation:pim-hop-soft .5s ease-out}.trainer-pim.oops .tp-body{animation:none}}
 @keyframes pim-hop-soft{50%{transform:translateY(-8px)}}
 
+/* ---------- грамматика в практике ---------- */
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1080px){.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.grid-4{grid-template-columns:1fr}}
+.g-head{margin-top:28px}
+.g-trainings{margin:12px 0 8px}
+.train-card.g-review .ic{background:var(--sun);color:#3a2a00}.train-card.g-build .ic{background:#e2f7ec;color:#11683f}.train-card.g-spot .ic{background:#ffe3dc;color:#a8361a}
+.g-q{font-size:24px;line-height:1.5;text-align:center}
+.g-ctx{color:var(--muted);text-align:center;margin:0}
+.g-mark{background:var(--brand-soft);color:var(--brand-ink);padding:0 6px;border-radius:8px;font-weight:800}
+.g-mark.ok{background:var(--ok-soft);color:var(--ok)}.g-mark.bad{background:var(--bad-soft);color:var(--bad);text-decoration:line-through}
+.lessons em.due{color:var(--coral);font-weight:900;font-size:18px}
+.g-in-text{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 16px}
+.g-in-text .ic{width:16px;height:16px;vertical-align:-3px}
+.g-in-text .g-chip{display:inline-flex;gap:6px;align-items:baseline;padding:5px 12px;border-radius:99px;background:var(--bg2);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
+.g-in-text .g-chip span{color:var(--muted);font-style:italic}.g-in-text .g-chip.passed{border-color:#18a564}
+.g-in-text .g-chip:hover{border-color:var(--brand)}
+.pop-rule{margin:8px 0 0;font-size:14px}.pop-rule .ic{width:15px;height:15px;vertical-align:-3px}
+.stack .gs-strong,.g-legend .gs-strong{background:#11683f}.stack .gs-solid,.g-legend .gs-solid{background:#18a564}.stack .gs-fresh,.g-legend .gs-fresh{background:var(--sun)}.stack .gs-weak,.g-legend .gs-weak{background:var(--coral)}.stack .gs-new,.g-legend .gs-new{background:#9aa0b8}
+.g-legend{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.g-legend li{display:flex;align-items:center;gap:8px}.g-legend i{width:12px;height:12px;border-radius:4px;display:inline-block}.g-legend b{margin-left:auto}
+.g-weak{list-style:none;padding:0;margin:0;display:grid;gap:6px}.g-weak li{display:flex;gap:8px}.g-weak em{margin-left:auto;font-style:normal;color:var(--muted);font-weight:700}
 .resources h3{margin:18px 0 8px;font-size:17px}.res-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}.res-list li{display:grid;gap:2px;padding:12px 14px;border-radius:var(--r);border:2px solid var(--line);overflow-wrap:anywhere}.res-list a{font-weight:800}.res-list span{opacity:.75;font-size:15px}

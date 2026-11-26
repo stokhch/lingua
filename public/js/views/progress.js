@@ -4,7 +4,11 @@ import { esc, $, $$, icon, plural, toast, mascot } from '../ui.js';
 import * as G from '../game.js';
 import * as St from '../stats.js';
 import { L, LANGS, switchLang } from '../lang.js';
-import { TRAIN_INFO } from './train.js';
+import { TRAIN_INFO as WORD_TRAIN_INFO } from './train.js';
+import { GRAMMAR_STATS_INFO, grammarState } from './grammar-train.js';
+import * as D from '../grammar-drill.js';
+
+const TRAIN_INFO = { ...WORD_TRAIN_INFO, ...GRAMMAR_STATS_INFO };
 import * as Pim from '../pim.js';
 
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
@@ -61,6 +65,11 @@ export function renderProgress(main) {
     ${wordsBlock(St.langData(s, L().id).words, now)}
     <h3 class="sub">Новые и изученные слова за 30 дней <span class="muted">· все языки</span></h3>
     ${wordTimeline(St.wordTimeline(allWords, 30, now))}
+  </section>
+
+  <section class="band">
+    <div class="sec-head"><h2>Грамматика <span class="muted small-h">· ${esc(L().name)}</span></h2><a class="link" href="#grammar">Все уроки</a></div>
+    ${grammarBlock(now)}
   </section>
 
   <section class="band">
@@ -191,6 +200,32 @@ function wordTimeline(days) {
   <div class="wt-legend"><span class="k added"></span>добавлено <b>${added}</b><span class="k learned"></span>изучено <b>${learned}</b></div>
   <div class="wt-chart" role="img" aria-label="Добавлено ${added}, изучено ${learned} слов за 30 дней">
     ${days.map((d, i) => `<div class="col" title="${fmtDay(d.date)}: добавлено ${d.added}, изучено ${d.learned}"><div class="pair"><i class="added" style="height:${(d.added / max) * 100}%"></i><i class="learned" style="height:${(d.learned / max) * 100}%"></i></div><span>${i % 5 === 4 || i === days.length - 1 ? d.date.getDate() : ''}</span></div>`).join('')}
+  </div>`;
+}
+
+// ---------- грамматика ----------
+function grammarBlock(now) {
+  const { lessons, g } = grammarState(now.getTime());
+  const x = D.grammarSummary(lessons, g, now.getTime()), plan = D.grammarPlan(lessons, g, now.getTime());
+  const order = ['strong', 'solid', 'fresh', 'weak', 'new'];
+  return `
+  <div class="kpis small">
+    <div class="kpi leaf">${icon('check')}<b>${x.passed}</b><span>из ${x.total} ${plural(x.total, 'урока', 'уроков', 'уроков')} пройдено</span><i class="bar"><i style="width:${(x.passed / Math.max(1, x.total)) * 100}%"></i></i></div>
+    <div class="kpi ${x.due ? 'fire' : ''}">${icon('cards')}<b>${x.due}</b><span>${plural(x.due, 'правило', 'правила', 'правил')} пора повторить</span></div>
+    <div class="kpi">${icon('star')}<b>${x.started ? x.avg + '%' : '—'}</b><span>средний результат в уроках</span></div>
+    <div class="kpi gold">${icon('trophy')}<b>${x.by.strong + x.by.solid}</b><span>${plural(x.by.strong + x.by.solid, 'правило закрепляется', 'правила закрепляются', 'правил закрепляются')} надолго</span></div>
+  </div>
+  <div class="two-col tight">
+    <div class="panel">
+      <h3 class="sub">Прочность правил</h3>
+      <div class="stack">${order.map(k => x.by[k] ? `<i class="gs-${k}" style="flex:${x.by[k]}" title="${D.STRENGTH_LABEL[k]}: ${x.by[k]}"></i>` : '').join('')}</div>
+      <ul class="g-legend">${order.map(k => `<li><i class="gs-${k}"></i>${D.STRENGTH_LABEL[k]}<b>${x.by[k]}</b></li>`).join('')}</ul>
+    </div>
+    <div class="panel">
+      <h3 class="sub">Что дальше</h3>
+      <p><a class="btn small" href="${plan.href}">${plan.kind === 'review' ? `Повторить ${plan.count} ${plural(plan.count, 'правило', 'правила', 'правил')}` : plan.kind === 'lesson' ? `Урок: ${esc(plan.lesson.title)}` : 'Грамматика вперемешку'}</a></p>
+      ${x.weakest.length ? `<p class="muted small">Подтянуть:</p><ul class="g-weak">${x.weakest.map(l => `<li><a href="#gtrain-mix.${l.id}">${esc(l.title)}</a><em>${g[l.id].best}%</em></li>`).join('')}</ul>` : '<p class="muted small">Слабых мест пока нет.</p>'}
+    </div>
   </div>`;
 }
 

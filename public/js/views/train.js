@@ -8,6 +8,7 @@ import { L, lower, fold, lettersOnly, keysBar } from '../lang.js';
 import { EXTRA, EXTRA_INFO, extraPlan, EXTRA_QUESTIONS } from './train-extra.js';
 import { focusBar, bindFocusBar } from './mysets.js';
 import { pleaBlock, resultBlock, say } from '../pimfx.js';
+import { grammarCards } from './grammar-train.js';
 
 const SESSION = 10;
 export const TRAIN_INFO = {
@@ -51,6 +52,9 @@ export function renderTrainings(main) {
       return `<a class="train-card ${k}" href="#train-${k}">${icon(t.ic)}<b>${t.title}</b><span>${t.desc}</span>${cnt === null ? '<em>в любое время</em>' : `<em class="${cnt ? 'ready' : ''}">${cnt ? `${cnt} ${plural(cnt, 'слово', 'слова', 'слов')} готово` : 'нет слов'}</em>`}</a>`;
     }).join('')}${L().id === 'en' ? `<a class="train-card irr" href="#verbs">${icon('grammar')}<b>Неправильные глаголы</b><span>Напишите Past Simple и Past Participle</span><em>112 глаголов</em></a>` : ''}</div>
     ${c.total < 4 ? `<div class="empty">${say('Мне нечем подкрепиться… Для тренировок нужно хотя бы 4 слова. Добавь набор — и я сразу попрошу первое яблоко!', { mood: 'hungry', size: 80, cls: 'center' })}<p>Для тренировок нужно хотя бы 4 слова в словаре.</p><a class="btn" href="#sets">Выбрать набор слов</a></div>` : ''}
+    <div class="sec-head g-head"><h2>Грамматика</h2><a class="link" href="#grammar">Все уроки</a></div>
+    <p class="muted">Задания из уроков грамматики: правила, которые вы прошли, возвращаются сюда на повторение.</p>
+    ${grammarCards()}
   </section>`;
   if (c.total) bindFocusBar(() => renderTrainings(main));
 }

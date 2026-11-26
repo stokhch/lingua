@@ -10,6 +10,13 @@ import { myLevel } from './placement.js';
 import { levelRank } from '../placement.js';
 import { KINDS, wordTotal, newWordCount, youtubeId } from '../materials.js';
 import { openMaterialEditor, deleteMaterial } from './materials.js';
+import * as D from '../grammar-drill.js';
+import { grammarCards, grammarState } from './grammar-train.js';
+
+// Словоформы из упражнений → уроки (для подсказок в текстах), строится один раз на язык
+const ruleCache = {};
+const rules = () => (ruleCache[L().id] ||= D.ruleIndex(L().ALL_LESSONS, L().letters, L().lower));
+const lessonById = id => L().ALL_LESSONS.find(l => l.id === id);
 
 const F = { tab: 'all', level: 'all', kind: 'all', status: 'all', topic: 'all', sort: 'level' };
 let lessonKey = null;
@@ -100,6 +107,7 @@ export function renderReader(main, id) {
       ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
       ${src ? `<p class="muted small">Источник: <a href="${esc(src)}" target="_blank" rel="noopener nofollow">${esc(src.replace(/^https?:[/][/](www[.])?/, '').slice(0, 60))}</a></p>` : ''}
       <div class="legend"><span class="mine">в словаре</span><span class="known">изучено</span><span>нажмите на слово — перевод слова и всего предложения</span></div>
+      ${grammarInText(t.body)}
       <div class="body" id="body">${tokenized}</div>
       <div class="done-row">${store.state.readTexts[t.id] ? `<p class="muted">${icon('check')} Текст прочитан</p>` : '<button class="btn big" id="done">Я прочитал(а) текст · +10 XP</button>'}</div>
     </article>
@@ -147,6 +155,8 @@ export function renderReader(main, id) {
       : `${res.translation ? `<p class="tr">${esc(res.translation)}</p>` : '<p class="muted">Перевода нет во встроенном словаре — впишите свой:</p>'}
          <form class="pop-add"><input name="t" value="${esc(res.translation)}" aria-label="Перевод" ${res.translation ? 'hidden' : 'required'}><button class="btn small">${icon('plus')} В словарь</button>${res.translation ? '<button type="button" class="link edit">изменить</button>' : ''}</form>
          ${res.source === 'online' ? '<p class="muted small">Машинный перевод</p>' : ''}`;
+    const rl = ruleLink(raw);
+    if (rl) $('.pop-body', pop).insertAdjacentHTML('beforeend', rl);
     const sb = document.createElement('div');
     sb.className = 'pop-sent';
     sb.innerHTML = `<button class="link" type="button">Перевести всё предложение</button>`;
@@ -179,18 +189,36 @@ export function renderReader(main, id) {
   return () => { closePop(); document.removeEventListener('click', outside); };
 }
 
+// Правила из уроков, которые встречаются в тексте
+function grammarInText(body) {
+  const found = D.rulesInText(body, rules(), L().tokenRe, L().lower).map(r => ({ ...r, l: lessonById(r.id) })).filter(r => r.l);
+  if (!found.length) return '';
+  const g = store.state.grammar;
+  return `<div class="g-in-text"><span class="muted small">${icon('grammar')} Грамматика в тексте:</span>${found.map(r => `<a class="g-chip ${g[r.id]?.passed ? 'passed' : ''}" href="#lesson-${r.id}" title="Примеры: ${esc(r.words.join(', '))}"><b>${esc(r.l.title)}</b> <span>${esc(r.words.slice(0, 3).join(', '))}</span></a>`).join('')}</div>`;
+}
+// Ссылка на правило для слова в окне перевода
+function ruleLink(word) {
+  const id = rules().get(lower(word))?.[0], l = id && lessonById(id);
+  return l ? `<p class="pop-rule">${icon('grammar')} Правило: <a href="#lesson-${l.id}">${esc(l.title)}</a></p>` : '';
+}
+
 // ---------- Грамматика ----------
 export function renderGrammar(main) {
-  const g = store.state.grammar, { COURSES } = L();
+  const { COURSES } = L(), { g } = grammarState(), now = Date.now();
+  const due = l => g[l.id]?.srs && g[l.id].srs.due <= now;
   main.innerHTML = `
   <section class="band">
     <h1>Грамматика</h1>
     <p class="lead">${L().name}: короткие уроки: объяснение по-русски и упражнения с проверкой. Урок засчитывается, если верно выполнено не меньше 70% заданий. В конце каждого курса — итоговый тест с оценкой и сертификатом.</p>
+    <h2 class="sub">Практика</h2>
+    <p class="muted">Пройденные уроки возвращаются на повторение через день, три дня, неделю, месяц — как слова в карточках. Задания берутся из упражнений уроков.</p>
+    ${grammarCards()}
+    <h2 class="sub">Уроки</h2>
     <div class="courses">${COURSES.map(c => {
       const done = c.lessons.filter(l => g[l.id]?.passed).length;
       return `<div class="course"><div class="course-head"><span class="lv">${c.level}</span><h2>${esc(c.title)}</h2><span class="muted">${done} из ${c.lessons.length}</span></div>
         <i class="bar"><i style="width:${(done / c.lessons.length) * 100}%"></i></i>
-        <ol class="lessons">${c.lessons.map(l => `<li><a href="#lesson-${l.id}" class="${g[l.id]?.passed ? 'passed' : ''}">${g[l.id]?.passed ? icon('check') : '<i class="dot"></i>'}<span>${esc(l.title)}</span>${g[l.id] ? `<em>${g[l.id].best}%</em>` : ''}</a></li>`).join('')}</ol>${examRow(c)}</div>`;
+        <ol class="lessons">${c.lessons.map(l => `<li><a href="#lesson-${l.id}" class="${g[l.id]?.passed ? 'passed' : ''}">${g[l.id]?.passed ? icon('check') : '<i class="dot"></i>'}<span>${esc(l.title)}</span>${due(l) ? `<em class="due" title="Правило пора повторить">↻</em>` : ''}${g[l.id] ? `<em>${g[l.id].best}%</em>` : ''}</a></li>`).join('')}</ol>${examRow(c)}</div>`;
     }).join('')}</div>
   </section>`;
 }
@@ -206,10 +234,10 @@ export function renderLesson(main, id) {
     <a class="back" href="#grammar">${icon('back')} Все уроки</a>
     <h1>${esc(lesson.title)}</h1>
     <div class="theory">${lesson.theory}</div>
-    <button class="btn big" id="go">Перейти к упражнениям</button>
+    <div class="row gap"><button class="btn big" id="go">Перейти к упражнениям</button>${store.state.grammar[lesson.id] ? `<a class="btn ghost" href="#gtrain-mix.${lesson.id}">Тренировать правило</a>` : ''}</div>
     <div id="ex"></div>
   </section>`;
-  $('#go').onclick = () => { $('#go').remove(); run(); };
+  $('#go').onclick = () => { $('#go').parentElement.remove(); run(); };
 
   function run() {
     let i = 0, right = 0;
@@ -246,10 +274,11 @@ export function renderLesson(main, id) {
       const pct = Math.round((right / lesson.exercises.length) * 100);
       const prev = store.state.grammar[lesson.id];
       const passed = pct >= 70;
-      store.state.grammar[lesson.id] = { best: Math.max(pct, prev?.best || 0), passed: passed || !!prev?.passed, at: Date.now() };
+      store.state.grammar[lesson.id] = { ...prev, best: Math.max(pct, prev?.best || 0), passed: passed || !!prev?.passed, at: Date.now() };
+      D.lessonDone(store.state.grammar, lesson.id, right, lesson.exercises.length);
       G.addXp(right + (passed && !prev?.passed ? 15 : 0), passed && !prev?.passed ? 'урок пройден' : 'упражнения');
       box.innerHTML = `<div class="exercise result"><h2>${passed ? 'Урок пройден' : 'Почти получилось'}</h2><p class="lead">${right} из ${lesson.exercises.length} верно (${pct}%)</p>
-        <div class="row gap"><button class="btn ${passed ? 'ghost' : ''}" id="retry">Пройти ещё раз</button>${nextL ? `<a class="btn ${passed ? '' : 'ghost'}" href="#lesson-${nextL.id}">Следующий урок</a>` : ''}<a class="btn ghost" href="#grammar">К списку</a></div></div>`;
+        <div class="row gap"><button class="btn ${passed ? 'ghost' : ''}" id="retry">Пройти ещё раз</button>${nextL ? `<a class="btn ${passed ? '' : 'ghost'}" href="#lesson-${nextL.id}">Следующий урок</a>` : ''}<a class="btn ghost" href="#gtrain-mix.${lesson.id}">Закрепить в тренировке</a><a class="btn ghost" href="#grammar">К списку</a></div>${passed && !prev?.passed ? '<p class="muted small">Правило вернётся на повторение завтра — в «Тренировках» и на главной.</p>' : ''}</div>`;
       $('#retry').onclick = () => run();
     };
     step();
