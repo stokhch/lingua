@@ -146,7 +146,7 @@ export const QUESTIONS = {
   au(stage, word, answer) {
     const can = canSpeak();
     stage.innerHTML = `
-      ${can ? `<button class="play say" aria-label="Прослушать ещё раз">${icon('sound')}</button><p class="muted center">Напишите услышанное слово</p>` : `<div class="big-word">${esc(word.t)}</div><p class="muted center">Озвучка недоступна в этом браузере — напишите слово по переводу</p>`}
+      ${can ? `<button class="play say" aria-label="Прослушать ещё раз">${icon('sound')}</button><p class="muted center">Напишите услышанное слово</p>` : `<div class="big-word">${esc(word.t)}</div><p class="muted center">Озвучка недоступна ${L().tts ? 'в этом браузере' : 'для этого языка'} — напишите слово по переводу</p>`}
       <form class="type-form"><input id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Слово"><button class="btn">Проверить</button></form>
       ${keysBar()}<button class="link" id="hint">Подсказка: показать перевод</button>`;
     if (can) { speak(word.w, store.state.rate); $('.say', stage).onclick = () => speak(word.w, store.state.rate * 0.8); }
