@@ -1,5 +1,6 @@
 // Точка входа: маршрутизация по #хэшу, шапка, главная, вход и профиль.
 import { lianas, fernBush, fernRow } from './jungle.js';
+import { sideScenery, postcard } from './scenery.js';
 import { store } from './store.js';
 import { esc, $, $$, icon, mascot, toast, modal, plural } from './ui.js';
 import * as G from './game.js';
@@ -26,6 +27,7 @@ let cleanup = null;
 
 function shell() {
   app.innerHTML = `
+  <div class="scenery" id="scenery"></div>
   <header class="top">
     <a class="logo" href="#home" aria-label="Лингва — на главную">${mascot('happy', 40)}<span>Лингва</span></a>
     <nav class="nav" aria-label="Разделы">${NAV.map(([id, t, ic]) => `<a href="#${id}" data-nav="${id}">${icon(ic)}<span>${t}</span></a>`).join('')}</nav>
@@ -37,7 +39,8 @@ function shell() {
     </div>
   </header>
   <main id="view" tabindex="-1"></main>
-  <footer class="foot">${fernRow()}<p>Лингва — учебный open-source проект. Озвучка — синтез речи вашего браузера. <span id="sync"></span></p></footer>`;
+  <footer class="foot"><div id="postcard"></div>${fernRow()}<p>Лингва — учебный open-source проект. Озвучка — синтез речи вашего браузера. <span id="sync"></span></p></footer>`;
+  sceneLang = null;
   store.on(updateHud);
   $('#hud-lang').onclick = pickLang;
   updateHud();
@@ -71,9 +74,11 @@ document.addEventListener('click', e => {
   inp.dispatchEvent(new Event('input', { bubbles: true }));
 });
 
+let sceneLang = null; // язык, для которого нарисованы пейзажи
 function updateHud() {
   if (!store.state || !$('#hud-xp')) return;
   $('#hud-lang b').textContent = L().code;
+  if (sceneLang !== L().id) { sceneLang = L().id; $('#scenery').innerHTML = sideScenery(sceneLang); $('#postcard').innerHTML = postcard(sceneLang); }
   document.body.classList.toggle('no-tts', !L().tts);
   $('#hud-streak').textContent = G.currentStreak();
   $('#hud-xp').textContent = `${G.todayXp()}/${store.state.goal}`;

@@ -609,3 +609,23 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .opt.picked{border-color:var(--brand);background:var(--brand-soft)}
 @media (max-width:640px){.leaders.friends li{grid-template-columns:28px minmax(0,1fr) auto;gap:6px 10px}.leaders.friends li>span:nth-child(3){display:none!important}.fr-act{grid-column:2/-1;justify-content:flex-end}}
 .text-note{margin:-4px 0 14px;padding:10px 14px;border-radius:12px;background:var(--bg2);color:var(--ink);font-size:15px;line-height:1.5}
+
+/* ===== Пейзажи страны изучаемого языка ===== */
+.scenery{position:fixed;inset:64px 0 0;pointer-events:none;z-index:15;display:none}
+.scene{position:absolute;top:0;bottom:0;width:calc((100vw - 1240px) / 2);overflow:hidden;}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.scene.left{left:0;-webkit-mask-image:linear-gradient(90deg,#000 80%,transparent);mask-image:linear-gradient(90deg,#000 80%,transparent)}
+.scene.right{right:0;-webkit-mask-image:linear-gradient(270deg,#000 80%,transparent);mask-image:linear-gradient(270deg,#000 80%,transparent)}
+.scene .lianas{height:40%}
+.scene .lianas::before{display:none}
+.scene .vine svg{position:static;width:40px;height:auto;max-height:240px}
+@media (min-width:1480px){.scenery{display:block}.postcard{display:none}.hero{padding-inline:calc((100vw - 1240px) / 2 + 24px)}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .scene svg{filter:brightness(.72) saturate(.9)}}
+:root[data-theme=dark] .scene svg{filter:brightness(.72) saturate(.9)}
+
+/* открытка-панорама над подвалом на узком экране */
+.postcard{position:relative;z-index:4;display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:900px;margin:0 auto 26px}
+.postcard figure{position:relative;margin:0;height:220px;border-radius:18px;overflow:hidden;border:3px solid var(--gold);box-shadow:0 8px 24px rgba(15,42,25,.25)}
+.postcard svg{width:100%;height:100%;display:block}
+.postcard figcaption{position:absolute;left:10px;bottom:10px;padding:3px 12px;border-radius:99px;background:rgba(15,42,25,.75);color:#ffe08a;font-weight:900;font-size:14px}
+@media (max-width:760px){.postcard{gap:8px;margin-bottom:18px}.postcard figure{height:190px;border-width:2px;border-radius:14px}.postcard figcaption{font-size:12px;left:6px;bottom:6px}}
