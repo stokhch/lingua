@@ -5,6 +5,7 @@ import * as G from '../game.js';
 import { L, LANGS } from '../lang.js';
 import { rankFor } from '../ranks.js';
 import { distractors } from './train.js';
+import { inviteLink } from '../invite.js';
 
 const DUEL_N = 10;
 const fmtTime = ms => `${Math.floor(ms / 60000) ? Math.floor(ms / 60000) + ' мин ' : ''}${Math.round((ms % 60000) / 1000)} с`;
@@ -37,6 +38,11 @@ export function renderFriends(main) {
         <button class="btn ghost small" id="copy">${icon('check')} Скопировать</button>
         <form id="add-f" class="add-f"><input name="code" placeholder="Код друга" maxlength="12" autocomplete="off" autocapitalize="characters" required aria-label="Код друга"><button class="btn">${icon('plus')} Добавить</button></form>
       </div>
+      <div class="invite-box">
+        <div><b>Пригласить по ссылке</b><span class="muted">Кто откроет ссылку и войдёт или зарегистрируется, сразу станет вашим другом.</span></div>
+        <input id="inv-link" readonly value="${esc(inviteLink(code))}" aria-label="Ваша ссылка-приглашение">
+        <div class="row gap"><button class="btn small" id="inv-copy">${icon('check')} Скопировать ссылку</button>${navigator.share ? `<button class="btn ghost small" id="inv-share">${icon('heart')} Поделиться</button>` : ''}</div>
+      </div>
       ${toPlay.length ? `<h2 class="sets-h">Вас вызвали</h2><div class="duels">${toPlay.map(d => duelCard(d)).join('')}</div>` : ''}
     </section>
     <section class="band">
@@ -45,10 +51,14 @@ export function renderFriends(main) {
         <div class="fr-name"><b>${esc(f.name)}${f.isMe ? ' (вы)' : ''}</b><span>${esc(rankFor(f.level).title)} · ур. ${f.level} · ${LANGS[f.lang]?.code || ''} · ${ago(f.active)}</span></div>
         <span title="Дней подряд">${icon('fire')}${f.streak}</span><span class="num">${f.week} XP</span>
         ${f.isMe ? '<span></span>' : `<span class="fr-act"><button class="btn small" data-duel="${esc(f.code)}" data-name="${esc(f.name)}">Дуэль</button><button class="icon-btn" data-rm="${esc(f.code)}" data-name="${esc(f.name)}" title="Удалить из друзей" aria-label="Удалить ${esc(f.name)} из друзей">${icon('x')}</button></span>`}</li>`).join('')}</ol>`
-        : `<div class="empty"><p>Пока никого. Отправьте другу свой код <b>${esc(code)}</b> или добавьте его код выше — дружба взаимная.</p></div>`}
+        : `<div class="empty"><p>Пока никого. Отправьте другу ссылку-приглашение или код <b>${esc(code)}</b>, либо добавьте его код выше — дружба взаимная.</p></div>`}
     </section>
     ${waiting.length || done.length ? `<section class="band"><h2>Дуэли</h2><div class="duels">${[...waiting, ...done].slice(0, 20).map(d => duelCard(d)).join('')}</div></section>` : ''}`;
 
+    const link = inviteLink(code);
+    $('#inv-copy').onclick = async () => { try { await navigator.clipboard.writeText(link); toast('Ссылка скопирована — отправьте её другу'); } catch { $('#inv-link').select(); toast('Скопируйте ссылку из поля'); } };
+    $('#inv-link').onfocus = e => e.target.select();
+    $('#inv-share') && ($('#inv-share').onclick = () => navigator.share({ title: 'Лингва', text: `${me.name} зовёт вас учить языки вместе в Лингве`, url: link }).catch(() => {}));
     $('#copy').onclick = async () => { try { await navigator.clipboard.writeText(code); toast('Код скопирован'); } catch { toast(`Ваш код: ${code}`); } };
     $('#add-f').onsubmit = async e => {
       e.preventDefault();
