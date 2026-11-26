@@ -103,6 +103,7 @@ function pimPanel(s, now) {
     <div class="pim-body">
       <h2>${p.title}</h2>
       <div class="feed big"><span class="apples">${Pim.appleRow(p)}</span><span><b>${p.apples}</b> из ${Pim.APPLES} яблок · ${p.xp} / ${p.goal} XP</span></div>
+      <p class="pim-quote">«${esc(Pim.plea(p, now, 'progress'))}»</p>
       <p>${p.hint}${p.left ? ` До полной миски — <b>${p.left} XP</b>, одно яблоко — около ${p.perApple} XP.` : ''}</p>
       ${p.left ? `<a class="btn" href="#train">${icon('train')} Покормить Пима</a>` : ''}
     </div>

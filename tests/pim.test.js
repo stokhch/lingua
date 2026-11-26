@@ -37,3 +37,23 @@ test('Сытые дни подряд: сегодняшний голодный д
   assert.equal(fedStreak({ ...log, [key(-2)]: 10 }, 50, now), 1);
   assert.equal(fedDays(log, 50), 3);
 });
+
+import { plea, reaction } from '../public/js/pim.js';
+
+test('Реплики Пима: просьба зависит от сытости, вечером настойчивее', () => {
+  const morning = new Date('2026-11-26T09:00:00'), evening = new Date('2026-11-26T21:00:00');
+  const hungry = satiety({}, 50, morning);
+  assert.ok(plea(hungry, morning).length > 10);
+  assert.equal(plea(hungry, morning), plea(hungry, morning)); // стабильно в течение дня
+  assert.match(plea(satiety({}, 50, evening), evening), /вечер|ночь|Звёзды/);
+  assert.doesNotMatch(plea(satiety({ [dayKey(evening)]: 60 }, 50, evening), evening), /вечер|ночь/);
+});
+
+test('Реакция после тренировки считает съеденные яблоки', () => {
+  assert.match(reaction(0, 12, 50).text, /\+1 яблоко/);
+  assert.match(reaction(0, 30, 50).text, /\+3 яблока/);
+  assert.equal(reaction(40, 55, 50).full, true);
+  assert.match(reaction(0, 50, 50).text, /сразу 5 яблок/);
+  assert.match(reaction(12, 15, 50).text, /ещё 5 XP/);
+  assert.equal(reaction(60, 70, 50).mood, 'happy');
+});

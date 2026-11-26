@@ -7,6 +7,7 @@ import { GRADES, intervalLabel } from '../srs.js';
 import { L, lower, fold, lettersOnly, keysBar } from '../lang.js';
 import { EXTRA, EXTRA_INFO, extraPlan, EXTRA_QUESTIONS } from './train-extra.js';
 import { focusBar, bindFocusBar } from './mysets.js';
+import { pleaBlock, resultBlock, say } from '../pimfx.js';
 
 const SESSION = 10;
 export const TRAIN_INFO = {
@@ -42,13 +43,14 @@ export function renderTrainings(main) {
   main.innerHTML = `
   <section class="band">
     <h1>Тренировки <span class="muted small-h">· ${L().name}</span></h1>
+    ${c.total >= 4 ? pleaBlock('train', { noButton: true, cls: 'wide' }) : ''}
     <p class="lead">Каждое новое слово проходит четыре тренировки. После этого оно считается изученным и возвращается в «Карточках» через растущие интервалы: 1 день, 3 дня, неделю, месяц…</p>
     ${c.total ? focusBar() : ''}
     <div class="trainings">${Object.entries(TRAIN_INFO).map(([k, t]) => {
       const cnt = n(k);
       return `<a class="train-card ${k}" href="#train-${k}">${icon(t.ic)}<b>${t.title}</b><span>${t.desc}</span>${cnt === null ? '<em>в любое время</em>' : `<em class="${cnt ? 'ready' : ''}">${cnt ? `${cnt} ${plural(cnt, 'слово', 'слова', 'слов')} готово` : 'нет слов'}</em>`}</a>`;
     }).join('')}${L().id === 'en' ? `<a class="train-card irr" href="#verbs">${icon('grammar')}<b>Неправильные глаголы</b><span>Напишите Past Simple и Past Participle</span><em>112 глаголов</em></a>` : ''}</div>
-    ${c.total < 4 ? `<div class="empty"><p>Для тренировок нужно хотя бы 4 слова в словаре.</p><a class="btn" href="#sets">Выбрать набор слов</a></div>` : ''}
+    ${c.total < 4 ? `<div class="empty">${say('Мне нечем подкрепиться… Для тренировок нужно хотя бы 4 слова. Добавь набор — и я сразу попрошу первое яблоко!', { mood: 'hungry', size: 80, cls: 'center' })}<p>Для тренировок нужно хотя бы 4 слова в словаре.</p><a class="btn" href="#sets">Выбрать набор слов</a></div>` : ''}
   </section>`;
   if (c.total) bindFocusBar(() => renderTrainings(main));
 }
@@ -70,7 +72,7 @@ export function renderTraining(main, kind) {
   if (EXTRA[kind]) return EXTRA[kind](main);
   const plan = buildPlan(kind);
   if (!plan) {
-    main.innerHTML = `<section class="band narrow"><a class="back" href="#train">${icon('back')} Тренировки</a><h1>${info.title}</h1><div class="empty"><p>${kind === 'cards' ? 'Сейчас нечего повторять. Изученные слова появятся здесь, когда придёт их время.' : kind === 'ctx' ? 'Для этой тренировки нужны слова, которые встречаются в текстах или фразах. Добавьте слова из раздела «Тексты» или наборов.' : 'Добавьте в словарь хотя бы 4 слова.'}</p><a class="btn" href="#sets">Выбрать набор слов</a></div></section>`;
+    main.innerHTML = `<section class="band narrow"><a class="back" href="#train">${icon('back')} Тренировки</a><h1>${info.title}</h1><div class="empty">${say(kind === 'cards' ? 'Все слова пока крепко сидят в памяти. Я покараулю, а ты загляни в другие тренировки!' : 'Здесь пока пусто. Я подожду — а ты добавь слова, и мы вернёмся!', { mood: kind === 'cards' ? 'happy' : 'calm', size: 80, cls: 'center' })}<p>${kind === 'cards' ? 'Сейчас нечего повторять. Изученные слова появятся здесь, когда придёт их время.' : kind === 'ctx' ? 'Для этой тренировки нужны слова, которые встречаются в текстах или фразах. Добавьте слова из раздела «Тексты» или наборов.' : 'Добавьте в словарь хотя бы 4 слова.'}</p><a class="btn" href="#sets">Выбрать набор слов</a></div></section>`;
     return;
   }
   const { steps, practice } = plan;
@@ -116,6 +118,7 @@ export function renderTraining(main, kind) {
     <section class="band narrow">
       <h1>${ok === results.length ? 'Без единой ошибки!' : 'Тренировка завершена'}</h1>
       <p class="lead">${ok} из ${results.length} верно · +${5 + (results.length >= 5 && ok === results.length ? 5 : 0)} XP бонус</p>
+      ${resultBlock()}
       <ul class="results">${results.map(r => `<li class="${r.ok ? 'ok' : 'bad'}">${icon(r.ok ? 'check' : 'x')}<b>${esc(r.word.w)}</b><span>${esc(r.word.t)}</span></li>`).join('')}</ul>
       <div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div>
     </section>`;
@@ -278,7 +281,7 @@ function sprint(main) {
       clearInterval(tick); document.removeEventListener('keydown', onKey);
       const xp = Math.round(score / 20);
       G.addXp(xp, 'спринт'); G.countTraining('sprint');
-      main.innerHTML = `<section class="band narrow"><h1>Время вышло</h1><p class="lead">${score} очков · ${total} ${plural(total, 'ответ', 'ответа', 'ответов')} · +${xp} XP</p><div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div></section>`;
+      main.innerHTML = `<section class="band narrow"><h1>Время вышло</h1><p class="lead">${score} очков · ${total} ${plural(total, 'ответ', 'ответа', 'ответов')} · +${xp} XP</p>${resultBlock()}<div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div></section>`;
       $('#again').onclick = () => sprint(main);
     }
   }, 1000);

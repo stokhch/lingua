@@ -659,3 +659,66 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .postcard svg{width:100%;height:100%;display:block}
 .postcard figcaption{position:absolute;left:10px;bottom:10px;padding:3px 12px;border-radius:99px;background:rgba(15,42,25,.75);color:#ffe08a;font-weight:900;font-size:14px}
 @media (max-width:760px){.postcard{gap:8px;margin-bottom:18px}.postcard figure{height:190px;border-width:2px;border-radius:14px}.postcard figcaption{font-size:12px;left:6px;bottom:6px}}
+
+/* ---------- Пим: реплики, просьбы покормить, реакции ---------- */
+.mascot.hungry{transform-origin:50% 90%;animation:plead 2.8s ease-in-out infinite}
+.mascot.sad{transform-origin:50% 95%;animation:droop 4s ease-in-out infinite}
+.mascot.eating{animation:munch .5s ease-in-out infinite alternate}.mascot .chew{transform-box:fill-box;transform-origin:center;animation:chew .25s ease-in-out infinite alternate}
+.mascot.hungry .bowl{transform-box:fill-box;transform-origin:50% 0;animation:bowl 2.8s ease-in-out infinite}
+.mascot .tear{animation:tear 3s ease-in infinite}
+@keyframes plead{0%,100%{transform:rotate(0)}20%{transform:rotate(-5deg) translateY(-2px)}40%{transform:rotate(4deg)}60%{transform:rotate(-2deg) translateY(-3px)}80%{transform:rotate(0)}}
+@keyframes droop{50%{transform:rotate(-3deg) translateY(2px)}}
+@keyframes munch{to{transform:translateY(-3px) scale(1.02)}}
+@keyframes chew{to{transform:scaleY(.45)}}
+@keyframes bowl{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}50%{transform:rotate(6deg)}}
+@keyframes tear{0%,40%{opacity:0;transform:translateY(0)}55%{opacity:1}100%{opacity:0;transform:translateY(14px)}}
+.rumble{position:absolute;z-index:3;font-weight:900;font-size:13px;font-style:italic;color:var(--gold-ink);background:var(--card);border-radius:99px;padding:1px 8px;box-shadow:var(--shadow);animation:rumble 2.8s ease-in-out infinite;pointer-events:none}
+.hero-pic .rumble{right:4%;bottom:26%;font-size:15px}
+@keyframes rumble{0%,55%,100%{opacity:0;transform:translate(0,0) scale(.8)}62%{opacity:1;transform:translate(2px,-2px) scale(1)}68%{transform:translate(-2px,-4px)}74%{transform:translate(2px,-6px)}86%{opacity:1}94%{opacity:0;transform:translate(0,-12px)}}
+
+.bubble{position:relative;padding:12px 16px;border-radius:18px;background:var(--card);color:var(--ink);border:2px solid var(--gold);box-shadow:var(--shadow);font-weight:700;line-height:1.4}
+.bubble p{margin:0}.bubble .row{margin-top:10px}.bubble .apples{display:inline-flex;gap:1px;margin-top:6px}
+.bubble::before{content:"";position:absolute;left:-11px;top:24px;width:18px;height:18px;background:inherit;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(45deg);border-radius:0 0 0 4px}
+.pim-say{display:flex;align-items:center;gap:14px;margin:6px 0 18px}
+.pim-say .pim-av{flex:none;position:relative}.pim-say .bubble{flex:1;max-width:560px}
+.pim-say.center{justify-content:center;text-align:left}.pim-say.center .bubble{flex:0 1 auto}
+.pim-say.wide .bubble{max-width:760px}
+.pim-say.st-starving .bubble,.pim-say.st-hungry .bubble{border-color:var(--coral)}.pim-say.st-starving .bubble::before,.pim-say.st-hungry .bubble::before{border-color:var(--coral)}
+.pim-say.result{margin:14px 0 20px}.pim-say.result.full .bubble{background:linear-gradient(160deg,#fff3c4,#ffe08a);color:#3a2a00}
+.clues .row .pim-say{flex-basis:100%;margin:0 0 8px}
+
+.hero-bubble{position:relative;margin:4px 0 16px;padding:14px 18px;border-radius:20px;background:#fffdf3;color:#1c2a1a;max-width:560px;font-weight:700;font-size:17px;box-shadow:0 4px 0 var(--gold),0 10px 24px rgba(0,0,0,.25)}
+.hero-bubble p{margin:0}.hero-bubble .row{margin-top:12px}.hero-bubble .row span{color:#566450;font-size:14px}.hero-bubble .row b{color:#8a5d00}
+.hero-bubble::before{content:"";position:absolute;left:-12px;top:22px;border:12px solid transparent;border-left:0;border-right-color:#fffdf3}
+.hero-bubble.st-hungry,.hero-bubble.st-starving{animation:nudge-in .5s ease-out}
+.feed-btn{background:linear-gradient(180deg,#ff7a63,#e5483a)!important;box-shadow:0 3px 0 #a8291c!important;color:#fff!important}
+.feed-btn .ic{fill:#fff}
+@keyframes nudge-in{from{opacity:0;transform:translateY(8px) scale(.97)}}
+
+.pim-pop{position:fixed;left:16px;bottom:16px;z-index:90;display:flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:20px;background:var(--card);color:var(--ink);border:2px solid var(--gold);box-shadow:var(--shadow);animation:pop-up .35s cubic-bezier(.2,1.4,.4,1)}
+.pim-pop b{display:block}.pim-pop .apples{display:inline-flex;gap:1px}.pim-pop.out{opacity:0;transform:translateY(20px);transition:.4s}
+@keyframes pop-up{from{opacity:0;transform:translateY(40px) scale(.8)}}
+
+.pim-party{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:rgba(10,30,18,.25);pointer-events:none;animation:fade .3s}.pim-party .card{pointer-events:auto;cursor:pointer}
+.pim-party.out{opacity:0;transition:.35s}
+.pim-party .card{position:relative;z-index:2;display:grid;justify-items:center;gap:6px;max-width:340px;margin:16px;padding:22px 24px;border-radius:24px;text-align:center;background:linear-gradient(170deg,#fffdf3,#fff1c4);color:#1c2a1a;box-shadow:0 5px 0 var(--gold),0 20px 50px rgba(0,0,0,.35);animation:pop-up .45s cubic-bezier(.2,1.4,.4,1)}
+.pim-party h2{margin:4px 0 0;color:#135127}.pim-party p{margin:0 0 8px;color:#566450}
+.pim-party .rain{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.pim-party .rain i{position:absolute;top:-50px;left:var(--x);animation:fall-apple 2.4s ease-in var(--d) forwards}
+@keyframes fall-apple{to{transform:translateY(110vh) rotate(var(--r))}}
+@keyframes fade{from{opacity:0}}
+
+.pim-nudge{position:fixed;left:16px;bottom:16px;z-index:70;display:flex;align-items:flex-end;gap:6px;max-width:min(380px,calc(100vw - 32px));animation:nudge-in .5s ease-out}
+.pim-nudge.out{opacity:0;transform:translateY(20px);transition:.3s}
+.pim-nudge .pim-av{position:relative;flex:none}.pim-nudge .rumble{left:-6px;top:6px;font-size:12px}
+.pim-nudge .bubble{border-color:var(--coral);font-size:15px;padding-right:30px}.pim-nudge .bubble::before{top:auto;bottom:22px;border-color:var(--coral)}
+.pim-nudge .x{position:absolute;right:6px;top:4px;z-index:2;width:28px;height:28px;border:0;border-radius:50%;background:none;color:var(--muted);font:900 20px/1 Nunito,sans-serif;cursor:pointer}
+.pim-nudge .x:hover{background:var(--bg2)}
+.pim-quote{font-size:18px;font-weight:800;color:#fff6d6!important;font-style:italic}
+@media (max-width:760px){
+  .hero-bubble{margin-inline:auto;text-align:left}.hero-bubble::before{left:50%;top:-12px;transform:translateX(-50%);border:12px solid transparent;border-top:0;border-bottom-color:#fffdf3}
+  .pim-pop,.pim-nudge{bottom:calc(84px + env(safe-area-inset-bottom))}
+  .pim-say:not(.center){align-items:flex-start}.pim-say .pim-av .mascot{width:64px;height:64px}
+}
+@media (prefers-reduced-motion:reduce){.mascot.hungry,.mascot.sad,.mascot.eating,.mascot .chew,.mascot .bowl,.mascot .tear,.rumble{animation:none!important}.rumble{opacity:1}.pim-party .rain{display:none}}
+.pim-say .bubble .apples,.pim-nudge .bubble .apples{display:flex;gap:2px}

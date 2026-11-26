@@ -40,13 +40,29 @@ const P = {
 };
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[name] || ''}</svg>`;
 
-// Маскот проекта — ёжик Пим (оригинальный рисунок). mood: happy | calm | sleepy
+// Маскот проекта — ёжик Пим (оригинальный рисунок).
+// mood: happy | calm | sleepy | hungry (умоляющие глаза и пустая миска) | sad (давно не кормили) | eating (жуёт яблоко)
+const INK = '#2a1d14';
 export function mascot(mood = 'calm', size = 160) {
-  const eyes = mood === 'sleepy'
-    ? '<path d="M70 92q6 4 12 0M98 92q6 4 12 0" stroke="#2a1d14" stroke-width="3" fill="none" stroke-linecap="round"/>'
-    : '<circle cx="76" cy="90" r="5" fill="#2a1d14"/><circle cx="104" cy="90" r="5" fill="#2a1d14"/><circle cx="78" cy="88" r="1.6" fill="#fff"/><circle cx="106" cy="88" r="1.6" fill="#fff"/>';
-  const mouth = mood === 'happy' ? '<path d="M82 108q8 9 16 0" stroke="#2a1d14" stroke-width="3" fill="#ff8a7a" stroke-linecap="round"/>'
-    : mood === 'sleepy' ? '<ellipse cx="90" cy="110" rx="4" ry="3" fill="#2a1d14"/>' : '<path d="M84 108q6 4 12 0" stroke="#2a1d14" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  const EYES = {
+    sleepy: `<path d="M70 92q6 4 12 0M98 92q6 4 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    eating: `<path d="M70 92q6-6 12 0M98 92q6-6 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    hungry: `<path d="M67 83l13-6M113 83l-13-6" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/><circle cx="76" cy="91" r="8.5" fill="${INK}"/><circle cx="104" cy="91" r="8.5" fill="${INK}"/><circle cx="79" cy="87.5" r="3.4" fill="#fff"/><circle cx="107" cy="87.5" r="3.4" fill="#fff"/><circle cx="73.5" cy="94.5" r="1.5" fill="#fff"/><circle cx="101.5" cy="94.5" r="1.5" fill="#fff"/>`,
+    sad: `<path d="M67 85l13-6M113 85l-13-6" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/><path d="M70 92q6 4 12 0M98 92q6 4 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/><path class="tear" d="M70 98q-3 5 0 8q3-3 0-8z" fill="#7cc4ff"/>`
+  };
+  const eyes = EYES[mood] || `<circle cx="76" cy="90" r="5" fill="${INK}"/><circle cx="104" cy="90" r="5" fill="${INK}"/><circle cx="78" cy="88" r="1.6" fill="#fff"/><circle cx="106" cy="88" r="1.6" fill="#fff"/>`;
+  const mouth = mood === 'happy' ? `<path d="M82 108q8 9 16 0" stroke="${INK}" stroke-width="3" fill="#ff8a7a" stroke-linecap="round"/>`
+    : mood === 'sleepy' ? `<ellipse cx="90" cy="110" rx="4" ry="3" fill="${INK}"/>`
+    : mood === 'hungry' ? `<ellipse cx="90" cy="111" rx="5" ry="6" fill="${INK}"/><ellipse cx="90" cy="114" rx="3" ry="2.2" fill="#ff8a7a"/>`
+    : mood === 'sad' ? `<path d="M83 113q7-6 14 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`
+    : mood === 'eating' ? `<ellipse class="chew" cx="90" cy="110" rx="7" ry="4" fill="${INK}"/><ellipse cx="64" cy="104" rx="10" ry="7" fill="#ffb3a1" opacity=".85"/><ellipse cx="116" cy="104" rx="10" ry="7" fill="#ffb3a1" opacity=".85"/>`
+    : `<path d="M84 108q6 4 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  // что Пим держит в лапках: книгу, пустую миску или яблоко
+  const prop = mood === 'hungry' || mood === 'sad'
+    ? `<g class="bowl"><path d="M112 124h44q-2 18-22 18t-22-18z" fill="#c98a4b" stroke="#7a4a2a" stroke-width="2.5" stroke-linejoin="round"/><path d="M114 124h40" stroke="#7a4a2a" stroke-width="2.5" stroke-linecap="round"/><path d="M120 131q14 6 28 0" stroke="#e3ad73" stroke-width="2" fill="none" stroke-linecap="round"/></g>`
+    : mood === 'eating'
+    ? `<g class="held-apple" transform="translate(90 132) scale(1.7) translate(-134 -124)"><path d="M134 116c-3-3-11-3-12 5-1 8 5 16 9 16 1.5 0 2-1 3-1s1.5 1 3 1c4 0 10-8 9-16-1-8-9-8-12-5z" fill="#e5483a"/><path d="M134 116c0-3 1-5 3-7" stroke="#6b3f22" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M136 112c2-3 6-3 8-2-2 3-5 4-8 2z" fill="#3aa055"/><path d="M144 122a4 4 0 0 0-3 6" stroke="#fff" stroke-width="3" fill="none" opacity=".9"/></g>`
+    : `<rect x="118" y="112" width="34" height="26" rx="3" fill="#ffcf3f" transform="rotate(12 135 125)"/><path d="M135 113v24" stroke="#c99a12" stroke-width="2" transform="rotate(12 135 125)"/>`;
   const spikes = Array.from({ length: 11 }, (_, i) => {
     const a = Math.PI * (0.95 + i * 0.11); const x = 90 + Math.cos(a) * 62, y = 100 + Math.sin(a) * 62;
     const x2 = 90 + Math.cos(a) * 88, y2 = 100 + Math.sin(a) * 88;
@@ -65,11 +81,10 @@ export function mascot(mood = 'calm', size = 160) {
   <ellipse cx="90" cy="96" rx="34" ry="32" fill="#fbe4c0"/>
   ${eyes}
   <ellipse cx="66" cy="104" rx="7" ry="4" fill="#ffb3a1" opacity=".7"/><ellipse cx="114" cy="104" rx="7" ry="4" fill="#ffb3a1" opacity=".7"/>
-  <ellipse cx="90" cy="100" rx="6" ry="4.5" fill="#2a1d14"/>
+  <ellipse cx="90" cy="100" rx="6" ry="4.5" fill="${INK}"/>
   ${mouth}
   <ellipse cx="66" cy="152" rx="12" ry="7" fill="#6b3f22"/><ellipse cx="114" cy="152" rx="12" ry="7" fill="#6b3f22"/>
-  <rect x="118" y="112" width="34" height="26" rx="3" fill="#ffcf3f" transform="rotate(12 135 125)"/>
-  <path d="M135 113v24" stroke="#c99a12" stroke-width="2" transform="rotate(12 135 125)"/>
+  ${prop}
 </svg>`;
 }
 
