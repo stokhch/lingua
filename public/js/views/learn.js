@@ -5,6 +5,7 @@ import * as G from '../game.js';
 import { speak } from '../speech.js';
 import { translateWord } from '../translate.js';
 import { L, lower, splitRe, keysBar } from '../lang.js';
+import { myLevel } from './placement.js';
 
 let levelFilter = 'all';
 let lessonKey = null;
@@ -21,7 +22,7 @@ export function renderTexts(main) {
       <div class="chips">${['all', ...levels].map(l => `<button class="chip ${levelFilter === l ? 'on' : ''}" data-l="${l}">${l === 'all' ? 'Все уровни' : l}</button>`).join('')}</div>
       <div class="texts">${TEXTS.filter(t => levelFilter === 'all' || t.level === levelFilter).map(t => {
         const words = t.body.split(/\s+/).length;
-        return `<a class="text-card lv-${t.level}" href="#read-${t.id}"><span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${esc(t.topic)} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span>${s.readTexts[t.id] ? `<em>${icon('check')} прочитано</em>` : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
+        return `<a class="text-card lv-${t.level}" href="#read-${t.id}"><span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${esc(t.topic)} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span>${s.readTexts[t.id] ? `<em>${icon('check')} прочитано</em>` : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
       }).join('')}</div>
     </section>`;
     $$('.chip').forEach(b => b.onclick = () => { levelFilter = b.dataset.l; draw(); });

@@ -9,6 +9,7 @@ import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/
 import { renderProgress } from './views/progress.js';
 import { satiety, appleRow, APPLES } from './pim.js';
 import { L, LANGS, switchLang, wordCount } from './lang.js';
+import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 
 const NAV = [
   ['home', 'Главная', 'home'], ['dictionary', 'Словарь', 'dict'], ['sets', 'Наборы', 'sets'],
@@ -97,7 +98,8 @@ function route() {
     grammar: () => renderGrammar(main),
     lesson: () => renderLesson(main, param),
     profile: () => renderProfile(main),
-    progress: () => renderProgress(main)
+    progress: () => renderProgress(main),
+    test: () => renderPlacement(main)
   };
   cleanup = (views[view] || views.home)() || null;
   main.focus({ preventScroll: true });
@@ -122,7 +124,7 @@ function renderHome(main) {
     </div>
     <div class="hero-text">
       <h1>${tx > 0 || pim.state === 'starving' ? pim.title : 'Привет, ' + esc(s.name) + '!'}</h1>
-      <p class="lang-line">Учим ${L().acc} · <button class="link" id="home-lang">сменить язык</button></p>${L().beta ? `<p class="beta-note">${L().beta}. Озвучки для этого языка в браузерах нет.</p>` : ''}
+      <p class="lang-line">Учим ${L().acc} · ${myLevel() ? `<a href="#test" title="Тест на уровень">уровень ${myLevel()}</a> · ` : ''}<button class="link" id="home-lang">сменить язык</button></p>${L().beta ? `<p class="beta-note">${L().beta}. Озвучки для этого языка в браузерах нет.</p>` : ''}
       <a class="feed" href="#progress" title="Сытость Пима — подробнее на странице «Прогресс»"><span class="apples">${appleRow(pim)}</span><span>${pim.apples} из ${APPLES} яблок</span></a>
       <p class="lead">${tx >= s.goal ? `${pim.hint} Можно повторить пару слов на завтра или почитать.` : `${pim.hint} До полной миски — <b>${pim.left} XP</b>.`}</p>
       <div class="stat-row">
@@ -132,6 +134,7 @@ function renderHome(main) {
       </div>
     </div>
   </section>
+  ${placementBanner()}
   <section class="band">
     <div class="grid-3">
       <a class="action primary" href="${c.due ? '#train-cards' : '#train'}">
@@ -193,6 +196,7 @@ function renderProfile(main) {
     <div class="profile-head">
       <div class="avatar big">${esc((s.name || '?').slice(0, 1).toUpperCase())}</div>
       <div><h1>${esc(s.name)}</h1><p class="muted">${store.mode === 'server' ? esc(store.user?.email) : 'Режим без регистрации'}</p>
+      ${hasPlacement() ? `<p class="muted">${L().name}: ${myLevel() ? `уровень <b>${myLevel()}</b> · ` : ''}<a href="#test">${myLevel() ? 'пройти тест заново' : 'определить уровень'}</a></p>` : ''}
       <div class="level"><b>Уровень ${lv.level}</b><i class="bar"><i style="width:${lv.pct}%"></i></i><span>${lv.into} / ${lv.need} XP</span></div></div>
     </div>
     <div class="stat-row wide">
