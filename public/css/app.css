@@ -379,6 +379,9 @@ body{background-color:var(--bg);
 .xkeys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
 .xkeys button{min-width:40px;min-height:40px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:800 18px Nunito,sans-serif;cursor:pointer}
 .xkeys button:hover{border-color:var(--gold)}
+.xkeys.full{gap:4px;max-width:560px;margin-inline:auto}
+.xkeys.full button{min-width:34px;min-height:38px;font-size:17px;padding:0 4px}
+.xkeys .acc{min-width:46px;font-size:22px;background:color-mix(in srgb,var(--sun) 25%,var(--card))}
 .add-word .xkeys{grid-column:1/-1;justify-content:flex-start;margin:0}
 .small-h{font-size:.55em;font-weight:700}
 .hero .lang-line{color:var(--sun);text-shadow:0 1px 3px rgba(5,25,12,.9)}

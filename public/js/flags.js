@@ -46,5 +46,11 @@ const BALKARIA = svg('Балкария', '0 0 30 20', `
   <rect y="14.2" width="30" height="1.3" fill="#fff"/>
   <rect y="16.6" width="30" height="1.3" fill="#fff"/>`);
 
-export const FLAGS = { en: [UK], tr: [TR], krc: [KARACHAY, BALKARIA] };
+// Греция: девять полос (синие и белые), в синем крыже белый крест
+const GR = svg('Греция', '0 0 27 18', `
+  <rect width="27" height="18" fill="#0D5EAF"/>
+  <path d="M10,3h17M10,7h17M0,11h27M0,15h27" stroke="#fff" stroke-width="2"/>
+  <path d="M5,0v10M0,5h10" stroke="#fff" stroke-width="2"/>`);
+
+export const FLAGS = { en: [UK], tr: [TR], el: [GR], krc: [KARACHAY, BALKARIA] };
 export const flagsFor = id => `<span class="flags">${(FLAGS[id] || []).join('')}</span>`;

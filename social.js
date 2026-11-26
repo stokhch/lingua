@@ -11,7 +11,7 @@ const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const MAX_FRIENDS = 100;
 const MAX_OPEN_DUELS = 20;
 const DUEL_TTL = 14 * 86400000;
-const LANGS = ['en', 'tr', 'krc'];
+const LANGS = ['en', 'tr', 'el', 'krc'];
 
 export function levelOf(xp = 0) {
   let level = 1, need = 100, start = 0;

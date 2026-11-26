@@ -1,5 +1,5 @@
 // Озвучка через встроенный в браузер синтез речи (Web Speech API) — без аудиофайлов.
-// Голос выбирается под изучаемый язык: английский (en-GB / en-US) или турецкий (tr-TR).
+// Голос выбирается под изучаемый язык: английский (en-GB / en-US), турецкий (tr-TR) или греческий (el-GR).
 // У карачаево-балкарского голоса в браузерах нет (tts: null) — озвучка для него отключена,
 // а тренировки на слух показывают задание текстом.
 import { L } from './lang.js';
@@ -11,6 +11,8 @@ function pickVoices() {
     || list.find(v => /en[-_](US|GB)/i.test(v.lang)) || list.find(v => /^en/i.test(v.lang)) || null;
   voices.tr = list.find(v => /tr[-_]TR/i.test(v.lang) && /google|natural|yelda|emel|ahmet/i.test(v.name))
     || list.find(v => /^tr/i.test(v.lang)) || null;
+  voices.el = list.find(v => /el[-_]GR/i.test(v.lang) && /google|natural|melina|nikos|athina/i.test(v.name))
+    || list.find(v => /^el/i.test(v.lang)) || null;
 }
 if ('speechSynthesis' in window) { pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
 

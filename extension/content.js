@@ -8,9 +8,10 @@
   send({ type: 'settings' }).then(r => { if (r.ok) settings = r.data; });
   chrome.storage.onChanged.addListener(ch => { for (const k of ['lang', 'dblclick', 'user']) if (ch[k]) settings[k] = ch[k].newValue; });
 
-  // Язык слова: кириллица — карачаево-балкарский, турецкие буквы — турецкий, иначе — выбранный в настройках
-  const langOf = w => /[а-яё]/i.test(w) ? 'krc' : /[çğıöşüİ]/i.test(w) ? 'tr' : (settings.lang === 'krc' ? 'en' : settings.lang);
-  const WORD = /^[A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛûА-Яа-яЁёЎў'’-]{1,40}$/;
+  // Язык слова: кириллица — карачаево-балкарский, греческие буквы — греческий, турецкие — турецкий,
+  // иначе — выбранный в настройках
+  const langOf = w => /[а-яё]/i.test(w) ? 'krc' : /[\u0370-\u03ff]/.test(w) ? 'el' : /[çğıöşüİ]/i.test(w) ? 'tr' : (['krc', 'el'].includes(settings.lang) ? 'en' : settings.lang);
+  const WORD = /^[A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛûА-Яа-яЁёЎўΑ-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ'’-]{1,40}$/;
 
   let host, root;
   function box() {
@@ -55,7 +56,7 @@
     host.style.top = (window.scrollY + rect.bottom + 8) + 'px';
     b.innerHTML = `<div class="h"><button class="s" title="Произнести" aria-label="Произнести">🔊</button><b>${esc(word)}</b><span class="tag">${lang.toUpperCase()}</span><button class="x" aria-label="Закрыть">×</button></div><p class="m">Ищем перевод…</p>`;
     b.querySelector('.x').onclick = close;
-    b.querySelector('.s').onclick = () => { try { const u = new SpeechSynthesisUtterance(word); u.lang = { en: 'en-US', tr: 'tr-TR' }[lang] || ''; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch {} };
+    b.querySelector('.s').onclick = () => { try { const u = new SpeechSynthesisUtterance(word); u.lang = { en: 'en-US', tr: 'tr-TR', el: 'el-GR' }[lang] || ''; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch {} };
     if (multi || !WORD.test(word)) {
       const res = await send({ type: 'sentence', q: word, lang });
       b.querySelector('.m').outerHTML = res.ok && res.data.translation ? `<p class="t">${esc(res.data.translation)}</p><p class="m">Машинный перевод фразы</p>` : `<p class="m err">${esc(res.error || 'Перевод не найден')}</p>`;

@@ -3,7 +3,7 @@ import { store } from '../store.js';
 import { esc, $, $$, icon, shuffle, plural } from '../ui.js';
 import * as G from '../game.js';
 import { speak, canSpeak } from '../speech.js';
-import { L, lower, fold, lettersOnly, keysBar } from '../lang.js';
+import { L, lower, fold, lettersOnly, keysBar, cellForm } from '../lang.js';
 import { distractors } from './train.js';
 import { buildCrossword } from '../crossword.js';
 
@@ -18,7 +18,7 @@ export const EXTRA_INFO = {
 
 // ---------- планы для пошаговых тренировок ----------
 const sentenceCache = {};
-const sentences = () => (sentenceCache[L().id] ||= [...L().TEXTS.flatMap(t => t.body.split(/(?<=[.!?])\s+/)), ...L().PHRASES.map(p => p.en)].map(s => s.trim()).filter(Boolean));
+const sentences = () => (sentenceCache[L().id] ||= [...L().TEXTS.flatMap(t => t.body.split(/(?<=[.!?;])\s+/)), ...L().PHRASES.map(p => p.en)].map(s => s.trim()).filter(Boolean));
 
 function findSentence(w) {
   const tokenRe = new RegExp(L().tokenRe.source, 'g'), { lemma } = L();
@@ -139,7 +139,7 @@ export const EXTRA_QUESTIONS = {
       const v = $('#typed').value; if (!v.trim()) return;
       $('#typed').disabled = true; e.target.querySelector('button').disabled = true;
       const exact = norm(v) === norm(word.w), close = !exact && fold(norm(v)) === fold(norm(word.w));
-      answer(word, exact || close, exact ? '' : close ? `<br><small>Засчитано. Обратите внимание на буквы: ${esc(v)}</small>` : `<br><small>Вы написали: ${esc(v)}</small>`);
+      answer(word, exact || close, exact ? '' : close ? `<br><small>Засчитано. Обратите внимание на ${L().id === 'el' ? 'ударение и буквы' : 'буквы'}: ${esc(v)}</small>` : `<br><small>Вы написали: ${esc(v)}</small>`);
     };
   }
 };
@@ -207,8 +207,9 @@ function fall(main) {
 function cross(main) {
   const letterRe = new RegExp(`^[${L().letters}]{3,10}$`);
   const ok = w => letterRe.test(w) && w === lower(w);
-  let cands = shuffle(G.trainWords().filter(w => ok(w.w))).map(w => ({ w: w.w, t: w.t }));
-  if (cands.length < 6) cands = cands.concat(shuffle([...L().DICT.entries()].filter(([w]) => ok(w))).slice(0, 30).map(([w, t]) => ({ w, t })));
+  // в клетках — форма без ударений (для греческого), у остальных языков слово как есть
+  let cands = shuffle(G.trainWords().filter(w => ok(w.w))).map(w => ({ w: cellForm(w.w), t: w.t }));
+  if (cands.length < 6) cands = cands.concat(shuffle([...L().DICT.entries()].filter(([w]) => ok(w))).slice(0, 30).map(([w, t]) => ({ w: cellForm(w), t })));
   let cw = null;
   for (let tries = 0; tries < 8; tries++) { const c = buildCrossword(shuffle(cands).slice(0, 16)); if (c && (!cw || c.words.length > cw.words.length)) cw = c; if (cw?.words.length >= 7) break; }
   const cells = {};
@@ -251,7 +252,7 @@ function cross(main) {
   const grid = $('#cg');
   grid.addEventListener('focusin', e => { const k = e.target.dataset.k; if (!k) return; if (focusK === k && cells[k].words.length > 1) { /* повторный клик — смена направления */ } focusK = k; highlight(); });
   grid.addEventListener('click', e => { const k = e.target.dataset?.k; if (k && k === focusK && cells[k].words.length > 1) { dir = dir === 'across' ? 'down' : 'across'; highlight(); } });
-  grid.addEventListener('input', e => { const x = e.target; x.value = lettersOnly(lower(x.value)).slice(-1); x.parentElement.classList.remove('bad'); if (x.value) move(x.dataset.k, 1); });
+  grid.addEventListener('input', e => { const x = e.target; x.value = cellForm(lettersOnly(lower(x.value))).slice(-1); x.parentElement.classList.remove('bad'); if (x.value) move(x.dataset.k, 1); });
   grid.addEventListener('keydown', e => {
     const k = e.target.dataset.k; if (!k) return;
     if (e.key === 'Backspace' && !e.target.value) { move(k, -1); }
