@@ -14,6 +14,7 @@ import * as krcDict from './data/krc/dictionary.js';
 import { TEXTS as krcTexts } from './data/krc/texts.js';
 import { COURSES as krcCourses, ALL_LESSONS as krcLessons } from './data/krc/grammar.js';
 import { PHRASES as krcPhrases } from './data/krc/phrases.js';
+import { RESOURCES as krcResources } from './data/krc/resources.js';
 import * as elDict from './data/el/dictionary.js';
 import { TEXTS as elTexts } from './data/el/texts.js';
 import { COURSES as elCourses, ALL_LESSONS as elLessons } from './data/el/grammar.js';
@@ -62,7 +63,7 @@ export const LANGS = {
     sample: 'джол', sampleTr: 'алма;яблоко', firstSet: 'core',
     lower: krcDict.lower,
     DICT: krcDict.DICT, SETS: krcDict.SETS, SET_INFO: krcDict.SET_INFO, lemma: krcDict.lemma, lookup: krcDict.lookup,
-    TEXTS: krcTexts, COURSES: krcCourses, ALL_LESSONS: krcLessons, PHRASES: krcPhrases
+    TEXTS: krcTexts, COURSES: krcCourses, ALL_LESSONS: krcLessons, PHRASES: krcPhrases, RESOURCES: krcResources
   }
 };
 
