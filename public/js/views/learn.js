@@ -25,6 +25,14 @@ let lessonKey = null;
 export const allTexts = () => [...L().TEXTS.map(t => ({ ...t, kind: t.kind || 'text' })), ...Object.values(store.state.materials || {}).map(m => ({ ...m, own: true }))];
 const textStatus = id => store.state.readTexts[id] ? 'done' : store.state.openedTexts?.[id] ? 'reading' : 'new';
 
+// Полезные внешние ресурсы по языку (если они заданы в данных языка)
+const resourcesHtml = lang => `
+    <section class="band resources" id="resources">
+      <h2>Полезные ресурсы</h2>
+      <p class="muted">Внешние сайты для изучающих ${esc(lang.acc)}: уроки, словари, книги, новости.</p>
+      ${lang.RESOURCES.map(g => `<h3>${esc(g.group)}</h3><ul class="res-list">${g.items.map(r => `<li><a href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>${esc(r.desc)}</span></li>`).join('')}</ul>`).join('')}
+    </section>`;
+
 export function renderTexts(main) {
   const s = store.state, { lemma, tokenRe } = L();
   const has = k => !!s.words[k];
@@ -65,7 +73,7 @@ export function renderTexts(main) {
         const st = stats.get(t.id), words = st.n, status = textStatus(t.id);
         return `<a class="text-card lv-${t.level}" href="#read-${t.id}"><span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${t.kind !== 'text' ? `${KINDS[t.kind] || ''} · ` : ''}${esc(t.topic || 'Без темы')} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span><span class="fresh">${st.fresh ? `новых для вас слов: ${st.fresh}` : 'все слова уже в словаре'}</span>${status === 'done' ? `<em>${icon('check')} прочитано</em>` : status === 'reading' ? '<em class="reading">читаю</em>' : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}${t.own ? '<i class="own-tag">моё</i>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
       }).join('') || `<div class="empty"><p>${F.tab === 'own' && !own ? 'Своих материалов пока нет. Вставьте текст статьи, песни или субтитры — и читайте с переводом по клику.' : 'Ничего не найдено — попробуйте другие фильтры.'}</p>${F.tab === 'own' && !own ? '<button class="btn" id="add-mat2">Добавить материал</button>' : ''}</div>`}</div>
-    </section>`;
+    </section>${L().RESOURCES ? resourcesHtml(L()) : ''}`;
     $$('[data-tab]').forEach(b => b.onclick = () => { F.tab = b.dataset.tab; draw(); });
     $$('[data-f]').forEach(x => x.onchange = () => { F[x.dataset.f] = x.value; draw(); });
     const add = () => openMaterialEditor(null, m => { location.hash = 'read-' + m.id; });
