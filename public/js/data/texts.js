@@ -1,5 +1,7 @@
 // Материалы для чтения. Все тексты написаны специально для проекта.
-export const TEXTS = [
+import { LIBRARY } from './en/library/index.js';
+
+const BASE = [
   {
     id: 'morning', level: 'A1', topic: 'Повседневная жизнь', title: 'My Morning',
     body: `I get up at seven o'clock every day. First, I open the window and look at the sky. Then I go to the kitchen and make a cup of tea. My cat sits on the table and watches me.
@@ -65,3 +67,5 @@ Supporters of remote work emphasise flexibility. Without a daily commute, people
 Critics, on the other hand, point out that remote work can be lonely. Younger employees in particular may miss the informal conversations through which they learn from experienced colleagues. As a result, many organisations are experimenting with hybrid models, where teams meet in person for collaboration and work independently at home the rest of the time.`
   }
 ];
+
+export const TEXTS = [...BASE, ...LIBRARY];

@@ -32,6 +32,14 @@ test('Полки: правила по теме, формату и явной п�
 test('Полки: у карачаево-балкарского материалы разложены по нескольким полкам', () => {
   const used = new Set(KRC.map(shelfOf));
   for (const sh of ['reading', 'dialogs', 'phrasebook', 'tales', 'wisdom', 'culture', 'songs']) assert.ok(used.has(sh), sh);
-  // основное чтение у английского остаётся на полке «Тексты для чтения»
-  assert.ok(EN.every(t => shelfOf(t) === 'reading'));
+  // базовые английские тексты — на полке «Тексты для чтения»
+  assert.ok(EN.filter(t => !t.id.startsWith('en-l-')).every(t => shelfOf(t) === 'reading'));
+});
+
+test('Полки: английская библиотека заполняет все полки, id уникальны', () => {
+  const lib = EN.filter(t => t.id.startsWith('en-l-'));
+  assert.equal(new Set(EN.map(t => t.id)).size, EN.length);
+  const used = new Set(lib.map(shelfOf));
+  for (const sh of ['reading', 'dialogs', 'phrasebook', 'tales', 'wisdom', 'culture', 'songs']) assert.ok(used.has(sh), sh);
+  for (const t of lib) assert.ok(t.title && t.body && ['A1', 'A2', 'B1', 'B2', 'C1'].includes(t.level), t.id);
 });

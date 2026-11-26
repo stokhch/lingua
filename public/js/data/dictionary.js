@@ -1,5 +1,6 @@
 // Встроенный англо-русский словарь проекта (составлен вручную для этого проекта).
 // Формат блоков: "слово|перевод" — по строке на слово. Ключ блока = тематический набор.
+import { LIBRARY_WORDS, LIBRARY_FORMS } from './en/library/index.js';
 const RAW = {
 core: `the|определённый артикль
 a|неопределённый артикль
@@ -780,6 +781,11 @@ for (const [set, block] of Object.entries(RAW)) {
     SETS[set].push(w);
   }
 }
+// Слова из библиотеки материалов: только в словарь перевода, без тематических наборов
+for (const line of LIBRARY_WORDS) {
+  const [w, t] = line.split('|');
+  if (w && t && !DICT.has(w)) DICT.set(w, t);
+}
 
 // Неправильные формы -> начальная форма
 const IRREGULAR = {
@@ -799,6 +805,7 @@ const IRREGULAR = {
   better: 'better', best: 'best', worse: 'bad', worst: 'bad', grown: 'grow', 'grown-ups': 'grown-up',
   studies: 'study', practising: 'practise', organisations: 'organisation', lives: 'life'
 };
+Object.assign(IRREGULAR, LIBRARY_FORMS);
 
 // Простая лемматизация для поиска слова в словаре
 export function lemma(raw) {
