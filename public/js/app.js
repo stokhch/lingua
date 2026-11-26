@@ -8,12 +8,15 @@ import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderMySet } from './views/mysets.js';
 import { renderVerbs } from './views/verbs.js';
 import { renderFriends } from './views/friends.js';
+import { renderExtension } from './views/extension.js';
+import { pullInbox } from './inbox.js';
 import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
 import { satiety, appleRow, APPLES } from './pim.js';
 import { L, LANGS, switchLang, wordCount } from './lang.js';
+import { flagsFor } from './flags.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 
 const NAV = [
@@ -51,7 +54,7 @@ function pickLang() {
   modal(`<h2>Какой язык учим?</h2><p class="muted">У каждого языка свой словарь, тексты и уроки. Опыт, стрик и достижения общие.</p>
     <div class="lang-pick">${Object.values(LANGS).map(l => {
       const n = wordCount(l.id);
-      return `<button class="lang-opt ${l.id === L().id ? 'on' : ''}" data-l="${l.id}"><span class="code">${l.code}</span><b>${l.name}</b><span class="muted">${n ? `${n} ${plural(n, 'слово', 'слова', 'слов')} в словаре` : 'словарь пуст'}</span>${l.beta ? `<span class="beta">${l.beta}</span>` : ''}</button>`;
+      return `<button class="lang-opt ${l.id === L().id ? 'on' : ''}" data-l="${l.id}"><span class="lang-top">${flagsFor(l.id)}<span class="code">${l.code}</span></span><b>${l.name}</b><span class="muted">${n ? `${n} ${plural(n, 'слово', 'слова', 'слов')} в словаре` : 'словарь пуст'}</span>${l.beta ? `<span class="beta">${l.beta}</span>` : ''}</button>`;
     }).join('')}</div>`,
   (el, close) => { el.querySelector('.lang-pick').onclick = e => {
     const b = e.target.closest('[data-l]'); if (!b) return;
@@ -105,6 +108,7 @@ function route() {
     myset: () => renderMySet(main, param),
     verbs: () => renderVerbs(main),
     friends: () => renderFriends(main),
+    extension: () => renderExtension(main),
     train: () => (param ? renderTraining(main, param) : renderTrainings(main)),
     texts: () => renderTexts(main),
     read: () => renderReader(main, param),
@@ -230,7 +234,7 @@ function renderProfile(main) {
     <h2>Достижения</h2>
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
-  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a></section>
+  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
   <section class="band" id="leaders"></section>
   <section class="band">
     <h2>Настройки</h2>
@@ -293,6 +297,7 @@ function start() {
   G.checkBadges();
   window.onhashchange = route;
   route();
+  pullInbox();
 }
 
 async function boot() {
