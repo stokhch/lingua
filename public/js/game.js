@@ -2,7 +2,7 @@
 import { store } from './store.js';
 import { newCard, review, isDue } from './srs.js';
 import { toast } from './ui.js';
-import { lower } from './lang.js';
+import { lower, L } from './lang.js';
 import { TRAININGS, wordStatus, dayKey, emptyDay, pruneDays } from './stats.js';
 
 export { TRAININGS, wordStatus };
@@ -29,10 +29,24 @@ export function removeWord(word) { delete S().words[word]; store.save(); }
 export function updateWord(word, patch) { Object.assign(S().words[word], patch); store.save(); }
 export const allWords = () => Object.values(S().words);
 
-export function wordsFor(training) {
-  return allWords().filter(w => !w.srs && !w.trained?.[training]).sort((a, b) => a.added - b.added);
+// Фокус тренировок: все слова словаря или только один набор (встроенный «set:id» или свой «my:id»).
+export function focusInfo() {
+  const s = S(), f = s.focus?.[s.lang || 'en'];
+  if (!f) return null;
+  const [kind, id] = [f.slice(0, f.indexOf(':')), f.slice(f.indexOf(':') + 1)];
+  if (kind === 'set' && L().SETS[id]) return { id: f, title: L().SET_INFO[id]?.title || id, keys: new Set(L().SETS[id]) };
+  if (kind === 'my' && s.mySets?.[id]) return { id: f, title: s.mySets[id].title, keys: new Set(s.mySets[id].words) };
+  return null;
 }
-export const dueWords = () => allWords().filter(w => w.srs && isDue(w.srs)).sort((a, b) => a.srs.due - b.srs.due);
+export function setFocus(f) {
+  const s = S(); s.focus = { ...(s.focus || {}), [s.lang || 'en']: f || null }; store.save();
+}
+export const trainWords = () => { const f = focusInfo(); return f ? allWords().filter(w => f.keys.has(w.w)) : allWords(); };
+
+export function wordsFor(training) {
+  return trainWords().filter(w => !w.srs && !w.trained?.[training]).sort((a, b) => a.added - b.added);
+}
+export const dueWords = () => trainWords().filter(w => w.srs && isDue(w.srs)).sort((a, b) => a.srs.due - b.srs.due);
 
 // Отметить, что слово прошло тренировку. Когда пройдены все 4 — слово «изучено» и уходит на интервальные повторения.
 export function markTrained(word, training) {

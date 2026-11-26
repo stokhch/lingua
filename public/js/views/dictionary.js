@@ -5,6 +5,7 @@ import * as G from '../game.js';
 import { speak } from '../speech.js';
 import { L, lower, keysBar } from '../lang.js';
 import { translateWord } from '../translate.js';
+import { mySetsHtml, bindMySets, focusButton, bindFocusButton } from './mysets.js';
 
 let filter = 'all', query = '';
 
@@ -92,12 +93,14 @@ export function renderSets(main) {
   main.innerHTML = `
   <section class="band">
     <h1>Наборы слов</h1>
-    <p class="lead">${L().name}: тематические подборки из встроенного словаря. Откройте набор и добавьте нужные слова — они сразу появятся в тренировках.</p>
+    <p class="lead">${L().name}: тематические подборки из встроенного словаря и ваши собственные наборы. Слова из набора сразу появляются в тренировках, а тренировки можно запускать только по одному набору.</p>
+    ${mySetsHtml()}
     <div class="sets">${Object.entries(L().SET_INFO).map(([id, s]) => {
       const words = L().SETS[id] || []; const have = words.filter(w => G.hasWord(w)).length;
       return `<a class="set-card ${id}" href="#set-${id}"><b>${s.title}</b><span>${s.desc}</span><i class="bar"><i style="width:${Math.round((have / words.length) * 100)}%"></i></i><em>${have} из ${words.length} в словаре</em></a>`;
     }).join('')}</div>
   </section>`;
+  bindMySets();
 }
 
 export function renderSet(main, id) {
@@ -109,12 +112,13 @@ export function renderSet(main, id) {
     main.innerHTML = `
     <section class="band">
       <a class="back" href="#sets">${icon('back')} Все наборы</a>
-      <div class="head-row"><h1>${info.title}</h1><button class="btn" id="add-all" ${left ? '' : 'disabled'}>${icon('plus')} ${left ? `Добавить все (${left})` : 'Все слова в словаре'}</button></div>
+      <div class="head-row"><h1>${info.title}</h1><div class="row gap">${left < words.length ? focusButton('set:' + id) : ''}<button class="btn" id="add-all" ${left ? '' : 'disabled'}>${icon('plus')} ${left ? `Добавить все (${left})` : 'Все слова в словаре'}</button></div></div>
       <ul class="set-words">${words.map(w => `<li data-w="${esc(w)}" class="${G.hasWord(w) ? 'have' : ''}">
         <button class="icon-btn say" aria-label="Произнести">${icon('sound')}</button>
         <div><b>${esc(w)}</b><span>${esc(DICT.get(w))}</span></div>
         <button class="icon-btn add" aria-label="${G.hasWord(w) ? 'Уже в словаре' : 'Добавить'}">${icon(G.hasWord(w) ? 'check' : 'plus')}</button></li>`).join('')}</ul>
     </section>`;
+    bindFocusButton(main);
     $('#add-all').onclick = () => { let n = 0; for (const w of words) if (G.addWord(w, DICT.get(w), '', info.title)) n++; toast(`Добавлено ${n} ${plural(n, 'слово', 'слова', 'слов')}`); draw(); };
     $('.set-words').onclick = e => {
       const li = e.target.closest('[data-w]'); if (!li) return;
