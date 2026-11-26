@@ -785,3 +785,20 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .add-card{font:inherit;text-align:left;cursor:pointer;border-style:dashed;align-content:center;justify-items:start}.add-card>.ic{width:34px;height:34px;color:var(--brand-ink)}
 .shelf-bar{max-width:420px;margin:-6px 0 16px}
 @media (max-width:640px){.shelf-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-inline:-16px;padding-inline:16px}.shelf-chips .chip{flex:none}.shelf-row{grid-auto-columns:minmax(230px,78vw)}.shelf-head .btn{display:none}}
+
+/* вход / выход в шапке — всегда на виду */
+.auth-btn{border:0;cursor:pointer;font:900 15px Nunito,sans-serif;gap:6px}
+.top .auth-btn.in{background:linear-gradient(180deg,#ffd76a,var(--sun));color:#2b1d00;box-shadow:0 2px 0 var(--gold)}
+.top .auth-btn.out{background:rgba(255,255,255,.1);color:#fff6d6;box-shadow:inset 0 0 0 2px rgba(255,215,106,.5)}
+.top .auth-btn:hover{filter:brightness(1.08)}
+.auth-btn .ic{width:18px;height:18px}
+.who{color:#fff6d6;font-weight:800;max-width:14ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:1599px){.who{display:none}}
+@media (min-width:1081px) and (max-width:1440px){.nav{gap:0}.nav a{padding:10px 7px;gap:4px;font-size:15px}.top{gap:10px}}
+@media (max-width:760px){
+  .hud{gap:6px}
+  .top .pill{padding:6px 8px}
+  .auth-btn{font-size:14px}
+}
+@media (max-width:359px){.auth-btn span{display:none}.auth-btn{padding:8px!important}.auth-btn .ic{width:20px;height:20px}}
+@media (min-width:761px) and (max-width:1300px){.nav a span{display:none}.nav a{padding:10px}}

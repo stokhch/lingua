@@ -36,7 +36,8 @@ const P = {
   heart: '<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-  logout: '<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>'
+  logout: '<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',
+  login: '<path d="M14 4h5v16h-5M9 8l4 4-4 4M3 12h10"/>'
 };
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[name] || ''}</svg>`;
 

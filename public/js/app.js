@@ -44,6 +44,8 @@ function shell() {
       <a class="pill streak" href="#progress" title="Дней подряд — открыть прогресс">${icon('fire')}<b id="hud-streak">0</b></a>
       <a class="pill xp" href="#progress" title="Опыт за сегодня / цель — открыть прогресс">${icon('star')}<b id="hud-xp">0</b></a>
       <a class="avatar" href="#profile" title="Профиль" id="hud-avatar"></a>
+      <span class="who" id="hud-who"></span>
+      <button class="pill auth-btn" id="hud-auth" hidden></button>
     </div>
   </header>
   <main id="view" tabindex="-1"></main>
@@ -51,6 +53,7 @@ function shell() {
   sceneLang = null;
   store.on(updateHud);
   $('#hud-lang').onclick = pickLang;
+  $('#hud-auth').onclick = authAction;
   updateHud();
 }
 
@@ -87,6 +90,16 @@ document.addEventListener('click', e => {
 });
 
 let sceneLang = null; // язык, для которого нарисованы пейзажи
+
+async function logoutNow() {
+  await store.logout();
+  location.hash = '';
+  if (store.serverAvailable) renderAuth(); else boot();
+}
+function authAction() {
+  if (store.mode === 'server') logoutNow();
+  else { location.hash = ''; renderAuth(); }
+}
 function updateHud() {
   if (!store.state || !$('#hud-xp')) return;
   $('#hud-lang b').textContent = L().code;
@@ -96,6 +109,14 @@ function updateHud() {
   $('#hud-xp').textContent = `${G.todayXp()}/${store.state.goal}`;
   $('#hud-avatar').textContent = (store.state.name || '?').slice(0, 1).toUpperCase();
   $('#hud-avatar').title = `Профиль · ${rankFor(G.levelInfo().level).title}`;
+  // Вход / выход всегда на виду в шапке
+  const authed = store.mode === 'server', btn = $('#hud-auth');
+  btn.hidden = !authed && !store.serverAvailable;
+  btn.className = `pill auth-btn ${authed ? 'out' : 'in'}`;
+  btn.innerHTML = authed ? `${icon('logout')}<span>Выйти</span>` : `${icon('login')}<span>Войти</span>`;
+  btn.title = authed ? `Вы вошли как ${store.user?.email || store.state.name} — выйти` : 'Войти или создать аккаунт: прогресс сохранится на сервере';
+  btn.setAttribute('aria-label', authed ? 'Выйти из аккаунта' : 'Войти или зарегистрироваться');
+  $('#hud-who').textContent = authed ? store.state.name || store.user?.email || '' : 'Гость';
   const sync = $('#sync');
   sync.textContent = store.mode === 'server'
     ? ({ saved: 'Прогресс сохранён в аккаунте.', saving: 'Сохраняем…', error: 'Нет связи с сервером — изменения не сохранены.' })[store.syncState]
@@ -293,7 +314,7 @@ function renderProfile(main) {
     }; });
   $('#reset').onclick = () => modal(`<h2>Сбросить прогресс?</h2><p>Словарь, опыт, стрик и достижения будут удалены. Отменить это нельзя.</p><div class="row gap"><button class="btn danger" id="yes">Да, сбросить</button><button class="btn ghost" data-close>Отмена</button></div>`,
     (el, close) => { $('#yes', el).onclick = async () => { await store.resetProgress(); close(); toast('Прогресс сброшен'); renderProfile(main); }; });
-  $('#logout') && ($('#logout').onclick = async () => { await store.logout(); location.hash = ''; boot(); });
+  $('#logout') && ($('#logout').onclick = logoutNow);
   $('#login') && ($('#login').onclick = () => { location.hash = ''; renderAuth(); });
 
   // Рейтинг (только с сервером)
