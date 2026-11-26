@@ -14,6 +14,13 @@ import * as krcDict from './data/krc/dictionary.js';
 import { TEXTS as krcTexts } from './data/krc/texts.js';
 import { COURSES as krcCourses, ALL_LESSONS as krcLessons } from './data/krc/grammar.js';
 import { PHRASES as krcPhrases } from './data/krc/phrases.js';
+import * as elDict from './data/el/dictionary.js';
+import { TEXTS as elTexts } from './data/el/texts.js';
+import { COURSES as elCourses, ALL_LESSONS as elLessons } from './data/el/grammar.js';
+import { PHRASES as elPhrases } from './data/el/phrases.js';
+
+// Греческие буквы, включая буквы с ударением (тонос) и диерезисом
+const EL_LETTERS = 'Α-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ';
 
 export const LANGS = {
   en: {
@@ -33,6 +40,18 @@ export const LANGS = {
     lower: trDict.lower,
     DICT: trDict.DICT, SETS: trDict.SETS, SET_INFO: trDict.SET_INFO, lemma: trDict.lemma, lookup: trDict.lookup,
     TEXTS: trTexts, COURSES: trCourses, ALL_LESSONS: trLessons, PHRASES: trPhrases
+  },
+  // Новогреческий: своя азбука. На клавиатуре у ученика её обычно нет, поэтому панель — весь алфавит
+  // и кнопка ударения «´» (ставит тонос на предыдущую гласную). Ответ без ударений засчитывается с подсказкой.
+  el: {
+    id: 'el', code: 'GR', name: 'Греческий', acc: 'греческий', gen: 'греческого', flag: '🇬🇷',
+    tts: 'el-GR', voiceRe: /^el/i, preferVoice: /el[-_]GR/i,
+    letters: EL_LETTERS, tokenRe: new RegExp(`[${EL_LETTERS}’'-]+`, 'g'),
+    extraKeys: [...'αβγδεζηθικλμνξοπρσςτυφχψω', '´'], fullKeys: true,
+    sample: 'ταξίδι', sampleTr: 'μήλο;яблоко', firstSet: 'start',
+    lower: elDict.lower, plain: elDict.plain,
+    DICT: elDict.DICT, SETS: elDict.SETS, SET_INFO: elDict.SET_INFO, lemma: elDict.lemma, lookup: elDict.lookup,
+    TEXTS: elTexts, COURSES: elCourses, ALL_LESSONS: elLessons, PHRASES: elPhrases
   },
   // Карачаево-балкарский: кириллица, голоса синтеза речи для него нет (tts: null), онлайн-переводчик его не знает.
   krc: {
@@ -57,12 +76,21 @@ export const lettersOnly = s => String(s).replace(new RegExp(`[^${L().letters}]`
 
 // Сравнение без диакритики: если у ученика нет турецкой раскладки, «gunes» засчитаем как «güneş» с подсказкой.
 // Для кириллицы: ё → е, ў → у, дж → ж (балкарское написание: жол = джол) — ответ засчитывается с подсказкой.
-export const fold = s => lower(s).replace(/[çğıöşüâîûёў]/g, c => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', â: 'a', î: 'i', û: 'u', ё: 'е', ў: 'у' })[c]).replace(/дж/g, 'ж');
+// Для греческого: без ударений и диерезиса, конечная ς = σ (καλημερα = καλημέρα).
+export const fold = s => lower(s).replace(/[çğıöşüâîûёў]/g, c => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', â: 'a', î: 'i', û: 'u', ё: 'е', ў: 'у' })[c]).replace(/дж/g, 'ж')
+  .normalize('NFD').replace(/[\u0301\u0308]/g, '').normalize('NFC').replace(/ς/g, 'σ');
+// Форма слова для клеток кроссворда: греческие кроссворды пишут без ударений
+export const cellForm = s => (L().plain || (x => x))(s);
 
 // Панель с буквами, которых нет на русской/английской клавиатуре. Нажатие вставляет букву
 // в последнее активное поле ввода (обработчик — в app.js).
 export const keysBar = () => L().extraKeys.length
-  ? `<div class="xkeys" aria-label="Особые буквы">${L().extraKeys.map(k => `<button type="button" tabindex="-1" data-ch="${k}">${k}</button>`).join('')}</div>` : '';
+  ? `<div class="xkeys${L().fullKeys ? ' full' : ''}" aria-label="${L().fullKeys ? 'Буквы' : 'Особые буквы'}">${L().extraKeys.map(k => `<button type="button" tabindex="-1" data-ch="${k}"${k === '´' ? ' class="acc" title="Ударение на предыдущую гласную" aria-label="Поставить ударение"' : ''}>${k}</button>`).join('')}</div>` : '';
+
+// Кнопка «´»: ставит (или снимает) ударение на гласной перед курсором
+const ACUTE = { α: 'ά', ε: 'έ', η: 'ή', ι: 'ί', ο: 'ό', υ: 'ύ', ω: 'ώ', ϊ: 'ΐ', ϋ: 'ΰ', Α: 'Ά', Ε: 'Έ', Η: 'Ή', Ι: 'Ί', Ο: 'Ό', Υ: 'Ύ', Ω: 'Ώ' };
+const UNACUTE = Object.fromEntries(Object.entries(ACUTE).map(([a, b]) => [b, a]));
+export function toggleAccent(ch) { return ACUTE[ch] || UNACUTE[ch] || null; }
 
 // Поля прогресса, у которых своя копия для каждого языка
 const PER_LANG = ['words', 'readTexts', 'grammar', 'materials', 'openedTexts', 'mySets', 'exams'];

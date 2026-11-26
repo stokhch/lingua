@@ -35,13 +35,17 @@ const tokens = (body, re) => String(body).match(re) || [];
 // у турецкого слова длиннее (аффиксы), а предложения короче, поэтому шкала своя.
 export function estimateLevel(body, re, known, lang = 'en') {
   const all = tokens(body, re);
-  const toks = all.filter(t => !/^[A-ZÇĞİÖŞÜ][a-zçğıöşü]+$/.test(t)); // имена собственные не считаем
-  if (toks.length < 5) return lang === 'tr' ? 'A0' : 'A1';
+  const toks = all.filter(t => !/^[A-ZÇĞİÖŞÜΑ-ΩΆΈΉΊΌΎΏ][a-zçğıöşüα-ωάέήίόύώϊϋΐΰ]+$/.test(t)); // имена собственные не считаем
+  if (toks.length < 5) return lang === 'tr' || lang === 'el' ? 'A0' : 'A1';
   const unknown = toks.filter(t => !known(t)).length / toks.length;
-  const sentences = String(body).split(/[.!?…]+\s/).filter(x => x.trim()).length || 1;
+  const sentences = String(body).split(lang === 'el' ? /[.!?…;]+\s/ : /[.!?…]+\s/).filter(x => x.trim()).length || 1; // «;» — греческий вопрос
   const sl = all.length / sentences;
   const avg = all.reduce((n, t) => n + t.length, 0) / all.length;
   const long = all.filter(t => t.length >= 8).length / all.length;
+  if (lang === 'el') { // греческие слова длиннее английских, шкала подобрана по встроенным текстам
+    const sc = sl * 2 + long * 20 + unknown * 40;
+    return sc < 12 ? 'A0' : sc < 17.5 ? 'A1' : sc < 21 ? 'A2' : sc < 28 ? 'B1' : sc < 36 ? 'B2' : 'C1';
+  }
   if (lang === 'tr') {
     const sc = sl * 2 + long * 20 + unknown * 40;
     return sc < 14 ? 'A0' : sc < 16.5 ? 'A1' : sc < 20 ? 'A2' : sc < 26 ? 'B1' : sc < 34 ? 'B2' : 'C1';
