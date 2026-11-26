@@ -8,11 +8,12 @@ import { BANKS, LEVEL_NAMES, PURPOSES, PACES } from '../data/leveltest.js';
 import { BLOCK, PASS, nextStep, pickByLevel, levelRank } from '../placement.js';
 
 export const myLevel = () => store.state.placement?.[L().id]?.level || null;
+export const hasPlacement = () => !!BANKS[L().id];
 export const levelLabel = lv => `${lv} · ${LEVEL_NAMES[lv] || ''}`;
 
 // Карточка-приглашение на главной, пока уровень по текущему языку не определён
 export function placementBanner() {
-  if (myLevel()) return '';
+  if (myLevel() || !hasPlacement()) return '';
   return `<section class="band"><a class="action primary placement-cta" href="#test">${icon('bolt')}<div><b>Узнайте свой уровень за 3 минуты</b><span>Короткий тест по словам подскажет, с каких текстов, уроков и наборов начать</span></div></a></section>`;
 }
 

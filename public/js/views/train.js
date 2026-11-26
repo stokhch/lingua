@@ -108,7 +108,7 @@ export function renderTraining(main, kind) {
 
   const finish = () => {
     const ok = results.filter(r => r.ok).length;
-    G.finishTraining(ok, results.length);
+    G.finishTraining(ok, results.length, kind);
     main.innerHTML = `
     <section class="band narrow">
       <h1>${ok === results.length ? 'Без единой ошибки!' : 'Тренировка завершена'}</h1>
@@ -146,7 +146,7 @@ export const QUESTIONS = {
   au(stage, word, answer) {
     const can = canSpeak();
     stage.innerHTML = `
-      ${can ? `<button class="play say" aria-label="Прослушать ещё раз">${icon('sound')}</button><p class="muted center">Напишите услышанное слово</p>` : `<div class="big-word">${esc(word.t)}</div><p class="muted center">Озвучка недоступна в этом браузере — напишите слово по переводу</p>`}
+      ${can ? `<button class="play say" aria-label="Прослушать ещё раз">${icon('sound')}</button><p class="muted center">Напишите услышанное слово</p>` : `<div class="big-word">${esc(word.t)}</div><p class="muted center">Озвучка недоступна ${L().tts ? 'в этом браузере' : 'для этого языка'} — напишите слово по переводу</p>`}
       <form class="type-form"><input id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Слово"><button class="btn">Проверить</button></form>
       ${keysBar()}<button class="link" id="hint">Подсказка: показать перевод</button>`;
     if (can) { speak(word.w, store.state.rate); $('.say', stage).onclick = () => speak(word.w, store.state.rate * 0.8); }
@@ -274,7 +274,7 @@ function sprint(main) {
     if (time <= 0) {
       clearInterval(tick); document.removeEventListener('keydown', onKey);
       const xp = Math.round(score / 20);
-      G.addXp(xp, 'спринт'); store.state.stats.trainings++; store.save();
+      G.addXp(xp, 'спринт'); G.countTraining('sprint');
       main.innerHTML = `<section class="band narrow"><h1>Время вышло</h1><p class="lead">${score} очков · ${total} ${plural(total, 'ответ', 'ответа', 'ответов')} · +${xp} XP</p><div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div></section>`;
       $('#again').onclick = () => sprint(main);
     }

@@ -1,5 +1,7 @@
 // Озвучка через встроенный в браузер синтез речи (Web Speech API) — без аудиофайлов.
 // Голос выбирается под изучаемый язык: английский (en-GB / en-US) или турецкий (tr-TR).
+// У карачаево-балкарского голоса в браузерах нет (tts: null) — озвучка для него отключена,
+// а тренировки на слух показывают задание текстом.
 import { L } from './lang.js';
 
 const voices = {};
@@ -12,7 +14,7 @@ function pickVoices() {
 }
 if ('speechSynthesis' in window) { pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
 
-export const canSpeak = () => 'speechSynthesis' in window;
+export const canSpeak = () => 'speechSynthesis' in window && !!L().tts;
 // Есть ли в системе голос для текущего языка (без него браузер может читать чужим акцентом)
 export const hasVoice = () => !canSpeak() || !!voices[L().id] || !(speechSynthesis.getVoices?.() || []).length;
 
