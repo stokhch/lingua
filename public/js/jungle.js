@@ -44,8 +44,8 @@ export function lianas(count = 9, seed = 7) {
   return `<div class="lianas" aria-hidden="true">${Array.from({ length: count }, (_, i) => {
     const left = (i + 0.3 + r() * 0.4) / count * 100;
     const len = Math.round(110 + r() * 170 + (i % 3 === 1 ? 60 : 0));
-    const dur = (3.4 + r() * 2.6).toFixed(2), delay = (-r() * 4).toFixed(2), swing = (2.5 + r() * 3).toFixed(1);
-    return `<span class="vine" style="left:${left.toFixed(1)}%;--dur:${dur}s;--delay:${delay}s;--swing:${swing}deg">${vine(len, seed * 31 + i * 17)}</span>`;
+    const dur = (3.4 + r() * 2.6).toFixed(2), delay = (-r() * 4).toFixed(2), amp = ['', ' s2', ' s3'][i % 3];
+    return `<span class="vine${amp}" style="left:${left.toFixed(1)}%;--dur:${dur}s;--delay:${delay}s">${vine(len, seed * 31 + i * 17)}</span>`;
   }).join('')}</div>`;
 }
 
