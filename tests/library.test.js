@@ -58,8 +58,8 @@ test('Английская библиотека: популярные сказк
 
 test('Иллюстрации к материалам: у каждого art есть рисунок, SVG собирается', async () => {
   const { textArt, hasArt, ART_KEYS } = await import('../public/js/text-art.js');
-  const used = [...EL, ...EN].filter(t => t.art);
-  assert.ok(used.length >= 13);
+  const used = [...EL, ...EN, ...KRC].filter(t => t.art);
+  assert.ok(used.length >= 18);
   for (const t of used) {
     assert.ok(hasArt(t), `нет рисунка ${t.art} у ${t.id}`);
     const svg = textArt(t);

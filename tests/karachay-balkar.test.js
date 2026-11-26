@@ -90,3 +90,15 @@ test('Карачаево-балкарский: перевод в казахск�
   assert.equal(krcToKazakh('Минги тау'), 'миңи таұ');
   assert.equal(krcToKazakh('чычхан бла киштик!'), 'чычхан бла киштик!');
 });
+
+test('Карачаево-балкарский: сказки с иллюстрациями и переводом', async () => {
+  const { hasArt, textArt } = await import('../public/js/text-art.js');
+  const ids = ['krc-tale-elder', 'krc-tale-share', 'krc-tale-olmezbiy', 'krc-tale-goat', 'krc-tale-crane'];
+  for (const id of ids) {
+    const t = TEXTS.find(x => x.id === id);
+    assert.ok(t && t.topic === 'Сказки', id);
+    assert.ok(hasArt(t), `нет рисунка у ${id}`);
+    assert.match(textArt(t), /<svg[^>]*>.*<\/svg>/s, id);
+    assert.ok(t.translation && t.summary, id);
+  }
+});

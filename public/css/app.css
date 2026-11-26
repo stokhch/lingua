@@ -966,3 +966,11 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 /* Рейтинг дня и недели */
 .rating-me{display:flex;align-items:center;gap:8px;margin:-4px 0 12px;font-weight:800;max-width:620px}.rating-me .ic{width:20px;height:20px;color:var(--gold)}
 .rating-card{max-width:620px}.rating-card div>span{display:block;margin-top:2px}.rating-card div>span b{display:inline;font-size:inherit;color:var(--ink)}
+/* Установка на экран телефона (PWA): карточка на главной и в профиле, шаги для iPhone */
+.install-cta{align-items:center;max-width:none}.install-cta>img{flex:none;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.2)}.install-cta>div:first-of-type{flex:1;min-width:0}
+.install-cta .btn .ic{width:18px;height:18px;color:inherit}
+@media (max-width:560px){.install-cta{flex-wrap:wrap}.install-cta>.row,.install-cta>.btn{width:100%}.install-cta>.row .btn:first-child,.install-cta>.btn{flex:1}}
+.install-steps{margin:14px 0 18px;padding-left:22px;line-height:1.5}.install-steps li{margin:6px 0}
+.ios-share{width:20px;height:20px;vertical-align:-4px;fill:none;stroke:#0a84ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Иконка с экрана «Домой» открывает Лингву без панели Safari: шапка уходит под строку состояния, отодвигаем её */
+.top{padding-top:max(8px,env(safe-area-inset-top))}
