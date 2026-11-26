@@ -16,13 +16,21 @@ const peak = (cx, base, h, hw, c = '#5d7186', cap = '#e9ecef') =>
   `<path d="M${cx} ${base - h}L${cx + hw * .28} ${base - h * .66}L${cx + hw} ${base}H${cx + hw * .2}Z" fill="#000" opacity=".12"/>`;
 const hills = (y, c, amp = 30) => `<path d="M0 ${y}q80 ${-amp} 160 -6t160 4t160 -8t160 6V${H}H0z" fill="${c}"/>`;
 const cypress = (x, y, h, c = '#2f5a3a') => `<path d="M${x} ${y - h}q${h * .16} ${h * .45} ${h * .1} ${h}h${-h * .2}q${-h * .06} ${-h * .55} ${h * .1} ${-h}z" fill="${c}"/>`;
-// Византийский храм: кирпично-красные стены, свинцово-серые купола
-const church = (x, y, s = 1, wall = '#b0513a', dome = '#7d8b97') => `<g transform="translate(${x} ${y}) scale(${s})">
-  <rect x="-40" y="-36" width="80" height="36" fill="${wall}"/><rect x="-14" y="-62" width="28" height="28" fill="${wall}"/>
-  <path d="M-16 -62a16 16 0 0 1 32 0z" fill="${dome}"/><path d="M0 -78v-10M-4 -84h8" stroke="#d9a521" stroke-width="2"/>
-  <path d="M-38 -36a10 10 0 0 1 20 0zM18 -36a10 10 0 0 1 20 0z" fill="${dome}"/>
-  ${[-30, -8, 14].map(k => `<rect x="${k}" y="-28" width="7" height="14" rx="3.5" fill="#3b2a22"/>`).join('')}
-  <path d="M-40 -18h80" stroke="#e8c9a0" stroke-width="1.5" opacity=".7"/></g>`;
+// Православный крест: верхняя табличка, перекладина и косая подножка
+const cross = (x, y, k = 1, c = '#d9a521') => `<path d="M${x} ${y}v${-26 * k}M${x - 4 * k} ${y - 21 * k}h${8 * k}M${x - 8 * k} ${y - 15 * k}h${16 * k}M${x - 5 * k} ${y - 5 * k}l${10 * k} ${-4 * k}" stroke="${c}" stroke-width="${2.2 * k}" stroke-linecap="round"/>`;
+// Византийский храм (крестово-купольный): кирпичные пояса, двускатная черепичная кровля,
+// высокий барабан с окнами, небольшой купол с православным крестом, апсида и звонница
+const church = (x, y, s = 1, wall = '#b0513a', dome = '#7d8b97', win = '#3b2a22') => `<g transform="translate(${x} ${y}) scale(${s})">
+  <path d="M44 0v-30a14 14 0 0 1 0 0h4a14 14 0 0 1 0 30z" fill="${wall}"/><path d="M44 -30q16 0 16 15v15h-16z" fill="${wall}"/><path d="M42 -32q20 0 20 17" stroke="#c2603e" stroke-width="5" fill="none"/>
+  <rect x="-44" y="-40" width="88" height="40" fill="${wall}"/>
+  ${[-30, -20, -10].map(yy => `<path d="M-44 ${yy}h88" stroke="#e8c9a0" stroke-width="2" opacity=".55"/>`).join('')}
+  <path d="M-50 -38L0 -60L50 -38z" fill="#c2603e"/><path d="M-50 -38h100" stroke="#8a3a26" stroke-width="2"/>
+  <rect x="-13" y="-86" width="26" height="32" fill="${wall}"/><path d="M-15 -86h30" stroke="#c2603e" stroke-width="3"/>
+  ${[-8, 2].map(k => `<rect x="${k}" y="-80" width="6" height="16" rx="3" fill="${win}"/>`).join('')}
+  <path d="M-14 -86a14 12 0 0 1 28 0z" fill="${dome}"/>${cross(0, -97, 1)}
+  ${[-34, -18, 10, 26].map(k => `<rect x="${k}" y="-30" width="8" height="18" rx="4" fill="${win}"/>`).join('')}
+  <path d="M-6 0v-16a6 6 0 0 1 12 0v16z" fill="#4a2a1e"/>
+  <g transform="translate(-58 0)"><rect x="-10" y="-58" width="20" height="58" fill="${wall}"/><path d="M-12 -58h24l-12 -10z" fill="#c2603e"/><rect x="-5" y="-50" width="10" height="14" rx="5" fill="#2a1d18"/><path d="M-3 -40a3 4 0 0 1 6 0z" fill="#d9a521"/>${cross(0, -68, .6)}</g></g>`;
 // Луковичный купол русского храма
 const onion = (x, y, s = 1, c = '#3f9a5e') => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-8" y="-6" width="16" height="16" fill="#f1ead8"/><path d="M0 -40q-14 12 -12 24q2 10 12 10q10 0 12 -10q2 -12 -12 -24z" fill="${c}"/><path d="M0 -40v-12M-5 -47h10" stroke="#e0b43a" stroke-width="2"/></g>`;
 // Монастырь-крепость: стены с деревянными балконами и башня
@@ -54,11 +62,9 @@ function athosPeninsula() {
 function athosMorning() {
   return `<defs>${sky('aM', [[0, '#141a3a'], [.65, '#3b3f6e'], [1, '#c98a6a']])}</defs>
   <rect width="${W}" height="${H}" fill="url(#aM)"/>${stars(44, 3)}
-  <path d="M552 46a20 20 0 1 0 14 34a16 16 0 1 1 -14 -34z" fill="#f3e6b0"/>
   ${peak(500, 230, 130, 150, '#2b3352', '#cfd3e0')}
   <rect x="0" y="230" width="${W}" height="50" fill="#2a2a3a"/><path d="M0 236h${W}" stroke="#4a4458" stroke-width="3"/>
-  ${church(250, 232, 1.25, '#7a3a2e', '#4e5866')}
-  <g fill="#f6c34a">${[-30, -8, 14].map(k => `<rect x="${250 + k * 1.25}" y="${232 - 28 * 1.25}" width="${7 * 1.25}" height="${14 * 1.25}" rx="4" opacity=".9"/>`).join('')}</g>
+  ${church(250, 232, 1.25, '#7a3a2e', '#4e5866', '#f6c34a')}
   <!-- монах с билом -->
   <g transform="translate(430 232)">
     <path d="M-12 0q2 -40 12 -52q10 12 12 52z" fill="#111"/><circle cx="0" cy="-58" r="8" fill="#e0b896"/><path d="M-9 -60q9 -14 18 0z" fill="#111"/><path d="M-2 -52q2 10 0 16" stroke="#555" stroke-width="5" stroke-linecap="round"/>
