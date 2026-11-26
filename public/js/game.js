@@ -4,6 +4,7 @@ import { newCard, review, isDue } from './srs.js';
 import { toast } from './ui.js';
 import { lower, L } from './lang.js';
 import { TRAININGS, wordStatus, dayKey, emptyDay, pruneDays } from './stats.js';
+import { bump } from './dayplan.js';
 
 export { TRAININGS, wordStatus };
 const S = () => store.state;
@@ -125,7 +126,13 @@ export function countTraining(kind) {
   const st = S().stats; st.trainings++;
   if (kind) { st.byType ||= {}; st.byType[kind] = (st.byType[kind] || 0) + 1; }
   day().t++;
+  planTick(String(kind || '').startsWith('g-') ? 'grammar' : 'train');
   store.save();
+}
+// Счётчик для плана на день по текущему языку: train — тренировки, grammar — уроки и тренировки правил
+export function planTick(kind) {
+  const s = S(), lang = s.lang || 'en';
+  s.plans = { ...(s.plans || {}), [lang]: bump(s.plans?.[lang], today(), kind) };
 }
 export function finishTraining(correct, total, kind) {
   const st = S().stats; countTraining(kind);

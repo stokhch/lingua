@@ -29,3 +29,15 @@ test('Дуэль: победитель по очкам, затем по врем
 test('Уровень на сервере считается как в клиенте', () => {
   assert.equal(levelOf(0), 1); assert.equal(levelOf(99), 1); assert.equal(levelOf(100), 2); assert.equal(levelOf(250), 3);
 });
+
+test('приглашение по ссылке: по коду видно только имя пригласившего', async () => {
+  const { createSocial } = await import('../social.js');
+  const db = { users: { u1: { id: 'u1', name: 'Аня', email: 'a@x.ru', code: 'ABC234' } } };
+  let out;
+  const social = createSocial({ getDb: () => db, persist() {}, send: (res, status, body) => (out = { status, body }), readJson: async () => ({}), weekXp: () => 0 });
+  social.handlePublic('GET /api/invite', {}, {}, new URL('http://x/api/invite?code=abc-234'));
+  assert.deepEqual(out, { status: 200, body: { name: 'Аня' } });
+  social.handlePublic('GET /api/invite', {}, {}, new URL('http://x/api/invite?code=ZZZZZZ'));
+  assert.equal(out.status, 404);
+  assert.equal(social.handlePublic('GET /api/other', {}, {}, new URL('http://x/')), false);
+});

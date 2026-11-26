@@ -4,6 +4,7 @@
 //   POST /api/friends/remove  { code }        -> удалить из друзей
 //   POST /api/duels           { to, lang, words, answers, ms }  -> вызвать друга: вы уже сыграли, он отвечает на те же слова
 //   POST /api/duels/answer    { id, answers, ms }               -> ответ на вызов
+//   GET  /api/invite?code=XXXX                 -> { name } — кто приглашает в друзья по ссылке (без входа)
 // Счёт считает сервер по выбранным вариантам, а не по словам клиента.
 import crypto from 'node:crypto';
 
@@ -151,5 +152,12 @@ export function createSocial({ getDb, persist, send, readJson, weekXp }) {
     return false;
   }
 
-  return { handle };
+  // Ссылка-приглашение ?friend=КОД: до входа показываем, кто зовёт в друзья (только имя)
+  function handlePublic(route, req, res, url) {
+    if (route !== 'GET /api/invite') return false;
+    const u = byCode(url.searchParams.get('code'));
+    return u ? send(res, 200, { name: u.name }) : send(res, 404, { error: 'Приглашение не найдено' });
+  }
+
+  return { handle, handlePublic };
 }

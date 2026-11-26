@@ -58,11 +58,15 @@ function contestCard(c, { teacher = false } = {}) {
   </div>`;
 }
 
+// После входа возвращаем к приглашению в класс, открытому без аккаунта
+export function resumeJoin() {
+  const code = store.mode === 'server' && pending.get();
+  if (code) { pending.set(null); location.hash = `join-${code}`; }
+}
+
 // ---------- #classes ----------
 export function renderClasses(main) {
   if (store.mode !== 'server') return needAccount(main, 'Классы', 'Классы работают с аккаунтом: учитель видит прогресс учеников, а ученики соревнуются внутри класса.');
-  const code = pending.get();
-  if (code) { pending.set(null); location.hash = `join-${code}`; return; }
   return loader(main, 'Классы', async () => { await store.saveNow(); return store.api('GET', 'api/classes'); }, (data, load) => {
     const { teacher, teaching, joined } = data;
     main.innerHTML = `
@@ -104,7 +108,7 @@ export function renderJoin(main, code) {
   code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (store.mode !== 'server') {
     pending.set(code);
-    return needAccount(main, 'Приглашение в класс', `Чтобы вступить в класс <b>${esc(code)}</b>, войдите в аккаунт: после входа откройте «Классы», и приглашение откроется снова.`);
+    return needAccount(main, 'Приглашение в класс', `Чтобы вступить в класс <b>${esc(code)}</b>, войдите или создайте аккаунт — после входа приглашение откроется снова.`);
   }
   return loader(main, 'Приглашение в класс', () => store.api('GET', `api/join?code=${encodeURIComponent(code)}`), data => {
     const k = data.class;
