@@ -67,3 +67,15 @@ test('Карачаево-балкарский: у чужих песен есть
     for (const l of t.links) assert.match(l.href, /^https:\/\//, t.id);
   }
 });
+
+test('Карачаево-балкарский: транслитерация для турецкого голоса', async () => {
+  const { krcToTurkish } = await import('../public/js/data/krc/translit.js');
+  assert.equal(krcToTurkish('Джол'), 'col');
+  assert.equal(krcToTurkish('къайда'), 'kayda');
+  assert.equal(krcToTurkish('кёз'), 'köz');
+  assert.equal(krcToTurkish('юй'), 'üy');
+  assert.equal(krcToTurkish('барыргъа'), 'barırga');
+  assert.equal(krcToTurkish('Минги тау'), 'mingi tau');
+  assert.equal(krcToTurkish('ешик, къая'), 'yeşik, kaya');
+  assert.equal(krcToTurkish('чычхан бла киштик!'), 'çıçhan bla kiştik!');
+});

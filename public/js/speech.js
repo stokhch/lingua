@@ -1,7 +1,7 @@
 // Озвучка через встроенный в браузер синтез речи (Web Speech API) — без аудиофайлов.
 // Голос выбирается под изучаемый язык: английский (en-GB / en-US), турецкий (tr-TR) или греческий (el-GR).
-// У карачаево-балкарского голоса в браузерах нет (tts: null) — озвучка для него отключена,
-// а тренировки на слух показывают задание текстом.
+// У карачаево-балкарского своего голоса нет: текст переводится в турецкую латиницу (lang.ttsText)
+// и читается турецким голосом (lang.voice = 'tr').
 // Если голоса нужного языка в системе нет (частый случай: греческий или турецкий в Chrome на Windows/macOS),
 // браузер читает текст голосом по умолчанию — то есть с английским произношением. Тогда звук берём
 // с сервера (/api/tts, mp3 на нужном языке), а встроенный синтез остаётся запасным вариантом.
@@ -22,7 +22,7 @@ if ('speechSynthesis' in window) { pickVoices(); speechSynthesis.onvoiceschanged
 
 export const canSpeak = () => 'speechSynthesis' in window && !!L().tts;
 // Есть ли в системе голос для текущего языка (без него браузер может читать чужим акцентом)
-export const hasVoice = () => !canSpeak() || !!voices[L().id] || !(speechSynthesis.getVoices?.() || []).length;
+export const hasVoice = () => !canSpeak() || !!voices[L().voice || L().id] || !(speechSynthesis.getVoices?.() || []).length;
 
 let audio = null, playId = 0, fails = 0; // после 3 неудач подряд онлайн-озвучку больше не пробуем (например, статичная версия сайта)
 function stopAll() {
@@ -66,9 +66,10 @@ export function speak(text, rate = 0.9) {
   if (!canSpeak() || !text) return false;
   try {
     stopAll();
-    const lang = L(), voice = voices[lang.id];
+    const lang = L(), id = lang.voice || lang.id, voice = voices[id];
+    if (lang.ttsText) text = lang.ttsText(text);
     if (voice) return speakBrowser(text, rate, lang.tts, voice);
-    if (fails < 3 && typeof Audio !== 'undefined') return speakOnline(text, rate, lang.id, lang.tts);
+    if (fails < 3 && typeof Audio !== 'undefined') return speakOnline(text, rate, id, lang.tts);
     return speakBrowser(text, rate, lang.tts, null);
   } catch { return false; }
 }
