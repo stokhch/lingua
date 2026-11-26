@@ -54,3 +54,8 @@ test('Карачаево-балкарский: полезные ресурсы �
     assert.ok(r.title && r.desc, r.href);
   }
 });
+
+test('Карачаево-балкарский: у текстов уникальные id', () => {
+  const ids = TEXTS.map(t => t.id);
+  assert.equal(new Set(ids).size, ids.length);
+});
