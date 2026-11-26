@@ -16,7 +16,7 @@ test('Турецкий: аффиксы отрезаются до словарн�
   const cases = {
     evlerimizde: 'ev', kitabı: 'kitap', çocuğu: 'çocuk', okula: 'okul', sokakta: 'sokak',
     geliyorum: 'gelmek', gidiyoruz: 'gitmek', başlıyor: 'başlamak', okuyacağım: 'okumak',
-    aldık: 'almak', mutluydu: 'mutlu', "İstanbul'da": 'istanbul', anlamıyorum: 'anlamak'
+    aldık: 'almak', mutluydu: 'mutlu', "İstanbul'da": 'istanbul', anlamadım: 'anlamak', kaldık: 'kalmak'
   };
   for (const [form, base] of Object.entries(cases)) assert.equal(lookup(form).word, base, form);
 });

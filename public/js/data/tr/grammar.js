@@ -2,6 +2,102 @@
 // Тип упражнения: choice (выбрать вариант) или input (вписать ответ; допустимы варианты через "/").
 export const COURSES = [
   {
+    id: 'tr-start', title: 'Старт: читаем, здороваемся, считаем', level: 'A0',
+    lessons: [
+      {
+        id: 'tr-alphabet', title: 'Алфавит и чтение',
+        theory: `<p>Турецкий пишется латиницей: в алфавите <b>29 букв</b>, и почти всегда слово читается так, как написано. Ударение обычно падает на <b>последний слог</b>.</p>
+<p>Буквы, которые читаются не так, как в английском:</p>
+<ul>
+<li><b>c</b> — «дж»: <i>cami</i> [джами] — мечеть</li>
+<li><b>ç</b> — «ч»: <i>çay</i> [чай] — чай</li>
+<li><b>ş</b> — «ш»: <i>şeker</i> [шекер] — сахар</li>
+<li><b>j</b> — «ж»: <i>jeton</i> [жетон]</li>
+<li><b>y</b> — «й»: <i>yol</i> [йол] — дорога</li>
+<li><b>e</b> — «э»: <i>ev</i> [эв] — дом</li>
+<li><b>ı</b> (без точки) — звук, близкий к «ы»: <i>ılık</i> [ылык] — тёплый</li>
+<li><b>ö</b> и <b>ü</b> — как «ё» и «ю», но без «й» в начале: <i>göz</i> — глаз, <i>üç</i> — три</li>
+<li><b>ğ</b> («мягкое г») — не произносится, а удлиняет гласную перед собой: <i>dağ</i> [даа] — гора</li>
+<li><b>h</b> — лёгкое «х» на выдохе: <i>hava</i> — погода</li>
+</ul>
+<p>Заглавная от <b>i</b> — <b>İ</b> (с точкой), а от <b>ı</b> — <b>I</b>: <i>İstanbul</i>, <i>Irmak</i>.</p>`,
+        exercises: [
+          { type: 'choice', q: 'Как читается «c» в слове cami (мечеть)?', options: ['дж', 'ц', 'к'], a: 'дж' },
+          { type: 'choice', q: 'Как читается «ş» в слове şeker (сахар)?', options: ['ш', 'с', 'щ'], a: 'ш' },
+          { type: 'choice', q: 'Как читается «ç» в слове çay (чай)?', options: ['ч', 'ц', 'к'], a: 'ч' },
+          { type: 'choice', q: 'Что делает буква «ğ» в слове dağ (гора)?', options: ['удлиняет гласную', 'читается как «г»', 'читается как «х»'], a: 'удлиняет гласную' },
+          { type: 'choice', q: 'Как читается «y» в слове yol (дорога)?', options: ['й', 'ы', 'у'], a: 'й' },
+          { type: 'choice', q: 'Какое слово читается [джан] — «душа»?', options: ['can', 'çan', 'şan'], a: 'can' },
+          { type: 'input', q: 'Запишите по-турецки «чай» [чай]: ___', a: 'çay' },
+          { type: 'input', q: 'Запишите по-турецки «сахар» [шекер]: ___', a: 'şeker' }
+        ]
+      },
+      {
+        id: 'tr-greetings', title: 'Приветствия и вежливость',
+        theory: `<p><b>Merhaba</b> — «здравствуйте», подходит всегда. Утром — <b>Günaydın</b>, днём — <b>İyi günler</b>, вечером — <b>İyi akşamlar</b>, перед сном — <b>İyi geceler</b>.</p>
+<p><b>Nasılsın?</b> (ты) / <b>Nasılsınız?</b> (вы) — «Как дела?». Ответ: <b>İyiyim, teşekkürler.</b> — «Хорошо, спасибо».</p>
+<p><b>Teşekkür ederim</b> или короче <b>teşekkürler</b> — «спасибо». В ответ — <b>Rica ederim</b>. Просьба — <b>lütfen</b>: <i>Bir çay, lütfen.</i></p>
+<p>Прощаются по-разному: уходящий говорит <b>Hoşça kal</b>, а остающийся — <b>Güle güle</b>. Универсальное «увидимся» — <b>Görüşürüz</b>.</p>
+<p>Полезные формулы: <b>Hoş geldiniz</b> — «добро пожаловать», <b>Afiyet olsun</b> — «приятного аппетита», <b>Kolay gelsin</b> — тому, кто работает, <b>Geçmiş olsun</b> — тому, кто болеет.</p>`,
+        exercises: [
+          { type: 'choice', q: 'Утром вы говорите: ___!', options: ['Günaydın', 'İyi geceler', 'Güle güle'], a: 'Günaydın' },
+          { type: 'choice', q: '— Teşekkür ederim! — ___.', options: ['Rica ederim', 'Lütfen', 'Merhaba'], a: 'Rica ederim' },
+          { type: 'choice', q: 'Вы уходите и прощаетесь: ___!', options: ['Hoşça kal', 'Güle güle', 'Hoş geldiniz'], a: 'Hoşça kal' },
+          { type: 'choice', q: 'Друг уходит, вы остаётесь: ___!', options: ['Güle güle', 'Hoşça kal', 'Günaydın'], a: 'Güle güle' },
+          { type: 'choice', q: '— Nasılsın? — ___, teşekkürler.', options: ['İyiyim', 'Merhaba', 'Evet'], a: 'İyiyim' },
+          { type: 'choice', q: 'Перед едой желают: ___!', options: ['Afiyet olsun', 'Geçmiş olsun', 'Kolay gelsin'], a: 'Afiyet olsun' },
+          { type: 'input', q: 'Коротко «спасибо»: ___', a: 'teşekkürler/sağ ol/sağol' }
+        ]
+      },
+      {
+        id: 'tr-numbers', title: 'Числа от 0 до 100',
+        theory: `<p><b>0</b> sıfır · <b>1</b> bir · <b>2</b> iki · <b>3</b> üç · <b>4</b> dört · <b>5</b> beş · <b>6</b> altı · <b>7</b> yedi · <b>8</b> sekiz · <b>9</b> dokuz · <b>10</b> on</p>
+<p>Десятки: <b>20</b> yirmi · <b>30</b> otuz · <b>40</b> kırk · <b>50</b> elli · <b>60</b> altmış · <b>70</b> yetmiş · <b>80</b> seksen · <b>90</b> doksan · <b>100</b> yüz · <b>1000</b> bin</p>
+<p>Составные числа строятся как конструктор, отдельными словами: <i>11 = on bir, 25 = yirmi beş, 99 = doksan dokuz, 250 = iki yüz elli</i>. Перед yüz и bin «один» не говорят: <i>100 = yüz, 1000 = bin</i>.</p>
+<p>После числа существительное остаётся в единственном числе: <i>iki kitap</i> — две книги. Цена: <i>Ne kadar?</i> — <i>On beş lira.</i></p>`,
+        exercises: [
+          { type: 'input', q: 'üç + dört = ___ (словом)', a: 'yedi' },
+          { type: 'choice', q: '40 — это…', options: ['kırk', 'dört', 'on dört'], a: 'kırk' },
+          { type: 'choice', q: '15 — это…', options: ['on beş', 'beş on', 'elli'], a: 'on beş' },
+          { type: 'input', q: '20 + 5 = ___ (словом)', a: 'yirmi beş' },
+          { type: 'choice', q: '90 — это…', options: ['doksan', 'dokuz', 'seksen'], a: 'doksan' },
+          { type: 'choice', q: 'İki yüz — это…', options: ['200', '12', '102'], a: '200' },
+          { type: 'choice', q: 'Как сказать «три яблока»?', options: ['üç elma', 'üç elmalar', 'elma üç'], a: 'üç elma' }
+        ]
+      },
+      {
+        id: 'tr-bu-ne', title: 'Что это? Кто это?',
+        theory: `<p><b>Bu ne?</b> — «Что это?». Ответ: <i><b>Bu</b> bir kitap.</i> — «Это книга». Слово <b>bir</b> работает как неопределённый артикль.</p>
+<p><b>Bu kim?</b> — «Кто это?». <i>Bu Ayşe. O öğretmen.</i></p>
+<p><b>bu</b> — это (рядом со мной), <b>şu</b> — вон то (рядом с вами или то, на что показываю), <b>o</b> — то (далеко).</p>
+<p>Вопрос «да/нет» — частица <b>mı / mi / mu / mü</b> после слова, гласная как в последнем слоге: <i>Bu kitap <b>mı</b>? Bu kalem <b>mi</b>? Bu okul <b>mu</b>?</i> Ответ: <i><b>Evet</b>, bu kitap.</i> или <i><b>Hayır</b>, bu kitap <b>değil</b>.</i></p>`,
+        exercises: [
+          { type: 'choice', q: 'Bu ___? — Bu bir kalem.', options: ['ne', 'kim', 'nerede'], a: 'ne' },
+          { type: 'choice', q: 'Bu ___? — Bu Ayşe.', options: ['kim', 'ne', 'nasıl'], a: 'kim' },
+          { type: 'choice', q: 'Bu kitap ___? — Evet, bu kitap.', options: ['mı', 'mi', 'mu'], a: 'mı' },
+          { type: 'choice', q: 'Bu kalem ___? — Hayır, bu defter.', options: ['mi', 'mı', 'mu'], a: 'mi' },
+          { type: 'choice', q: 'Hayır, bu kedi ___. Bu köpek.', options: ['değil', 'yok', 'hayır'], a: 'değil' },
+          { type: 'choice', q: 'Masa ___? (где стол?)', options: ['nerede', 'ne', 'kim'], a: 'nerede' }
+        ]
+      },
+      {
+        id: 'tr-meeting', title: 'Знакомство: имя, откуда, возраст',
+        theory: `<p><b>Adın ne?</b> / <b>Senin adın ne?</b> — «Как тебя зовут?». Ответ: <i>Benim adım Anna.</i> — «Меня зовут Анна» (дословно «моё имя — Анна»).</p>
+<p><b>Nerelisin?</b> — «Откуда ты?». Ответ: <i>Rusyalıyım.</i> — «Я из России», <i>Moskovalıyım</i> — «я из Москвы». Аффикс <b>-lı / -li</b> значит «происходящий откуда-то».</p>
+<p><b>Kaç yaşındasın?</b> — «Сколько тебе лет?». Ответ: <i>Yirmi beş yaşındayım.</i></p>
+<p><b>Ne iş yapıyorsun?</b> — «Кем работаешь?». Ответ: <i>Öğretmenim. Öğrenciyim.</i> Знакомство завершают словами <b>Memnun oldum</b> — «Приятно познакомиться».</p>`,
+        exercises: [
+          { type: 'choice', q: 'Senin ___ ne? — Benim adım Elif.', options: ['adın', 'adım', 'adı'], a: 'adın' },
+          { type: 'choice', q: 'Nereli___? — Rusyalıyım.', options: ['sin', 'sın', 'sun'], a: 'sin' },
+          { type: 'choice', q: 'Kaç yaşındasın? — Yirmi ___.', options: ['yaşındayım', 'yaşım', 'yaş'], a: 'yaşındayım' },
+          { type: 'choice', q: '«Приятно познакомиться» — это…', options: ['Memnun oldum', 'Hoş geldiniz', 'Afiyet olsun'], a: 'Memnun oldum' },
+          { type: 'choice', q: 'Ne iş ___? — Öğretmenim.', options: ['yapıyorsun', 'yapıyorum', 'yapıyor'], a: 'yapıyorsun' },
+          { type: 'input', q: 'Я из России: ___.', a: 'rusyalıyım' }
+        ]
+      }
+    ]
+  },
+  {
     id: 'tr-basics', title: 'Основы: гармония гласных и «быть»', level: 'A1',
     lessons: [
       {

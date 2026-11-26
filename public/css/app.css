@@ -400,6 +400,10 @@ body{background-color:var(--bg);
 @media (prefers-reduced-motion:reduce){.fern-row .fern-bush{animation:none}}
 .foot p{position:relative;z-index:5;width:fit-content;padding:10px 18px;border-radius:14px;background:color-mix(in srgb,var(--bg) 88%,transparent);box-shadow:0 2px 10px rgba(15,42,25,.12)}
 .fern-row{z-index:0}
+/* Языки без голоса синтеза речи (карачаево-балкарский): прячем кнопки озвучки */
+.no-tts .icon-btn.say,.no-tts .say-p,.no-tts .play.say,.no-tts .say svg{display:none}
+.lang-opt .beta{font-size:12px;font-weight:700;color:var(--gold-ink)}
+.beta-note{margin:0 0 8px;font-size:14px;font-weight:700;color:#fff6d6;text-shadow:0 1px 3px rgba(5,25,12,.9)}
 
 /* ---------- страница «Прогресс» ---------- */
 a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,255,255,.18)}

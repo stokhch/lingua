@@ -1,5 +1,23 @@
 // Короткие турецкие фразы с переводом для тренировок «Конструктор фраз», «Диктант» и «Слово в контексте». Написаны для Лингвы.
-const RAW = `Her gün saat yedide kalkarım.|Я встаю в семь каждый день.
+const RAW = `Merhaba!|Привет!
+Günaydın!|Доброе утро!
+İyi akşamlar!|Добрый вечер!
+Hoş geldiniz!|Добро пожаловать!
+Memnun oldum.|Приятно познакомиться.
+Özür dilerim.|Извините.
+Anlamıyorum.|Я не понимаю.
+Tekrar eder misiniz?|Не повторите?
+Türkçe bilmiyorum.|Я не знаю турецкий.
+Biraz Türkçe konuşuyorum.|Я немного говорю по-турецки.
+Bu ne?|Что это?
+Bu kim?|Кто это?
+Tuvalet nerede?|Где туалет?
+Su istiyorum.|Я хочу воды.
+Afiyet olsun!|Приятного аппетита!
+Kaç yaşındasın?|Сколько тебе лет?
+Yirmi beş yaşındayım.|Мне двадцать пять лет.
+Ben öğrenciyim.|Я студент.
+Her gün saat yedide kalkarım.|Я встаю в семь каждый день.
 Kız kardeşim köpekleri çok seviyor.|Моя сестра очень любит собак.
 Otobüs durağı nerede?|Где автобусная остановка?
 Bana yardım eder misiniz?|Не могли бы вы мне помочь?

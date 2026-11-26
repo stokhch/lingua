@@ -43,7 +43,7 @@ function pickLang() {
   modal(`<h2>Какой язык учим?</h2><p class="muted">У каждого языка свой словарь, тексты и уроки. Опыт, стрик и достижения общие.</p>
     <div class="lang-pick">${Object.values(LANGS).map(l => {
       const n = wordCount(l.id);
-      return `<button class="lang-opt ${l.id === L().id ? 'on' : ''}" data-l="${l.id}"><span class="code">${l.code}</span><b>${l.name}</b><span class="muted">${n ? `${n} ${plural(n, 'слово', 'слова', 'слов')} в словаре` : 'словарь пуст'}</span></button>`;
+      return `<button class="lang-opt ${l.id === L().id ? 'on' : ''}" data-l="${l.id}"><span class="code">${l.code}</span><b>${l.name}</b><span class="muted">${n ? `${n} ${plural(n, 'слово', 'слова', 'слов')} в словаре` : 'словарь пуст'}</span>${l.beta ? `<span class="beta">${l.beta}</span>` : ''}</button>`;
     }).join('')}</div>`,
   (el, close) => { el.querySelector('.lang-pick').onclick = e => {
     const b = e.target.closest('[data-l]'); if (!b) return;
@@ -69,6 +69,7 @@ document.addEventListener('click', e => {
 function updateHud() {
   if (!store.state || !$('#hud-xp')) return;
   $('#hud-lang b').textContent = L().code;
+  document.body.classList.toggle('no-tts', !L().tts);
   $('#hud-streak').textContent = G.currentStreak();
   $('#hud-xp').textContent = `${G.todayXp()}/${store.state.goal}`;
   $('#hud-avatar').textContent = (store.state.name || '?').slice(0, 1).toUpperCase();
@@ -121,7 +122,7 @@ function renderHome(main) {
     </div>
     <div class="hero-text">
       <h1>${tx > 0 || pim.state === 'starving' ? pim.title : 'Привет, ' + esc(s.name) + '!'}</h1>
-      <p class="lang-line">Учим ${L().acc} · <button class="link" id="home-lang">сменить язык</button></p>
+      <p class="lang-line">Учим ${L().acc} · <button class="link" id="home-lang">сменить язык</button></p>${L().beta ? `<p class="beta-note">${L().beta}. Озвучки для этого языка в браузерах нет.</p>` : ''}
       <a class="feed" href="#progress" title="Сытость Пима — подробнее на странице «Прогресс»"><span class="apples">${appleRow(pim)}</span><span>${pim.apples} из ${APPLES} яблок</span></a>
       <p class="lead">${tx >= s.goal ? `${pim.hint} Можно повторить пару слов на завтра или почитать.` : `${pim.hint} До полной миски — <b>${pim.left} XP</b>.`}</p>
       <div class="stat-row">
