@@ -22,6 +22,7 @@ import { satiety, appleRow, APPLES, plea } from './pim.js';
 import { initPim, onRoute, feedHref } from './pimfx.js';
 import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
 import { flagsFor } from './flags.js';
+import { dayPlanHtml } from './views/dayplan.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 
 const NAV = [
@@ -159,6 +160,7 @@ function route() {
 
 // ---------- Главная ----------
 function renderHome(main) {
+  const plan = dayPlanHtml(); // первым: награды за выполненные задания должны попасть в счётчики ниже
   const s = store.state, c = G.counts(), lv = G.levelInfo(), tx = G.todayXp();
   const { TEXTS, SET_INFO, firstSet } = L();
   const goalPct = Math.min(100, Math.round((tx / s.goal) * 100));
@@ -186,6 +188,7 @@ function renderHome(main) {
       </div>
     </div>
   </section>
+  ${plan}
   ${placementBanner()}
   <section class="band">
     <div class="grid-3 grid-4">

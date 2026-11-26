@@ -802,3 +802,22 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 }
 @media (max-width:359px){.auth-btn span{display:none}.auth-btn{padding:8px!important}.auth-btn .ic{width:20px;height:20px}}
 @media (min-width:761px) and (max-width:1300px){.nav a span{display:none}.nav a{padding:10px}}
+
+/* ---------- План на день ---------- */
+.day-plan{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.day-plan.complete{border-color:var(--leaf)}
+.plan-head{display:flex;gap:12px;align-items:center}
+.plan-head>.ic{width:34px;height:34px;color:var(--brand-ink);flex:none}
+.plan-head>div{flex:1;min-width:0}.plan-head h2{margin:0}.plan-head p{margin:2px 0 0}
+.plan-count{font-size:15px;color:var(--muted);white-space:nowrap}.plan-count b{font-size:26px;color:var(--ink)}
+.plan-bar{display:block;margin:12px 0 6px}
+.plan-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.plan-list a{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;text-decoration:none;color:var(--ink);border:2px solid transparent}
+.plan-list a:hover{border-color:var(--leaf)}
+.plan-list .tick{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);color:var(--brand-ink)}
+.plan-list .tick .ic{width:20px;height:20px}
+.plan-list .what{flex:1;min-width:0}.plan-list .what b{display:block}.plan-list .what span{color:var(--muted);font-size:14px}
+.plan-list .have{font-weight:800;white-space:nowrap;color:var(--brand-ink);font-size:14px}
+.plan-list li.ok .tick{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.plan-list li.ok .what b{text-decoration:line-through;text-decoration-thickness:2px;opacity:.75}
+.plan-list li.ok .have{color:var(--muted)}
