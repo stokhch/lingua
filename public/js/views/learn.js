@@ -47,6 +47,7 @@ export function renderReader(main, id) {
       ${t.summary ? `<p class="text-note"><b>О чём ${t.kind === 'song' ? 'песня' : t.kind === 'poem' ? 'стихотворение' : 'текст'}:</b> ${esc(t.summary)}</p>` : ''}
       ${t.translation ? `<details class="text-note"><summary><b>Перевод</b></summary><p style="white-space:pre-line;margin:8px 0 0">${esc(t.translation)}</p></details>` : ''}
       ${t.links?.length ? `<p class="text-note"><b>Полный текст и запись:</b> ${t.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener nofollow">${esc(l.label)}</a>`).join(' · ')}</p>` : ''}
+      ${t.set && L().SET_INFO[t.set] ? `<p class="text-note"><b>Слова из ${t.kind === 'song' ? 'песни' : 'текста'}:</b> <a href="#set-${esc(t.set)}">набор «${esc(L().SET_INFO[t.set].title)}» · ${L().SETS[t.set]?.length || 0} слов</a></p>` : ''}
       ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
       ${src ? `<p class="muted small">Источник: <a href="${esc(src)}" target="_blank" rel="noopener nofollow">${esc(src.replace(/^https?:[/][/](www[.])?/, '').slice(0, 60))}</a></p>` : ''}
       <div class="legend"><span class="mine">в словаре</span><span class="known">изучено</span><span>нажмите на слово — перевод слова и всего предложения</span></div>

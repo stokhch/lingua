@@ -367,6 +367,186 @@ function taleKrcCrane() {
   <g transform="translate(520 262)"><path d="M-6 0v-60M6 0v-60" stroke="#2a2a2a" stroke-width="3"/><ellipse cx="0" cy="-74" rx="26" ry="16" fill="#e8ecef"/><path d="M-26 -74q-14 6 -8 18q10 -8 14 -14z" fill="#2a2a2a"/><path d="M14 -84q10 -30 2 -54" stroke="#e8ecef" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="16" cy="-140" r="8" fill="#e8ecef"/><circle cx="16" cy="-146" r="3.5" fill="#d23a2a"/><path d="M22 -140l40 6l-40 2z" fill="#3a3a3a"/><circle cx="18" cy="-142" r="1.4" fill="#222"/></g>`;
 }
 
+// ---------- старинные английские песни ----------
+const moon = (x, y, r, bg) => `<circle cx="${x}" cy="${y}" r="${r * 1.8}" fill="#fff6c8" opacity=".12"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fff3c0"/><circle cx="${x + r * .45}" cy="${y - r * .25}" r="${r * .85}" fill="${bg}"/>`;
+const star5 = (x, y, r, c = '#ffe27a') => `<path d="${Array.from({ length: 10 }, (_, i) => { const a = Math.PI / 5 * i - Math.PI / 2, rr = i % 2 ? r * .45 : r; return `${i ? 'L' : 'M'}${(x + Math.cos(a) * rr).toFixed(1)} ${(y + Math.sin(a) * rr).toFixed(1)}`; }).join('')}Z" fill="${c}"/>`;
+const sparkle = (x, y, r, c = '#fff') => `<path d="M${x} ${y - r}Q${x + r * .15} ${y - r * .15} ${x + r} ${y}Q${x + r * .15} ${y + r * .15} ${x} ${y + r}Q${x - r * .15} ${y + r * .15} ${x - r} ${y}Q${x - r * .15} ${y - r * .15} ${x} ${y - r}z" fill="${c}"/>`;
+const snowflakes = (n, seed = 1) => Array.from({ length: n }, (_, i) => `<circle cx="${(i * 89 + seed * 31) % W}" cy="${(i * 47 + seed * 13) % 250}" r="${1.4 + (i % 3) * .8}" fill="#fff" opacity=".85"/>`).join('');
+const horse = (x, y, s = 1, c = '#8a5a34') => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-34" rx="30" ry="14" fill="${c}"/><path d="M22 -42l14 -26l12 4l-4 10l-10 2l-6 16z" fill="${c}"/><path d="M34 -68l2 -8l4 7z" fill="${c}"/><path d="M24 -46q4 -20 14 -24" stroke="#3a2414" stroke-width="5" fill="none"/><circle cx="40" cy="-62" r="1.6" fill="#222"/><path d="M-30 -36q-12 4 -10 20" stroke="#3a2414" stroke-width="5" fill="none" stroke-linecap="round"/>${[-22, -12, 12, 22].map((k, i) => `<path d="M${k} -24l${i % 2 ? 4 : -4} 24" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`).join('')}</g>`;
+const sailship = (x, y, s = 1, hull = '#5a3a22', sail = '#f4efe2') => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-60 0h120l-18 20h-86z" fill="${hull}"/><path d="M-60 0h120" stroke="#2a1a10" stroke-width="2"/><path d="M-20 0v-92M24 0v-76" stroke="#3a2414" stroke-width="3"/><path d="M-50 -10q30 -30 0 -76h56q-24 40 4 76z" fill="${sail}"/><path d="M0 -8q22 -26 0 -60h44q-18 30 4 60z" fill="${sail}" opacity=".95"/><path d="M-20 -92l14 6l-14 6z" fill="#c0392b"/></g>`;
+const lady = (x, y, s = 1, dress = '#3f8a4a', hair = '#8a4a1a') => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-30 0q4 -50 22 -66h16q18 16 22 66z" fill="${dress}"/><path d="M-8 -66q-18 6 -24 30q8 2 14 -8zM8 -66q18 6 24 30q-8 2 -14 -8z" fill="#2f6e38"/><path d="M-10 -66l10 18l10 -18z" fill="#f3e2c0"/><circle cx="0" cy="-78" r="10" fill="#f3c9a8"/><path d="M-11 -78q0 -16 11 -16q11 0 11 16q-3 -8 -11 -9q-8 1 -11 9zM-11 -80q-4 16 -2 24h4zM11 -80q4 16 2 24h-4z" fill="${hair}"/><circle cx="-4" cy="-78" r="1.4" fill="#333"/><circle cx="4" cy="-78" r="1.4" fill="#333"/></g>`;
+
+// Звёздочка: ночное небо, большая мерцающая звезда, дом со светлым окном
+function songTwinkle() {
+  return `<defs>${sky('sTw', [[0, '#141a46'], [.6, '#2f3f86'], [1, '#5a6fb0']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sTw)"/>${stars(46, 3)}${moon(90, 60, 22, '#1a2152')}
+  <circle cx="400" cy="92" r="70" fill="#ffe27a" opacity=".08"/><circle cx="400" cy="92" r="44" fill="#ffe27a" opacity=".14"/>${star5(400, 92, 30)}${sparkle(400, 92, 52, '#fff8d8')}
+  ${sparkle(250, 60, 10)}${sparkle(540, 50, 8)}${sparkle(560, 140, 6)}${sparkle(180, 130, 7)}
+  ${hills(214, '#1f2a5a', 24)}<path d="M0 250q200 -30 640 -6V${H}H0z" fill="#161f44"/>
+  <g transform="translate(150 240)"><rect x="-44" y="-50" width="88" height="50" fill="#2c3666"/><path d="M-54 -48L0 -86L54 -48z" fill="#22294f"/><rect x="-28" y="-38" width="24" height="20" fill="#ffd87a"/><path d="M-16 -38v20M-28 -28h24" stroke="#2c3666" stroke-width="2"/><rect x="12" y="-30" width="18" height="30" fill="#1a2040"/>
+  <circle cx="-16" cy="-24" r="4" fill="#f3c9a8"/></g>
+  <!-- путник с фонарём -->
+  <g transform="translate(470 256)"><path d="M-8 0l3 -30h10l3 30z" fill="#3a3a5a"/><circle cx="0" cy="-36" r="6" fill="#e9c4a0"/><path d="M-7 -38q7 -10 14 0z" fill="#2a2a40"/><path d="M6 -24l12 -4" stroke="#3a3a5a" stroke-width="3"/><path d="M-6 -24l-6 26" stroke="#7a5228" stroke-width="2.5"/><circle cx="20" cy="-26" r="10" fill="#ffd87a" opacity=".3"/><rect x="17" y="-30" width="6" height="8" fill="#ffd87a"/></g>`;
+}
+
+// Ферма Макдональда: красный амбар, корова, свинья, утка, овца, лошадь
+function songFarm() {
+  const cow = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-16" rx="26" ry="14" fill="#fff"/><ellipse cx="-8" cy="-20" rx="8" ry="6" fill="#333"/><ellipse cx="12" cy="-12" rx="6" ry="5" fill="#333"/><ellipse cx="28" cy="-24" rx="10" ry="8" fill="#fff"/><ellipse cx="34" cy="-20" rx="5" ry="4" fill="#f5b8c0"/><path d="M22 -32l-4 -6M32 -32l4 -6" stroke="#ccc" stroke-width="3"/>${[-16, -6, 8, 18].map(k => `<rect x="${k}" y="-4" width="4" height="10" fill="#eee"/>`).join('')}</g>`;
+  const sheep = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">${[[-14, -18], [0, -24], [14, -18], [-6, -12], [8, -12]].map(([a, b]) => `<circle cx="${a}" cy="${b}" r="11" fill="#f6f3ea"/>`).join('')}<ellipse cx="24" cy="-22" rx="7" ry="9" fill="#3a3a3a"/><circle cx="26" cy="-24" r="1.4" fill="#fff"/>${[-12, -2, 8, 16].map(k => `<rect x="${k}" y="-6" width="3" height="10" fill="#3a3a3a"/>`).join('')}</g>`;
+  const duck = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-10" rx="16" ry="10" fill="#fff"/><circle cx="12" cy="-22" r="8" fill="#3a8a4a"/><path d="M19 -22l9 2l-9 3z" fill="#f3a02a"/><circle cx="13" cy="-24" r="1.3" fill="#222"/><path d="M-16 -12l-6 -6l2 10z" fill="#fff"/></g>`;
+  const note = (x, y) => `<path d="M${x} ${y}v-18l12 -4v18" stroke="#5a3a6a" stroke-width="2.5" fill="none"/><ellipse cx="${x - 3}" cy="${y}" rx="4" ry="3" fill="#5a3a6a"/><ellipse cx="${x + 9}" cy="${y - 4}" rx="4" ry="3" fill="#5a3a6a"/>`;
+  return `<defs>${sky('sFa', [[0, '#8ccaf0'], [1, '#e8f6fc']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sFa)"/>${sun(570, 50, 20)}${cloud(150, 44, .8)}${cloud(380, 36, .6)}
+  ${hills(170, '#a5d276', 20)}<rect x="0" y="200" width="${W}" height="80" fill="#7cbf5a"/>
+  <g transform="translate(120 210)"><rect x="-60" y="-70" width="120" height="70" fill="#c0392b"/><path d="M-70 -68L0 -116L70 -68z" fill="#8e2a20"/><path d="M-22 0v-44h44v44M-22 -44l44 44M22 -44l-44 44" stroke="#f4eee0" stroke-width="4" fill="none"/><rect x="-12" y="-92" width="24" height="16" fill="#f4eee0"/><path d="M-12 -84h24" stroke="#8e2a20" stroke-width="2"/></g>
+  <path d="M200 236h440M200 220h440" stroke="#b08a5a" stroke-width="4"/>${Array.from({ length: 12 }, (_, i) => `<rect x="${210 + i * 36}" y="210" width="6" height="34" fill="#9a7444"/>`).join('')}
+  ${cow(280, 260, 1.1)}${pig(390, 266, 1.1)}${sheep(480, 266, 1)}${duck(560, 266, 1)}${horse(600, 236, .8)}
+  ${note(250, 160)}${note(430, 140)}${note(520, 176)}`;
+}
+
+// Лодка на тихой речке, утки и камыш
+function songRow() {
+  return `<defs>${sky('sRo', [[0, '#9fd4f2'], [1, '#f2f8e4']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sRo)"/>${sun(90, 56, 22)}${cloud(300, 46, .8)}${cloud(520, 60, .7)}
+  ${hills(150, '#98c86a', 18)}<path d="M0 170q160 -20 320 -4t320 0V${H}H0z" fill="#79b056"/>
+  ${cypress(70, 172, 60, '#3f7a3a')}${cypress(96, 172, 44, '#4e8c46')}${cypress(560, 168, 70, '#3f7a3a')}${cypress(590, 170, 50, '#4e8c46')}
+  <path d="M0 200q160 -24 320 -10t320 -6V${H}H0z" fill="#4a9ac8"/>
+  ${Array.from({ length: 12 }, (_, i) => `<path d="M${(i * 113) % 600} ${214 + (i % 5) * 12}q14 -6 28 0" stroke="#bfe4f6" stroke-width="2.5" fill="none" opacity=".7"/>`).join('')}
+  <g transform="translate(330 236)"><path d="M-70 -8h140q-10 22 -30 24h-80q-20 -2 -30 -24z" fill="#b5652e"/><path d="M-70 -8h140" stroke="#7a3e18" stroke-width="3"/>
+  <path d="M-6 -8l3 -32h14l3 32z" fill="#d24a3a"/><circle cx="4" cy="-48" r="9" fill="#f3c9a8"/><path d="M-6 -52q10 -14 20 0z" fill="#f2d45a"/><circle cx="7" cy="-49" r="1.4" fill="#333"/>
+  <path d="M-60 26L40 -36M60 26L-30 -36" stroke="#7a5228" stroke-width="4" stroke-linecap="round"/><ellipse cx="-64" cy="28" rx="10" ry="4" fill="#7a5228"/><ellipse cx="64" cy="28" rx="10" ry="4" fill="#7a5228"/></g>
+  ${[[500, 250], [530, 258]].map(([x, y]) => `<g transform="translate(${x} ${y})"><ellipse cx="0" cy="0" rx="12" ry="6" fill="#8a6a3a"/><circle cx="9" cy="-8" r="5" fill="#3a7a4a"/><path d="M14 -8l6 1l-6 2z" fill="#f3a02a"/></g>`).join('')}
+  ${Array.from({ length: 7 }, (_, i) => `<path d="M${20 + i * 10} 270q-4 -40 4 -60" stroke="#5a8a3a" stroke-width="3" fill="none"/><ellipse cx="${24 + i * 10}" cy="${214 - (i % 3) * 6}" rx="3" ry="9" fill="#7a5228"/>`).join('')}`;
+}
+
+// Старый Лондонский мост с домами на арках, Темза, падающие камни
+function songBridge() {
+  return `<defs>${sky('sBr', [[0, '#c4d6e4'], [1, '#f4ead6']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sBr)"/>${sun(540, 70, 20, '#ffe9a8', .3)}${cloud(140, 50, .9, '#fff', .7)}${cloud(400, 40, .7, '#fff', .7)}
+  <g fill="#a8a0b0" opacity=".8"><rect x="40" y="130" width="60" height="60"/><path d="M36 130h68l-34 -22z"/><rect x="540" y="120" width="70" height="70"/><rect x="560" y="96" width="20" height="26"/><path d="M556 96h28l-14 -18z"/></g>
+  ${sea(186, '#5a7f98', '#b8d4e2')}
+  <!-- мост: арки и опоры -->
+  <path d="M60 190h520v-36H60z" fill="#b9a68a"/>
+  ${[0, 1, 2, 3, 4, 5].map(i => `<path d="M${84 + i * 84} 190v-14a28 22 0 0 1 56 0v14z" fill="#5a7f98"/>`).join('')}
+  ${[0, 1, 2, 3, 4, 5, 6].map(i => `<path d="M${76 + i * 84} 196h24l-4 -10h-16z" fill="#9c8a6e"/>`).join('')}
+  <!-- дома на мосту -->
+  ${[[90, 54, '#e8d8b8'], [160, 70, '#d9c49a'], [250, 60, '#efe2c6'], [330, 50, '#d9c49a'], [400, 64, '#e8d8b8'], [480, 56, '#efe2c6']].map(([x, h, c], i) => `<rect x="${x}" y="${154 - h}" width="${i === 3 ? 0 : 60}" height="${h}" fill="${c}"/><path d="M${x - 4} ${154 - h}l${34} -22l${34} 22z" fill="#8a4a35" opacity="${i === 3 ? 0 : 1}"/>${i === 3 ? '' : `<path d="M${x} ${154 - h + 14}h60M${x + 20} ${154 - h}v${h}M${x + 40} ${154 - h}v${h}" stroke="#6a4a30" stroke-width="2.5"/><rect x="${x + 6}" y="${154 - h + 20}" width="10" height="10" fill="#f0d89a"/><rect x="${x + 44}" y="${154 - h + 20}" width="10" height="10" fill="#f0d89a"/>`}`).join('')}
+  <!-- провал и падающие камни -->
+  <path d="M330 154l10 10l12 -8l14 12l14 -14v-0z" fill="#e4dcc8"/>
+  ${[[350, 176, 0], [366, 200, 20], [342, 214, -15], [372, 232, 35]].map(([x, y, r]) => `<rect x="${x}" y="${y}" width="12" height="9" fill="#9c8a6e" transform="rotate(${r} ${x + 6} ${y + 4})"/>`).join('')}
+  <path d="M340 252q20 -6 40 0" stroke="#fff" stroke-width="3" fill="none" opacity=".8"/>`;
+}
+
+// Шотландский берег: девушка на скале смотрит на корабль за морем, ветер
+function songBonnie() {
+  return `<defs>${sky('sBo', [[0, '#7a9cc0'], [.6, '#c9d8e6'], [1, '#eef0ea']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sBo)"/>${cloud(320, 50, 1.1, '#f4f6fa', .8)}${cloud(520, 80, .8, '#f4f6fa', .7)}
+  ${sea(150, '#3f6f94', '#a8cbe2')}
+  ${sailship(470, 160, .45)}
+  ${[0, 1, 2].map(i => `<path d="M${200 + i * 30} ${70 + i * 26}q40 -16 80 0t80 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".75"/>`).join('')}
+  <path d="M0 150q40 -30 100 -30q80 0 120 40q30 30 40 120H0z" fill="#6a7a5a"/><path d="M0 170q60 -30 140 -20q60 10 90 60l20 70H0z" fill="#566848"/>
+  ${Array.from({ length: 10 }, (_, i) => `<circle cx="${30 + i * 18}" cy="${142 - (i % 3) * 4 + (i > 6 ? 12 : 0)}" r="4" fill="#9a6ab8"/>`).join('')}
+  ${lady(150, 142, .9, '#4a6a9a', '#c0702a')}
+  <path d="M168 76q20 -4 30 6" stroke="#c0702a" stroke-width="3" fill="none"/>`;
+}
+
+// Зимние сани с колокольчиками, лошадь, снег
+function songJingle() {
+  const bellJ = (x, y) => `<path d="M${x - 6} ${y}q0 -12 6 -12q6 0 6 12z" fill="#e0b43a"/><circle cx="${x}" cy="${y + 2}" r="2" fill="#a8801a"/>`;
+  return `<defs>${sky('sJi', [[0, '#2a3a6a'], [.7, '#6a7ab0'], [1, '#c8d2ea']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sJi)"/>${stars(20, 7)}${moon(560, 54, 18, '#2c3c6c')}
+  ${cypress(70, 190, 90, '#1f4a3a')}${cypress(110, 190, 70, '#2a5a44')}${cypress(600, 186, 80, '#1f4a3a')}
+  <path d="M0 180q160 -30 320 -10t320 -4V${H}H0z" fill="#e8eef8"/><path d="M0 230q200 -30 640 -6V${H}H0z" fill="#f6f9fd"/>
+  <path d="M60 252q200 -20 520 -10" stroke="#c8d4e8" stroke-width="3" fill="none"/>
+  ${horse(400, 246, 1, '#5a3a24')}
+  <path d="M376 212h-60" stroke="#8a2a2a" stroke-width="3"/>${[388, 400, 412].map(x => bellJ(x, 214)).join('')}
+  <!-- сани -->
+  <g transform="translate(250 244)"><path d="M-70 -6h110q20 0 24 -30h10q-2 40 -34 44h-110z" fill="#b02a2a"/><path d="M-80 10h130q24 0 30 -14" stroke="#e0b43a" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="-64" y="-30" width="80" height="24" fill="#c83a3a"/>
+  ${[[-44, '#2a6ab0', '#f2d45a'], [-14, '#2a8a4a', '#6a3a1a']].map(([x, coat, hair]) => `<path d="M${x - 10} -30l3 -26h14l3 26z" fill="${coat}"/><circle cx="${x}" cy="-62" r="8" fill="#f3c9a8"/><path d="M${x - 9} -64q9 -14 18 0z" fill="${hair}"/><path d="M${x - 9} -60h18" stroke="#e8e8e8" stroke-width="3"/>`).join('')}</g>
+  ${snowflakes(40, 2)}
+  <path d="M470 150q10 -10 20 0M490 140q10 -10 20 0" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/>`;
+}
+
+// Каньон золотоискателей: шахта, хижина, река и утята
+function songClementine() {
+  return `<defs>${sky('sCl', [[0, '#f2b26a'], [.6, '#f8d8a0'], [1, '#fcecc8']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sCl)"/>${sun(320, 70, 24, '#fff2b0', .4)}
+  <path d="M0 60h120l20 30h40l10 40l-30 150H0z" fill="#b8643a"/><path d="M0 120h90l30 30l-20 130H0z" fill="#9a4e2a"/>
+  <path d="M640 50h-110l-20 40h-40l-16 50l40 140h146z" fill="#b8643a"/><path d="M640 110h-90l-30 40l30 130h90z" fill="#9a4e2a"/>
+  ${[[30, 90], [60, 160], [580, 100], [610, 190]].map(([x, y]) => `<path d="M${x} ${y}h40" stroke="#7a3a1a" stroke-width="3" opacity=".5"/>`).join('')}
+  <!-- шахта -->
+  <g transform="translate(70 200)"><path d="M-24 0v-40a24 24 0 0 1 48 0v40z" fill="#3a2414"/><path d="M-28 0v-44h56v44" stroke="#8a5a2a" stroke-width="6" fill="none"/><path d="M-28 -44h56" stroke="#8a5a2a" stroke-width="8"/></g>
+  <path d="M40 210l140 10" stroke="#6a4a2a" stroke-width="3"/><g transform="translate(150 214)"><rect x="-16" y="-14" width="32" height="14" fill="#6a4a2a"/><circle cx="-10" cy="2" r="4" fill="#3a2a1a"/><circle cx="10" cy="2" r="4" fill="#3a2a1a"/>${[-8, 0, 8].map(k => `<circle cx="${k}" cy="-16" r="4" fill="#e0b43a"/>`).join('')}</g>
+  <!-- хижина -->
+  <g transform="translate(510 196)"><rect x="-40" y="-40" width="80" height="40" fill="#8a5a34"/>${[-32, -24, -16, -8].map(k => `<path d="M-40 ${k}h80" stroke="#6a4024" stroke-width="2"/>`).join('')}<path d="M-48 -38L0 -66L48 -38z" fill="#5a3a22"/><rect x="-8" y="-24" width="16" height="24" fill="#3a2414"/><rect x="16" y="-32" width="12" height="10" fill="#f2d98a"/></g>
+  <!-- река -->
+  <path d="M190 280q40 -40 130 -50t130 -30q30 -6 40 0q-10 30 -60 46t-110 34z" fill="#4a9ac8"/>
+  ${[[300, 244], [330, 236], [360, 228]].map(([x, y], i) => `<g transform="translate(${x} ${y})"><ellipse cx="0" cy="0" rx="${i ? 7 : 10}" ry="${i ? 4 : 5}" fill="#ffd84a"/><circle cx="${i ? 6 : 8}" cy="-5" r="${i ? 3.5 : 4.5}" fill="#ffd84a"/><path d="M${i ? 9 : 12} -5l4 1l-4 2z" fill="#f39a2a"/></g>`).join('')}
+  <!-- Клементина -->
+  ${lady(250, 236, .8, '#d24a6a', '#6a3a1a')}<rect x="226" y="230" width="20" height="9" fill="#a87a4a"/><rect x="254" y="230" width="20" height="9" fill="#a87a4a"/>`;
+}
+
+// Парусник после бури: тучи расходятся, лучи рассвета над морем
+function songGrace() {
+  return `<defs>${sky('sGr', [[0, '#4a5a7a'], [.45, '#e8a87a'], [1, '#ffe2a8']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sGr)"/>
+  ${Array.from({ length: 9 }, (_, i) => `<path d="M420 150L${200 + i * 60} 0h22z" fill="#fff4c8" opacity=".18"/>`).join('')}
+  ${sun(420, 150, 26, '#fff0b0', .5)}
+  ${cloud(120, 40, 1.6, '#5a6480', .9)}${cloud(260, 30, 1.3, '#6a7490', .85)}${cloud(600, 46, 1.4, '#5a6480', .9)}
+  <path d="M60 70l-8 22l10 -2l-8 22" stroke="#ffe27a" stroke-width="2.5" fill="none" opacity=".6"/>
+  ${sea(160, '#2f5a7f', '#f2c890')}
+  <path d="M0 160h${W}" stroke="#f8d8a0" stroke-width="2" opacity=".7"/>
+  ${sailship(250, 214, 1, '#4a2e1a', '#efe4cc')}
+  ${Array.from({ length: 6 }, (_, i) => `<path d="M${120 + i * 60} ${236 + (i % 2) * 14}q20 -10 40 0" stroke="#d8ecf8" stroke-width="3" fill="none" opacity=".6"/>`).join('')}
+  ${[[520, 90], [548, 102], [572, 88]].map(([x, y]) => `<path d="M${x - 8} ${y}q8 -6 8 0q0 -6 8 0" stroke="#3a3a4a" stroke-width="2" fill="none"/>`).join('')}`;
+}
+
+// Ярмарка в Скарборо: замок на утёсе, палатки и травы
+function songScarborough() {
+  const tent = (x, c) => `<g transform="translate(${x} 236)"><rect x="-30" y="-30" width="60" height="30" fill="#f4ead6"/><path d="M-36 -30L0 -58L36 -30z" fill="${c}"/>${[-24, -12, 0, 12, 24].map(k => `<path d="M${k} -30v8" stroke="${c}" stroke-width="5"/>`).join('')}<rect x="-24" y="-14" width="48" height="6" fill="#a87a4a"/><path d="M0 -58v-10" stroke="#6a4a2a" stroke-width="2"/><path d="M0 -68l10 3l-10 3z" fill="${c}"/></g>`;
+  const herb = (x, c, h) => `<path d="M${x} 280v-${h}" stroke="#4a7a3a" stroke-width="2"/>${Array.from({ length: 4 }, (_, i) => `<ellipse cx="${x + (i % 2 ? 5 : -5)}" cy="${280 - h + 6 + i * 8}" rx="5" ry="2.5" fill="${c}"/>`).join('')}`;
+  return `<defs>${sky('sSc', [[0, '#9ec8e6'], [1, '#eef6f6']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sSc)"/>${sun(90, 50, 18)}${cloud(260, 44, .7)}
+  ${sea(150, '#3f7fa8', '#b8dcef')}
+  <path d="M380 160q30 -60 120 -70q90 -6 140 0V${H}H380z" fill="#7a6a52"/><path d="M400 170q60 -40 240 -50V${H}H400z" fill="#5f7a42"/>
+  <g transform="translate(540 92)" fill="#9a8e7a"><rect x="-50" y="-30" width="100" height="30"/><rect x="-62" y="-60" width="26" height="60"/><rect x="30" y="-50" width="24" height="50"/>${[-62, -54, -46, 30, 38, 46].map(x => `<rect x="${x}" y="-66" width="6" height="8"/>`).join('')}<rect x="-6" y="-18" width="12" height="18" fill="#5a4e3e"/></g>
+  <path d="M0 200q200 -30 420 -6t220 6V${H}H0z" fill="#8cbf5a"/>
+  ${tent(90, '#c0392b')}${tent(200, '#2a6ab0')}${tent(310, '#e0a020')}${tent(420, '#3a8a4a')}
+  ${person(150, 262, .8, '#6a4a2a', '#3a3a3a')}${person(372, 264, .8, '#2a4a6a', '#8a5a2a')}
+  ${herb(500, '#5aa04a', 34)}${herb(530, '#8aa88a', 28)}${herb(560, '#6a9a7a', 40)}${herb(590, '#7ab05a', 26)}`;
+}
+
+// Дама в зелёном платье с лютней в саду эпохи Тюдоров
+function songGreensleeves() {
+  return `<defs>${sky('sGs', [[0, '#e8d8b8'], [1, '#c8b890']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sGs)"/>
+  <!-- фахверковый дом -->
+  <g transform="translate(480 220)"><rect x="-110" y="-120" width="220" height="120" fill="#f4ead6"/><path d="M-120 -118L0 -170L120 -118z" fill="#7a3a2a"/>
+  ${[-110, -70, -30, 10, 50, 90].map(x => `<path d="M${x} -120v120" stroke="#3a2a1a" stroke-width="6"/>`).join('')}<path d="M-110 -60h220" stroke="#3a2a1a" stroke-width="6"/>${[-90, -10, 70].map(x => `<path d="M${x - 20} -120l40 60M${x + 20} -120l-40 60" stroke="#3a2a1a" stroke-width="4"/>`).join('')}
+  ${[-50, 30].map(x => `<rect x="${x}" y="-44" width="24" height="28" fill="#a8c8d8"/><path d="M${x} -30h24M${x + 12} -44v28" stroke="#3a2a1a" stroke-width="2"/>`).join('')}</g>
+  <rect x="0" y="220" width="${W}" height="60" fill="#6a9a4a"/>
+  ${Array.from({ length: 6 }, (_, i) => `<circle cx="${30 + i * 50}" cy="216" r="16" fill="#4a7a3a"/><circle cx="${26 + i * 50}" cy="210" r="4" fill="#d84a6a"/>`).join('')}
+  ${lady(200, 262, 1.6, '#3f8a4a', '#8a4a1a')}
+  <!-- лютня -->
+  <g transform="translate(250 180) rotate(-30)"><ellipse cx="0" cy="0" rx="20" ry="26" fill="#b8742e"/><circle cx="0" cy="0" r="6" fill="#5a3414"/><rect x="-4" y="-66" width="8" height="42" fill="#7a4a1e"/><path d="M-4 -66l-8 -10h24l-8 10z" fill="#5a3414"/><path d="M-2 -60v66M2 -60v66" stroke="#f4ead6" stroke-width=".8"/></g>`;
+}
+
+// Новогодняя ночь в Шотландии: друзья в кругу, салют над холмами
+function songAuld() {
+  const firework = (x, y, r, c) => Array.from({ length: 12 }, (_, i) => { const a = Math.PI / 6 * i; return `<path d="M${x + Math.cos(a) * r * .3} ${y + Math.sin(a) * r * .3}L${(x + Math.cos(a) * r).toFixed(1)} ${(y + Math.sin(a) * r).toFixed(1)}" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><circle cx="${(x + Math.cos(a) * r).toFixed(1)}" cy="${(y + Math.sin(a) * r).toFixed(1)}" r="2.5" fill="${c}"/>`; }).join('');
+  return `<defs>${sky('sAu', [[0, '#0f1638'], [.7, '#2a2f6a'], [1, '#4a3f7a']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#sAu)"/>${stars(30, 9)}
+  ${firework(130, 70, 40, '#ffd84a')}${firework(320, 50, 34, '#ff6a8a')}${firework(510, 80, 44, '#6ad8ff')}
+  <path d="M0 190q100 -60 220 -40q120 20 200 -30q120 -40 220 20V${H}H0z" fill="#1f2a4a"/><path d="M0 230q200 -40 640 -10V${H}H0z" fill="#2a3a5a"/>
+  <!-- часы с полуночью -->
+  <g transform="translate(560 170)"><rect x="-14" y="-60" width="28" height="80" fill="#3a3f6a"/><path d="M-18 -60h36l-18 -22z" fill="#2a2f5a"/><circle cx="0" cy="-40" r="10" fill="#ffe7a8"/><path d="M0 -40v-8" stroke="#3a3f6a" stroke-width="2"/></g>
+  <!-- друзья в кругу, скрещённые руки -->
+  ${[[200, '#8a2a2a'], [250, '#2a6a4a'], [300, '#c0702a'], [350, '#3a4a9a'], [400, '#8a2a6a']].map(([x, c], i) => `<g transform="translate(${x} 262)"><path d="M-12 0l3 -40h18l3 40z" fill="${c}"/><circle cx="0" cy="-48" r="9" fill="#f3c9a8"/><path d="M-9 -52q9 -14 18 0z" fill="${['#6a3a1a', '#e0b040', '#3a2a1a', '#a0502a', '#2a2a2a'][i]}"/></g>`).join('')}
+  <path d="M190 236q35 -12 70 0q35 -12 70 0q35 -12 70 0q35 -12 70 0" stroke="#f3c9a8" stroke-width="4" fill="none"/><path d="M190 228q35 12 70 0q35 12 70 0q35 12 70 0q35 12 70 0" stroke="#f3c9a8" stroke-width="4" fill="none"/>
+  <!-- тартан под ногами -->
+  <rect x="160" y="262" width="280" height="10" fill="#8a2a2a"/>${Array.from({ length: 14 }, (_, i) => `<path d="M${164 + i * 20} 262v10" stroke="#2a4a2a" stroke-width="4"/>`).join('')}`;
+}
+
 const ART = {
   'athos-peninsula': { draw: athosPeninsula, label: 'Полуостров Афон: вершина и монастырь у моря' },
   'athos-morning': { draw: athosMorning, label: 'Ночная служба: храм и монах с билом' },
@@ -385,7 +565,18 @@ const ART = {
   'tale-krc-share': { draw: taleKrcShare, label: 'Медведь, волк с красной головой и лиса делят добычу на поляне' },
   'tale-krc-olmezbiy': { draw: taleKrcOlmezbiy, label: 'Князь Ёлмезбий едет на закат, на скале огромная птица' },
   'tale-krc-goat': { draw: taleKrcGoat, label: 'Коза у сакли в горах, козлята в окне, волк прячется за камнем' },
-  'tale-krc-crane': { draw: taleKrcCrane, label: 'Лиса у плоского блюда и журавль у высокого кувшина' }
+  'tale-krc-crane': { draw: taleKrcCrane, label: 'Лиса у плоского блюда и журавль у высокого кувшина' },
+  'song-twinkle': { draw: songTwinkle, label: 'Большая мерцающая звезда над спящим домом, путник с фонарём' },
+  'song-farm': { draw: songFarm, label: 'Ферма: красный амбар, корова, свинья, овца, утка и лошадь' },
+  'song-row': { draw: songRow, label: 'Мальчик гребёт в лодке по тихой речке, рядом утки и камыш' },
+  'song-bridge': { draw: songBridge, label: 'Старый Лондонский мост с домами на арках, из пролёта падают камни' },
+  'song-bonnie': { draw: songBonnie, label: 'Девушка на шотландском берегу смотрит на парусник за морем' },
+  'song-jingle': { draw: songJingle, label: 'Сани с колокольчиками мчатся по снегу зимней ночью' },
+  'song-clementine': { draw: songClementine, label: 'Каньон золотоискателей: шахта, хижина, Клементина и утята у реки' },
+  'song-grace': { draw: songGrace, label: 'Парусник в море после бури, сквозь тучи пробиваются лучи рассвета' },
+  'song-scarborough': { draw: songScarborough, label: 'Ярмарка в Скарборо: палатки, замок на утёсе над морем и травы' },
+  'song-greensleeves': { draw: songGreensleeves, label: 'Дама в зелёном платье с лютней у фахверкового дома' },
+  'song-auld': { draw: songAuld, label: 'Новогодняя ночь: друзья в кругу держатся за скрещённые руки, салют над холмами' }
 };
 
 export const hasArt = t => !!(t && ART[t.art]);
