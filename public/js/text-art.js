@@ -292,6 +292,81 @@ function taleWhittington() {
   <path d="M60 280q60 -40 110 -66" stroke="#d9c49a" stroke-width="16" fill="none" opacity=".7"/>`;
 }
 
+// ---------- карачаево-балкарские сказки ----------
+// Кавказский хребет со снежными шапками
+const range = (base, c = '#6f86a0', snow = '#f4f7fb') => [[90, 150, 120], [250, 190, 150], [430, 165, 140], [590, 140, 110]].map(([x, h, w]) =>
+  `<path d="M${x - w} ${base}L${x} ${base - h}L${x + w} ${base}Z" fill="${c}"/><path d="M${x - w * .22} ${base - h * .78}L${x} ${base - h}L${x + w * .22} ${base - h * .78}l${-w * .1} 8l${-w * .12} -6l${-w * .12} 7z" fill="${snow}"/>`).join('');
+// Каменная сакля с плоской крышей
+const saklya = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-40" y="-42" width="80" height="42" fill="#b9a68a"/>${[-30, -18, -6].map(k => `<path d="M-40 ${k}h80" stroke="#9c8a6e" stroke-width="2" opacity=".6"/>`).join('')}<rect x="-46" y="-48" width="92" height="8" fill="#7a6248"/><rect x="-10" y="-26" width="20" height="26" fill="#5a3e28"/><rect x="18" y="-34" width="14" height="12" fill="#f2d98a"/></g>`;
+const person = (x, y, s = 1, coat = '#5a4a3a', hat = '#e8e2d6', beard = false) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-12 0l3 -42h18l3 42z" fill="${coat}"/><circle cx="0" cy="-50" r="9" fill="#e9c4a0"/><path d="M-11 -54q0 -14 11 -14q11 0 11 14z" fill="${hat}"/>${beard ? '<path d="M-7 -46q7 14 14 0z" fill="#f2f2f2"/>' : ''}<circle cx="3" cy="-51" r="1.4" fill="#333"/></g>`;
+const bear = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})" fill="#7a4e2c"><ellipse cx="0" cy="-30" rx="34" ry="26"/><circle cx="28" cy="-56" r="18"/><circle cx="18" cy="-72" r="6"/><circle cx="38" cy="-72" r="6"/><ellipse cx="40" cy="-52" rx="8" ry="6" fill="#a87a52"/><circle cx="44" cy="-54" r="2.2" fill="#222"/><circle cx="32" cy="-60" r="2" fill="#222"/>${[-22, -8, 10, 22].map(k => `<rect x="${k}" y="-10" width="10" height="12" rx="4"/>`).join('')}</g>`;
+const wolf = (x, y, s = 1, head = '#6c7580') => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-30 0q-4 -26 14 -34q16 -6 26 4l14 -4l-4 10q8 10 2 22z" fill="#6c7580"/><path d="M4 -30q8 -12 20 -8l12 6l-12 8z" fill="${head}"/><path d="M8 -36l2 -12l6 10z" fill="${head}"/><circle cx="16" cy="-32" r="1.8" fill="#fff"/><path d="M-30 -12q-14 -10 -10 -24" stroke="#6c7580" stroke-width="8" fill="none" stroke-linecap="round"/></g>`;
+const fox = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-14" rx="22" ry="12" fill="#e07a2a"/><path d="M14 -20l14 -10l8 8l-10 8z" fill="#e07a2a"/><path d="M20 -30l2 -10l5 8zM28 -30l4 -8l3 8z" fill="#c25e18"/><circle cx="28" cy="-24" r="1.6" fill="#222"/><path d="M-20 -14q-30 -4 -26 -26q6 18 24 16z" fill="#e07a2a"/><path d="M-44 -38q-4 6 2 8" stroke="#fff" stroke-width="5" stroke-linecap="round"/>${[-14, -4, 6, 14].map(k => `<rect x="${k}" y="-4" width="4" height="8" fill="#c25e18"/>`).join('')}</g>`;
+const goat = (x, y, s = 1, c = '#f2efe8') => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="-20" rx="24" ry="13" fill="${c}"/><path d="M18 -26l10 -14l10 4l-4 14z" fill="${c}"/><path d="M28 -40q-6 -14 6 -18M32 -40q2 -12 12 -12" stroke="#8a7a62" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M34 -24q2 10 -2 12" stroke="#d8d0c0" stroke-width="3"/><circle cx="31" cy="-34" r="1.6" fill="#222"/>${[-16, -6, 8, 16].map(k => `<rect x="${k}" y="-9" width="4" height="12" fill="#c9c0ae"/>`).join('')}</g>`;
+
+// Мудрость старика: аул под горами, на старой дороге взошла пшеница
+function taleKrcElder() {
+  return `<defs>${sky('kE', [[0, '#8cc4ea'], [1, '#eef6fb']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#kE)"/>${sun(560, 50, 18)}${cloud(150, 42, .8)}
+  ${range(190)}${hills(196, '#88b060', 22)}<rect x="0" y="214" width="${W}" height="66" fill="#a8c46e"/>
+  ${saklya(110, 210, .8)}${saklya(190, 204, .65)}
+  <path d="M260 280q60 -40 200 -64q80 -12 180 -14" stroke="#c9a46a" stroke-width="26" fill="none"/>
+  ${Array.from({ length: 22 }, (_, i) => { const x = 280 + i * 16, y = 268 - i * 2.8; return `<path d="M${x} ${y}v-10M${x} ${y - 6}l-4 -4M${x} ${y - 8}l4 -4" stroke="#4e9a3a" stroke-width="2" stroke-linecap="round"/>`; }).join('')}
+  ${person(300, 250, 1.1, '#3e4a5a', '#e8e2d6', true)}<path d="M314 250l6 -46" stroke="#7a5228" stroke-width="3" stroke-linecap="round"/>
+  ${person(350, 252, 1.15, '#6a3e2a', '#2b2b2b')}`;
+}
+
+// Дележ добычи: медведь, волк с красной головой и лиса на поляне
+function taleKrcShare() {
+  return `<defs>${sky('kS', [[0, '#a6d4f0'], [1, '#f2f8ec']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#kS)"/>${cloud(500, 46, .9)}
+  ${cypress(40, 240, 140, '#2f5a3a')}${cypress(80, 240, 110, '#3a6a44')}${cypress(600, 240, 150, '#2f5a3a')}${cypress(560, 240, 100, '#3a6a44')}
+  ${hills(206, '#7cb85a', 16)}<rect x="0" y="226" width="${W}" height="54" fill="#6aa84f"/>
+  ${bear(250, 250, 1.3)}${wolf(440, 248, 1.15, '#d23a2a')}<path d="M470 196l6 -10M484 200l10 -6M478 190l2 -12" stroke="#f3c04a" stroke-width="2.5" stroke-linecap="round"/>
+  ${fox(130, 252, 1.2)}
+  <g transform="translate(340 262)"><ellipse cx="0" cy="-8" rx="12" ry="8" fill="#c8b8a0"/><ellipse cx="10" cy="-20" rx="3" ry="9" fill="#c8b8a0"/><ellipse cx="4" cy="-20" rx="3" ry="9" fill="#c8b8a0"/></g>`;
+}
+
+// Ёлмезбий: всадник едет к сияющей земле, на скале огромная птица
+function taleKrcOlmezbiy() {
+  return `<defs>${sky('kO', [[0, '#3b3f7a'], [.55, '#d07a6a'], [1, '#f6c98a']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#kO)"/>${stars(18, 5)}${sun(520, 150, 30, '#ffe6a0', .5)}
+  ${range(210, '#4e4a70', '#f6dcc8')}
+  <path d="M0 230q200 -30 640 -10V${H}H0z" fill="#5a4a5a"/>
+  <path d="M60 280q160 -50 460 -64" stroke="#b89a7a" stroke-width="14" fill="none" opacity=".8"/>
+  <!-- всадник -->
+  <g transform="translate(210 246)"><path d="M-36 -10q0 -22 30 -24l30 -2q16 -2 22 -16l8 4q-4 16 -14 22v16z" fill="#3a2a22"/>${[-30, -18, 10, 22].map(k => `<path d="M${k} -6l-2 22" stroke="#3a2a22" stroke-width="5" stroke-linecap="round"/>`).join('')}<path d="M-36 -26q-14 6 -14 22" stroke="#3a2a22" stroke-width="5" fill="none"/>
+    <path d="M-12 -36l2 -30h14l2 30z" fill="#1e1e2e"/><circle cx="-3" cy="-74" r="8" fill="#e0b896"/><path d="M-12 -78q0 -12 9 -12q9 0 9 12z" fill="#2b2b2b"/><path d="M-14 -40l-20 4" stroke="#1e1e2e" stroke-width="4"/></g>
+  <!-- огромная птица на скале -->
+  <path d="M470 236l20 -60h60l24 60z" fill="#3e3450"/>
+  <g transform="translate(520 176)"><path d="M-40 -10q20 -30 40 -26q20 -4 40 26q-20 -10 -40 -6q-20 -4 -40 6z" fill="#2a2030"/><circle cx="0" cy="-30" r="9" fill="#2a2030"/><path d="M8 -30l10 4l-10 3z" fill="#f3b02a"/></g>`;
+}
+
+// Коза и волк: сакля в горах, козлята в окне, волк за камнем
+function taleKrcGoat() {
+  return `<defs>${sky('kG', [[0, '#9ccff0'], [1, '#f0f8fb']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#kG)"/>${sun(80, 50, 18)}${cloud(300, 40, .9)}
+  ${range(200)}${hills(206, '#7cb85a', 18)}<rect x="0" y="224" width="${W}" height="56" fill="#6aa84f"/>
+  ${saklya(300, 232, 1.4)}
+  ${[0, 1, 2].map(i => `<g transform="translate(${331 + i * 6} ${194})"><circle r="4" fill="#f2efe8"/><circle cx="1.5" cy="-1" r="1" fill="#222"/></g>`).join('')}
+  ${goat(150, 258, 1.4)}
+  <path d="M470 250q-4 -40 40 -46q46 -4 54 40z" fill="#8a8a8a"/><path d="M480 246q10 -30 40 -32" stroke="#a8a8a8" stroke-width="3" fill="none"/>
+  <g transform="translate(470 214)"><path d="M0 0q14 -18 34 -10l12 4l-12 10q-14 8 -34 -4z" fill="#6c7580"/><path d="M14 -12l4 -12l6 10z" fill="#545c66"/><circle cx="30" cy="-6" r="1.8" fill="#fff"/></g>`;
+}
+
+// Лиса и журавль: плоское блюдо и высокий кувшин
+function taleKrcCrane() {
+  return `<defs>${sky('kC', [[0, '#f3dcae'], [1, '#e8c48a']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#kC)"/>${Array.from({ length: 16 }, (_, i) => `<path d="M${i * 40} 0v210" stroke="#d7b47a" stroke-width="2" opacity=".5"/>`).join('')}
+  <rect x="0" y="210" width="${W}" height="70" fill="#a8743e"/>
+  <rect x="200" y="196" width="240" height="10" fill="#7a4a24"/><rect x="214" y="206" width="8" height="40" fill="#6a3e1e"/><rect x="418" y="206" width="8" height="40" fill="#6a3e1e"/>
+  <ellipse cx="270" cy="194" rx="42" ry="6" fill="#e8e0d0"/><ellipse cx="270" cy="192" rx="34" ry="3.5" fill="#f0d89a"/>
+  <g transform="translate(380 196)"><path d="M-18 0q-8 -30 6 -46q-4 -14 0 -26h24q4 12 0 26q14 16 6 46z" fill="#b8642e"/><rect x="-7" y="-76" width="14" height="6" fill="#8a4a22"/><path d="M-12 -40h24" stroke="#e0a060" stroke-width="3"/></g>
+  ${fox(140, 262, 1.6)}
+  <!-- журавль -->
+  <g transform="translate(520 262)"><path d="M-6 0v-60M6 0v-60" stroke="#2a2a2a" stroke-width="3"/><ellipse cx="0" cy="-74" rx="26" ry="16" fill="#e8ecef"/><path d="M-26 -74q-14 6 -8 18q10 -8 14 -14z" fill="#2a2a2a"/><path d="M14 -84q10 -30 2 -54" stroke="#e8ecef" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="16" cy="-140" r="8" fill="#e8ecef"/><circle cx="16" cy="-146" r="3.5" fill="#d23a2a"/><path d="M22 -140l40 6l-40 2z" fill="#3a3a3a"/><circle cx="18" cy="-142" r="1.4" fill="#222"/></g>`;
+}
+
 const ART = {
   'athos-peninsula': { draw: athosPeninsula, label: 'Полуостров Афон: вершина и монастырь у моря' },
   'athos-morning': { draw: athosMorning, label: 'Ночная служба: храм и монах с билом' },
@@ -305,7 +380,12 @@ const ART = {
   'tale-hen': { draw: taleHen, label: 'Рыжая курочка на ферме у пшеничного поля, рядом цыплята и хлеб' },
   'tale-goldilocks': { draw: taleGoldilocks, label: 'Три миски каши и три стула в домике медведей, Златовласка в окне' },
   'tale-beanstalk': { draw: taleBeanstalk, label: 'Джек лезет по бобовому стеблю к замку великана' },
-  'tale-whittington': { draw: taleWhittington, label: 'Дик Уиттингтон с котом на холме, вдали звонят колокола Лондона' }
+  'tale-whittington': { draw: taleWhittington, label: 'Дик Уиттингтон с котом на холме, вдали звонят колокола Лондона' },
+  'tale-krc-elder': { draw: taleKrcElder, label: 'Старик и юноша у аула под горами, на старой дороге взошла пшеница' },
+  'tale-krc-share': { draw: taleKrcShare, label: 'Медведь, волк с красной головой и лиса делят добычу на поляне' },
+  'tale-krc-olmezbiy': { draw: taleKrcOlmezbiy, label: 'Князь Ёлмезбий едет на закат, на скале огромная птица' },
+  'tale-krc-goat': { draw: taleKrcGoat, label: 'Коза у сакли в горах, козлята в окне, волк прячется за камнем' },
+  'tale-krc-crane': { draw: taleKrcCrane, label: 'Лиса у плоского блюда и журавль у высокого кувшина' }
 };
 
 export const hasArt = t => !!(t && ART[t.art]);
