@@ -4,7 +4,8 @@
 // чтобы перевод по клику находил каждое слово.
 import * as p1 from './part1.js';
 import * as p2 from './part2.js';
-const PARTS = [p1, p2];
+import * as p3 from './part3.js';
+const PARTS = [p1, p2, p3];
 export const LIBRARY = PARTS.flatMap(p => p.TEXTS);
 export const LIBRARY_FORMS = Object.assign({}, ...PARTS.map(p => p.FORMS || {}));
 export const LIBRARY_WORDS = PARTS.flatMap(p => p.WORDS.trim().split('\n').filter(Boolean));

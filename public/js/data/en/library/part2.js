@@ -1,4 +1,4 @@
-// Библиотека английского, часть 2: 25 материалов A1–C1. Все тексты написаны специально для Лингвы.
+// Библиотека английского, часть 2: 26 материалов A1–C1. Все тексты написаны специально для Лингвы.
 export const TEXTS = [
   {
     id: 'en-l-weekend', level: 'A1', shelf: 'reading', topic: 'Повседневная жизнь', title: 'My Weekend',
@@ -294,6 +294,20 @@ So if there's someone on your mind,
 don't leave your kinder words behind.
 A letter only works, my friend,
 when it is brave enough to send.`
+  },
+  {
+    id: 'en-l-cities', art: 'en-cities', level: 'B1', shelf: 'culture', topic: 'География', title: 'The Biggest English-Speaking Cities',
+    body: `Which city has the most English speakers? The answer depends on how you count. Some cities are enormous, but most people there speak another language at home. In this text we look at the largest cities where English is the main language of everyday life.
+
+New York is the biggest. About eight million people live in the city itself, and nearly twenty million live in the whole metropolitan area. It is also one of the most international places on Earth: in some neighbourhoods you can hear dozens of languages on a single street.
+
+London is the largest English-speaking city in Europe. Almost nine million people live in Greater London, the capital of the United Kingdom. It is one of the world's most important financial centres, and visitors love its museums, many of which are free, as well as its red buses and black taxis.
+
+Los Angeles, on the west coast of the United States, is the home of Hollywood and the film industry. The city is spread over a huge area, so most people drive everywhere, and traffic jams are part of daily life. Chicago, the third largest city in the country, is famous for its skyscrapers. In fact, many historians say that the first skyscraper in the world was built there in 1885.
+
+Further north, Toronto is the largest city in Canada. Almost half of its residents were born in another country, which makes it one of the most multicultural cities on the planet. On the other side of the world, Sydney and Melbourne have been competing for decades. Sydney has the famous Opera House and Harbour Bridge, while Melbourne is proud of its coffee, street art and sport.
+
+Finally, there are giant cities like Lagos in Nigeria and Mumbai in India, where English is an official language of business and education. However, most people there speak other languages at home, so they are not usually included in lists like this one.`
   }
 ];
 
@@ -739,6 +753,37 @@ hide|прятаться
 parking|парковка
 hardly|вряд ли, едва ли
 nearly|почти
+english-speaking|англоязычный, англоговорящий
+depend|зависеть
+count|считать
+enormous|огромный
+biggest|самый большой
+metropolitan|столичный (metropolitan area — агломерация)
+earth|Земля, земля
+europe|Европа
+financial|финансовый
+los|Лос (Los Angeles — Лос-Анджелес)
+angeles|Анджелес (Los Angeles — Лос-Анджелес)
+hollywood|Голливуд
+film|фильм, кино (film industry — киноиндустрия)
+everywhere|везде, повсюду
+chicago|Чикаго
+third|третий
+skyscraper|небоскрёб
+fact|факт (in fact — на самом деле)
+further|дальше
+toronto|Торонто
+born|рождённый (be born — родиться)
+multicultural|многокультурный
+sydney|Сидней
+melbourne|Мельбурн
+opera|опера (Opera House — Оперный театр)
+sport|спорт
+lagos|Лагос
+nigeria|Нигерия
+mumbai|Мумбаи
+india|Индия
+list|список
 `;
 
 export const FORMS = {
