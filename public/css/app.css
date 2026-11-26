@@ -588,3 +588,4 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .ranks li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--bg2);color:var(--muted)}
 .ranks li span{font-weight:900;font-size:13px}.ranks li.got{color:var(--ink)}.ranks li.got .ic{color:var(--ok)}
 .ranks li.now{background:linear-gradient(180deg,#ffe9a8,var(--sun));color:#2b1d00}.ranks li em{font-style:normal;font-size:12px;font-weight:800}
+.text-note{margin:-4px 0 14px;padding:10px 14px;border-radius:12px;background:var(--bg2);color:var(--ink);font-size:15px;line-height:1.5}
