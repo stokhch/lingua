@@ -1,4 +1,5 @@
 // Точка входа: маршрутизация по #хэшу, шапка, главная, вход и профиль.
+import { lianas, fernBush } from './jungle.js';
 import { store } from './store.js';
 import { esc, $, $$, icon, mascot, toast, modal, plural } from './ui.js';
 import * as G from './game.js';
@@ -28,7 +29,7 @@ function shell() {
     </div>
   </header>
   <main id="view" tabindex="-1"></main>
-  <footer class="foot">Лингва — учебный open-source проект. Озвучка — синтез речи вашего браузера. <span id="sync"></span></footer>`;
+  <footer class="foot">${fernBush(120, 11)}${fernBush(120, 23, 'right')}<p>Лингва — учебный open-source проект. Озвучка — синтез речи вашего браузера. <span id="sync"></span></p></footer>`;
   store.on(updateHud);
   updateHud();
 }
@@ -78,6 +79,7 @@ function renderHome(main) {
   const R = 70, L = 2 * Math.PI * R;
   main.innerHTML = `
   <section class="hero">
+    ${lianas(11)}${fernBush(170, 2)}${fernBush(150, 9, 'right')}
     <div class="hero-pic">
       <svg class="ring" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="${R}" class="ring-bg"/><circle cx="90" cy="90" r="${R}" class="ring-fg" stroke-dasharray="${L}" stroke-dashoffset="${L * (1 - goalPct / 100)}"/></svg>
       ${mascot(mood, 150)}
@@ -114,7 +116,7 @@ function renderHome(main) {
 function renderAuth() {
   app.innerHTML = `
   <div class="auth">
-    <div class="auth-pic">${mascot('happy', 220)}<h1>Лингва</h1><p>Личный словарь, тренировки, тексты и грамматика — английский каждый день по 15 минут.</p></div>
+    <div class="auth-pic">${lianas(7, 13)}${fernBush(160, 4)}${fernBush(140, 17, 'right')}${mascot('happy', 220)}<h1>Лингва</h1><p>Личный словарь, тренировки, тексты и грамматика — английский каждый день по 15 минут.</p></div>
     <form class="auth-form" id="auth-form" novalidate>
       <div class="tabs" role="tablist"><button type="button" class="on" data-k="login">Вход</button><button type="button" data-k="register">Регистрация</button></div>
       <label class="reg-only" hidden>Имя<input name="name" autocomplete="nickname" maxlength="40"></label>
