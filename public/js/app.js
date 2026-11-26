@@ -11,6 +11,7 @@ import { renderFriends } from './views/friends.js';
 import { renderExtension } from './views/extension.js';
 import { renderExam } from './views/exam.js';
 import { pullInbox } from './inbox.js';
+import { captureInvite, pendingInvite, inviter, acceptInvite } from './invite.js';
 import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderShelf } from './views/library.js';
@@ -23,6 +24,7 @@ import { satiety, appleRow, APPLES, plea } from './pim.js';
 import { initPim, onRoute, feedHref } from './pimfx.js';
 import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
 import { flagsFor } from './flags.js';
+import { dayPlanHtml } from './views/dayplan.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 
 const NAV = [
@@ -45,6 +47,8 @@ function shell() {
       <a class="pill streak" href="#progress" title="Дней подряд — открыть прогресс">${icon('fire')}<b id="hud-streak">0</b></a>
       <a class="pill xp" href="#progress" title="Опыт за сегодня / цель — открыть прогресс">${icon('star')}<b id="hud-xp">0</b></a>
       <a class="avatar" href="#profile" title="Профиль" id="hud-avatar"></a>
+      <span class="who" id="hud-who"></span>
+      <button class="pill auth-btn" id="hud-auth" hidden></button>
     </div>
   </header>
   <main id="view" tabindex="-1"></main>
@@ -52,6 +56,7 @@ function shell() {
   sceneLang = null;
   store.on(updateHud);
   $('#hud-lang').onclick = pickLang;
+  $('#hud-auth').onclick = authAction;
   updateHud();
 }
 
@@ -88,6 +93,16 @@ document.addEventListener('click', e => {
 });
 
 let sceneLang = null; // язык, для которого нарисованы пейзажи
+
+async function logoutNow() {
+  await store.logout();
+  location.hash = '';
+  if (store.serverAvailable) renderAuth(); else boot();
+}
+function authAction() {
+  if (store.mode === 'server') logoutNow();
+  else { location.hash = ''; renderAuth(); }
+}
 function updateHud() {
   if (!store.state || !$('#hud-xp')) return;
   $('#hud-lang b').textContent = L().code;
@@ -97,6 +112,14 @@ function updateHud() {
   $('#hud-xp').textContent = `${G.todayXp()}/${store.state.goal}`;
   $('#hud-avatar').textContent = (store.state.name || '?').slice(0, 1).toUpperCase();
   $('#hud-avatar').title = `Профиль · ${rankFor(G.levelInfo().level).title}`;
+  // Вход / выход всегда на виду в шапке
+  const authed = store.mode === 'server', btn = $('#hud-auth');
+  btn.hidden = !authed && !store.serverAvailable;
+  btn.className = `pill auth-btn ${authed ? 'out' : 'in'}`;
+  btn.innerHTML = authed ? `${icon('logout')}<span>Выйти</span>` : `${icon('login')}<span>Войти</span>`;
+  btn.title = authed ? `Вы вошли как ${store.user?.email || store.state.name} — выйти` : 'Войти или создать аккаунт: прогресс сохранится на сервере';
+  btn.setAttribute('aria-label', authed ? 'Выйти из аккаунта' : 'Войти или зарегистрироваться');
+  $('#hud-who').textContent = authed ? store.state.name || store.user?.email || '' : 'Гость';
   const sync = $('#sync');
   sync.textContent = store.mode === 'server'
     ? ({ saved: 'Прогресс сохранён в аккаунте.', saving: 'Сохраняем…', error: 'Нет связи с сервером — изменения не сохранены.' })[store.syncState]
@@ -140,6 +163,7 @@ function route() {
 
 // ---------- Главная ----------
 function renderHome(main) {
+  const plan = dayPlanHtml(); // первым: награды за выполненные задания должны попасть в счётчики ниже
   const s = store.state, c = G.counts(), lv = G.levelInfo(), tx = G.todayXp();
   const { TEXTS, SET_INFO, firstSet } = L();
   const goalPct = Math.min(100, Math.round((tx / s.goal) * 100));
@@ -167,6 +191,7 @@ function renderHome(main) {
       </div>
     </div>
   </section>
+  ${plan}
   ${placementBanner()}
   <section class="band">
     <div class="grid-3 grid-4">
@@ -194,6 +219,7 @@ function renderAuth() {
   <div class="auth">
     <div class="auth-pic">${lianas(7, 13)}${fernBush(160, 4)}${fernBush(140, 17, 'right')}${mascot('happy', 220)}<h1>Лингва</h1><p>Личный словарь, тренировки, тексты и грамматика — английский и турецкий каждый день по 15 минут.</p></div>
     <form class="auth-form" id="auth-form" novalidate>
+      <p class="invite-note" id="invite-note" hidden></p>
       <div class="tabs" role="tablist"><button type="button" class="on" data-k="login">Вход</button><button type="button" data-k="register">Регистрация</button></div>
       <label class="reg-only" hidden>Имя<input name="name" autocomplete="nickname" maxlength="40"></label>
       <label>E-mail<input name="email" type="email" autocomplete="email" required></label>
@@ -208,6 +234,13 @@ function renderAuth() {
     kind = b.dataset.k; $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
     $('.reg-only').hidden = kind !== 'register';
     $('#auth-submit').textContent = kind === 'login' ? 'Войти' : 'Создать аккаунт';
+  });
+  // Открыли ссылку-приглашение: показываем, кто зовёт, и сразу предлагаем регистрацию
+  if (pendingInvite()) inviter().then(name => {
+    const note = $('#invite-note'); if (!name || !note) return;
+    note.innerHTML = `${icon('heart')}<span><b>${esc(name)}</b> приглашает вас в Лингву. Войдите или создайте аккаунт — и вы сразу станете друзьями.</span>`;
+    note.hidden = false;
+    $('.tabs [data-k="register"]').click();
   });
   $('#auth-form').onsubmit = async e => {
     e.preventDefault();
@@ -295,7 +328,7 @@ function renderProfile(main) {
     }; });
   $('#reset').onclick = () => modal(`<h2>Сбросить прогресс?</h2><p>Словарь, опыт, стрик и достижения будут удалены. Отменить это нельзя.</p><div class="row gap"><button class="btn danger" id="yes">Да, сбросить</button><button class="btn ghost" data-close>Отмена</button></div>`,
     (el, close) => { $('#yes', el).onclick = async () => { await store.resetProgress(); close(); toast('Прогресс сброшен'); renderProfile(main); }; });
-  $('#logout') && ($('#logout').onclick = async () => { await store.logout(); location.hash = ''; boot(); });
+  $('#logout') && ($('#logout').onclick = logoutNow);
   $('#login') && ($('#login').onclick = () => { location.hash = ''; renderAuth(); });
 
   // Рейтинг (только с сервером)
@@ -316,9 +349,11 @@ function start() {
   window.onhashchange = route;
   route();
   pullInbox();
+  acceptInvite().then(name => { if (name && location.hash === '#friends') route(); });
 }
 
 async function boot() {
+  captureInvite();
   app.innerHTML = `<div class="loading">${mascot('calm', 120)}<p>Загрузка…</p></div>`;
   const ok = await store.init();
   if (ok) start(); else renderAuth();

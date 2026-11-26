@@ -60,7 +60,7 @@ export const store = {
       body: body ? JSON.stringify(body) : undefined
     });
     const data = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(data.error || 'Ошибка сети');
+    if (!r.ok) throw Object.assign(new Error(data.error || 'Ошибка сети'), { status: r.status });
     return data;
   },
 
