@@ -15,6 +15,7 @@ import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/
 import { renderProgress } from './views/progress.js';
 import { satiety, appleRow, APPLES } from './pim.js';
 import { L, LANGS, switchLang, wordCount } from './lang.js';
+import { flagsFor } from './flags.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 
 const NAV = [
@@ -50,7 +51,7 @@ function pickLang() {
   modal(`<h2>Какой язык учим?</h2><p class="muted">У каждого языка свой словарь, тексты и уроки. Опыт, стрик и достижения общие.</p>
     <div class="lang-pick">${Object.values(LANGS).map(l => {
       const n = wordCount(l.id);
-      return `<button class="lang-opt ${l.id === L().id ? 'on' : ''}" data-l="${l.id}"><span class="code">${l.code}</span><b>${l.name}</b><span class="muted">${n ? `${n} ${plural(n, 'слово', 'слова', 'слов')} в словаре` : 'словарь пуст'}</span>${l.beta ? `<span class="beta">${l.beta}</span>` : ''}</button>`;
+      return `<button class="lang-opt ${l.id === L().id ? 'on' : ''}" data-l="${l.id}"><span class="lang-top">${flagsFor(l.id)}<span class="code">${l.code}</span></span><b>${l.name}</b><span class="muted">${n ? `${n} ${plural(n, 'слово', 'слова', 'слов')} в словаре` : 'словарь пуст'}</span>${l.beta ? `<span class="beta">${l.beta}</span>` : ''}</button>`;
     }).join('')}</div>`,
   (el, close) => { el.querySelector('.lang-pick').onclick = e => {
     const b = e.target.closest('[data-l]'); if (!b) return;

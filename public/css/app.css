@@ -620,3 +620,7 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .ext-steps{display:grid;gap:6px;padding-left:22px}.ext-page h2{margin-top:26px}
 .ext-page code{background:var(--bg2);padding:1px 6px;border-radius:6px;font-size:14px}
 @media (max-width:640px){.ext-pop{left:20px}}
+/* флаги в карточках выбора языка */
+.lang-opt .lang-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.lang-opt .flags{display:inline-flex;gap:6px}
+.lang-opt .flag{width:auto;height:24px;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.15);display:block}
