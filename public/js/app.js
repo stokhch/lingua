@@ -6,6 +6,7 @@ import * as G from './game.js';
 import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderMySet } from './views/mysets.js';
 import { renderVerbs } from './views/verbs.js';
+import { renderFriends } from './views/friends.js';
 import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
@@ -98,6 +99,7 @@ function route() {
     set: () => renderSet(main, param),
     myset: () => renderMySet(main, param),
     verbs: () => renderVerbs(main),
+    friends: () => renderFriends(main),
     train: () => (param ? renderTraining(main, param) : renderTrainings(main)),
     texts: () => renderTexts(main),
     read: () => renderReader(main, param),
@@ -223,6 +225,7 @@ function renderProfile(main) {
     <h2>Достижения</h2>
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
+  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a></section>
   <section class="band" id="leaders"></section>
   <section class="band">
     <h2>Настройки</h2>
