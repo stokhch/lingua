@@ -105,6 +105,8 @@ export function createSocial({ getDb, persist, send, readJson, weekXp }) {
       const u = byCode(code);
       if (!u) return send(res, 404, { error: 'Пользователь с таким кодом не найден' });
       if (u.id === me.id) return send(res, 400, { error: 'Это ваш собственный код' });
+      if ((me.blocked || []).includes(u.id)) return send(res, 400, { error: `Вы заблокировали ${u.name}. Разблокировать можно на странице «Сообщения»` });
+      if ((u.blocked || []).includes(me.id)) return send(res, 403, { error: 'Этот ученик ограничил общение с вами' });
       u.friends ||= [];
       if (me.friends.includes(u.id)) return send(res, 409, { error: `${u.name} уже у вас в друзьях` });
       if (me.friends.length >= MAX_FRIENDS || u.friends.length >= MAX_FRIENDS) return send(res, 400, { error: `Не больше ${MAX_FRIENDS} друзей` });
@@ -159,5 +161,5 @@ export function createSocial({ getDb, persist, send, readJson, weekXp }) {
     return u ? send(res, 200, { name: u.name }) : send(res, 404, { error: 'Приглашение не найдено' });
   }
 
-  return { handle, handlePublic };
+  return { handle, handlePublic, codeOf, byCode };
 }

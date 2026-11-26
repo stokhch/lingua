@@ -10,6 +10,7 @@ import { renderVerbs } from './views/verbs.js';
 import { renderFriends } from './views/friends.js';
 import { renderClasses, renderClass, renderJoin, resumeJoin } from './views/teacher.js';
 import { renderStudents } from './views/students.js';
+import { renderMessages, renderReports, watchUnread } from './views/messages.js';
 import { renderExtension } from './views/extension.js';
 import { renderExam } from './views/exam.js';
 import { pullInbox } from './inbox.js';
@@ -50,6 +51,7 @@ function shell() {
       <button class="pill lang" id="hud-lang" title="Изучаемый язык — сменить" aria-label="Сменить изучаемый язык">${icon('globe')}<b></b></button>
       <a class="pill streak" href="#progress" title="Дней подряд — открыть прогресс">${icon('fire')}<b id="hud-streak">0</b></a>
       <a class="pill xp" href="#progress" title="Опыт за сегодня / цель — открыть прогресс">${icon('star')}<b id="hud-xp">0</b></a>
+      <a class="pill msg" href="#messages" title="Сообщения" id="hud-msg" aria-label="Сообщения" hidden>${icon('mail')}<b hidden>0</b></a>
       <a class="avatar" href="#profile" title="Профиль" id="hud-avatar"></a>
       <span class="who" id="hud-who"></span>
       <button class="pill auth-btn" id="hud-auth" hidden></button>
@@ -62,6 +64,7 @@ function shell() {
   $('#hud-lang').onclick = pickLang;
   $('#hud-auth').onclick = authAction;
   updateHud();
+  watchUnread();
 }
 
 // ---------- выбор изучаемого языка ----------
@@ -149,6 +152,8 @@ function route() {
     class: () => renderClass(main, param),
     join: () => renderJoin(main, param),
     students: () => renderStudents(main),
+    messages: () => renderMessages(main, param),
+    reports: () => renderReports(main),
     extension: () => renderExtension(main),
     exam: () => renderExam(main, param),
     train: () => (param ? renderTraining(main, param) : renderTrainings(main)),
@@ -298,7 +303,7 @@ function renderProfile(main, param = '') {
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
   ${installSettings()}
-  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
+  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#messages">${icon('mail')}<div><b>Сообщения</b><span>Переписка с друзьями и одноклассниками, поздравления с достижениями и подарки-картинки</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
   <section class="band">
     <h2>Настройки</h2>
     <form class="settings" id="settings">

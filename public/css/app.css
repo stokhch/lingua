@@ -966,6 +966,57 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 /* Рейтинг дня и недели */
 .rating-me{display:flex;align-items:center;gap:8px;margin:-4px 0 12px;font-weight:800;max-width:620px}.rating-me .ic{width:20px;height:20px;color:var(--gold)}
 .rating-card{max-width:620px}.rating-card div>span{display:block;margin-top:2px}.rating-card div>span b{display:inline;font-size:inherit;color:var(--ink)}
+
+/* ---------- Сообщения, поздравления и подарки ---------- */
+.pill.msg{position:relative}.pill.msg .ic{width:18px;height:18px}
+.pill.msg b{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--coral);color:#fff;font-size:11px;line-height:18px;text-align:center}
+.pill.msg b[hidden]{display:none}
+.convs,.contacts,.kudos-news{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
+.convs a,.contacts li,.kudos-news li{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px;border-radius:12px;background:var(--bg2);color:inherit;text-decoration:none}
+.kudos-news li{grid-template-columns:minmax(0,1fr) auto}
+.convs a:hover{background:var(--brand-soft)}
+.convs div,.contacts div,.kudos-news div{display:grid;min-width:0}
+.convs div span,.contacts div span,.kudos-news div span{color:var(--muted);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.convs a.unread b{color:var(--brand-ink)}.convs a.unread div span{color:var(--ink);font-weight:700}
+.convs a.blocked{opacity:.6}
+.convs .when{display:grid;justify-items:end;gap:4px;color:var(--muted);font-size:13px;white-space:nowrap}
+.convs .dot{font-style:normal;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--brand);color:#fff;font-weight:900;font-size:12px;line-height:20px;text-align:center}
+.ava{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--brand);color:#fff;font-weight:900;font-size:18px}
+.chat-head{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;margin-bottom:12px}
+.chat-head h1{margin:0;font-size:24px;overflow-wrap:anywhere}.chat-head>div{display:grid}
+@media (max-width:560px){.chat-head{grid-template-columns:44px minmax(0,1fr)}.chat-head>.row{grid-column:1/-1}}
+.cong-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;margin-bottom:12px;border-radius:12px;background:var(--brand-soft)}
+.cong-row>.ic{color:var(--gold)}.cong-row .chip{min-height:34px;font-size:14px}
+.msgs{list-style:none;margin:0 0 12px;padding:12px;display:flex;flex-direction:column;gap:8px;max-height:min(60vh,560px);overflow-y:auto;border-radius:var(--r);background:var(--bg2)}
+.msg{max-width:80%;align-self:flex-start;padding:8px 12px;border-radius:14px 14px 14px 4px;background:var(--card);border:1px solid var(--line)}
+.msg.mine{align-self:flex-end;border-radius:14px 14px 4px 14px;background:var(--brand-soft)}
+.msg p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg time{display:block;font-size:12px;color:var(--muted);text-align:right;margin-top:2px}
+.msg.kudos{text-align:center}
+.msgs.plain{max-height:none}.msgs.plain li{padding:6px 0}
+.kudos-badge{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 6px;font-weight:800;color:var(--gold-ink)}
+.kudos-badge .ic{width:18px;height:18px}
+.gift-pic{display:inline-block;width:48px;height:48px}.gift-pic svg{width:100%;height:100%;display:block}
+.gift-pic.big{width:96px;height:96px;margin:4px auto;display:block;animation:gift-pop .5s ease-out}
+@keyframes gift-pop{from{transform:scale(.4) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.gift-pic.big{animation:none}}
+.composer{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:end}
+.composer textarea{resize:none;min-height:44px;margin:0}
+@media (max-width:420px){.composer .btn{padding:0 12px}}
+.gift-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-bottom:12px;max-height:46vh;overflow-y:auto}
+.gift-opt{display:grid;justify-items:center;gap:2px;padding:8px 4px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 12px Nunito,sans-serif;cursor:pointer}
+.gift-opt svg{width:48px;height:48px}
+.gift-opt.none{align-content:center;min-height:84px}
+.gift-opt.on{border-color:var(--brand);background:var(--brand-soft)}
+.cheers{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.cheers .chip{min-height:32px;font-size:13px;padding:0 10px}
+.gift-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px}
+.gift-shelf>div{display:grid;justify-items:center;gap:4px;padding:10px;border-radius:12px;background:var(--bg2);font-size:13px;text-align:center}
+.gift-shelf .gift-pic{width:56px;height:56px}
+.note.bad{background:var(--bad-soft);color:var(--bad)}
+.report{padding:12px 14px;margin-bottom:10px;border-radius:12px;background:var(--bg2)}.report.open{border-left:4px solid var(--coral)}
+.report p{margin:0 0 6px}
+.composer textarea,.modal #k-text,.modal #why{font-family:Nunito,system-ui,sans-serif;font-size:16px}
+.field{display:grid;gap:6px;font-weight:800;max-width:360px;margin:8px 0}
 /* Установка на экран телефона (PWA): карточка на главной и в профиле, шаги для iPhone */
 .install-cta{align-items:center;max-width:none}.install-cta>img{flex:none;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.2)}.install-cta>div:first-of-type{flex:1;min-width:0}
 .install-cta .btn .ic{width:18px;height:18px;color:inherit}
