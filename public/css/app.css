@@ -636,7 +636,7 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .cert-top{display:flex;align-items:center;gap:14px;text-align:left;margin-bottom:10px}.cert-top span{font-weight:800;color:var(--gold-ink);letter-spacing:.06em;text-transform:uppercase;font-size:13px}.cert-top h1{margin:0;font-size:40px}
 .cert p{margin:4px 0}.cert-name{font-size:30px;margin:4px 0 8px;color:var(--brand-ink);border-bottom:2px solid var(--line);padding:0 24px 6px}
 .cert h3{font-size:22px;margin:4px 0 10px}.cert-grade b{color:var(--gold-ink)}
-@media print{.top,.foot,.no-print,.toasts,.fern-row,.lianas{display:none!important}body{background:#fff}.cert{box-shadow:none;break-inside:avoid}}
+@media print{.top,.foot,.no-print,.toasts,.fern-row,.lianas,.scenery,.postcard{display:none!important}body{background:#fff}.cert{box-shadow:none;break-inside:avoid}}
 /* ===== Пейзажи страны изучаемого языка ===== */
 .scenery{position:fixed;inset:64px 0 0;pointer-events:none;z-index:15;display:none}
 .scene{position:absolute;top:0;bottom:0;width:calc((100vw - 1240px) / 2);overflow:hidden;}
