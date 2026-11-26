@@ -2,6 +2,80 @@
 // Формат блоков: "слово|перевод" — по строке на слово. Глаголы даны в инфинитиве (-mak / -mek).
 // Ключ блока = тематический набор.
 const RAW = {
+start: `merhaba|привет, здравствуйте
+selam|привет (разг.)
+günaydın|доброе утро
+iyi günler|добрый день
+iyi akşamlar|добрый вечер
+iyi geceler|спокойной ночи
+nasılsın|как дела? (ты)
+nasılsınız|как дела? (вы)
+iyiyim|у меня всё хорошо
+teşekkürler|спасибо
+teşekkür ederim|спасибо (благодарю)
+sağ ol|спасибо (разг.)
+rica ederim|пожалуйста (в ответ на спасибо)
+lütfen|пожалуйста (просьба)
+buyurun|пожалуйста (вот, проходите, слушаю вас)
+evet|да
+hayır|нет
+tamam|хорошо, ладно
+özür dilerim|извините, прошу прощения
+pardon|простите
+affedersiniz|извините (обращение к незнакомому)
+hoş geldiniz|добро пожаловать
+hoş bulduk|рады быть здесь (ответ на «hoş geldiniz»)
+memnun oldum|приятно познакомиться
+görüşürüz|увидимся
+hoşça kal|до свидания (говорит уходящий)
+güle güle|счастливо (говорит остающийся)
+afiyet olsun|приятного аппетита
+kolay gelsin|бог в помощь (тому, кто работает)
+geçmiş olsun|выздоравливай, сочувствую
+anlamıyorum|я не понимаю
+bilmiyorum|я не знаю
+tekrar|снова, ещё раз
+tuvalet|туалет
+ne|что
+kim|кто
+nerede|где
+bu|этот, это`,
+
+numbers: `sıfır|ноль
+bir|один; какой-то
+iki|два
+üç|три
+dört|четыре
+beş|пять
+altı|шесть
+yedi|семь; съел (от yemek)
+sekiz|восемь
+dokuz|девять
+on|десять
+on bir|одиннадцать
+on beş|пятнадцать
+yirmi|двадцать
+yirmi beş|двадцать пять
+otuz|тридцать
+kırk|сорок
+elli|пятьдесят
+altmış|шестьдесят
+yetmiş|семьдесят
+seksen|восемьдесят
+doksan|девяносто
+yüz|сто; лицо
+bin|тысяча
+milyon|миллион
+birinci|первый
+ikinci|второй
+üçüncü|третий
+yarım|половина
+çeyrek|четверть
+lira|лира (деньги)
+kaç|сколько (штук)
+ne kadar|сколько (о цене, количестве)
+toplam|итого, всего`,
+
 core: `ben|я
 sen|ты
 o|он, она, оно; тот
@@ -102,6 +176,8 @@ son|конец; последний
 bütün|весь, целый
 kez|раз
 örneğin|например
+başka|другой, ещё
+şey|вещь, что-то
 aslında|на самом деле
 ayrıca|кроме того
 yan|бок, сторона
@@ -298,6 +374,9 @@ tok|сытый
 simit|бублик с кунжутом
 börek|слоёный пирог
 ayran|айран
+şekerli|с сахаром
+şekersiz|без сахара
+kafe|кафе
 içecek|напиток`,
 
 travel: `yolculuk|путешествие, поездка
@@ -445,6 +524,7 @@ temiz|чистый
 kirli|грязный
 ağır|тяжёлый
 hafif|лёгкий (по весу)
+yüksek|высокий
 dolu|полный
 boş|пустой
 açık|открытый; светлый
@@ -624,6 +704,8 @@ dalga|волна`
 };
 
 export const SET_INFO = {
+  start: { title: 'Первые слова', icon: 'core', desc: 'Приветствия и вежливость — с них начинаем' },
+  numbers: { title: 'Числа и деньги', icon: 'time', desc: 'От нуля до миллиона, цены' },
   core: { title: 'Базовые слова', icon: 'core', desc: 'Местоимения, вопросы, числа, вежливость' },
   verbs: { title: 'Главные глаголы', icon: 'verbs', desc: 'Самые частые действия (-mak / -mek)' },
   family: { title: 'Семья и люди', icon: 'family', desc: 'Родственники и окружение' },
@@ -668,7 +750,8 @@ const FORMS = {
   'bunu': 'bu', 'bunun': 'bu', 'buna': 'bu', 'burada': 'burası', 'buraya': 'burası', 'buradan': 'burası',
   'orada': 'orası', 'oraya': 'orası', 'oradan': 'orası', 'şunu': 'şu',
   'kendime': 'kendi', 'kendimi': 'kendi', 'kendini': 'kendi',
-  'nerede': 'nerede', 'nerelisin': 'nereden', 'nasılsın': 'nasıl', 'nasılsınız': 'nasıl',
+  'nerelisin': 'nereden', 'nerelisiniz': 'nereden', 'özür': 'özür dilerim', 'dilerim': 'özür dilerim', 'afiyet': 'afiyet olsun',
+  'yaşındasın': 'yaş', 'odam': 'oda', 'odamda': 'oda', 'türküm': 'türk',
   'diyor': 'demek', 'diyorum': 'demek', 'dedi': 'demek', 'der': 'demek', 'diye': 'demek',
   'yiyor': 'yemek', 'yiyorum': 'yemek', 'yiyoruz': 'yemek', 'yedik': 'yemek', 'yer': 'yemek', 'yeriz': 'yemek',
   'gidiyor': 'gitmek', 'gidiyorum': 'gitmek', 'gidiyoruz': 'gitmek', 'gider': 'gitmek', 'gideriz': 'gitmek', 'giderim': 'gitmek', 'gidelim': 'gitmek', 'gidecek': 'gitmek', 'gideceğim': 'gitmek', 'gideceğiz': 'gitmek', 'gitti': 'gitmek', 'gittik': 'gitmek', 'gittim': 'gitmek',
@@ -690,6 +773,9 @@ const FORMS = {
   'şehrin': 'şehir', 'resmi': 'resim', 'rusyalıyım': 'rusya', 'rusyalı': 'rusya', 'türkçede': 'türkçe', 'başlangıçta': 'başlangıç',
   'hikâyeler': 'hikâye', 'hikayeler': 'hikâye', 'hikaye': 'hikâye'
 };
+
+// Слова, которые узнаём только целиком (как основа для аффиксов они дали бы ложные совпадения: kal-dık)
+const EXACT = { kal: 'hoşça kal', 'hoşça': 'hoşça kal', güle: 'güle güle' };
 
 // Аффиксы (без учёта гармонии гласных — проверку делает словарь)
 const SUFFIXES = [
@@ -756,6 +842,7 @@ export function lemma(raw) {
   if (!w) return '';
   if (w.includes("'")) w = w.split("'")[0]; // имя собственное + аффикс: İstanbul'da
   if (FORMS[w]) return FORMS[w];
+  if (EXACT[w]) return EXACT[w];
   if (DICT.has(w)) return w;
   // поиск в ширину: сначала одна отрезанная аффиксация, потом две и т.д.
   let level = [w];
