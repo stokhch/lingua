@@ -827,7 +827,7 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .node .start{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:6px;background:var(--card);color:var(--brand-ink);border:2px solid var(--brand);font-weight:900;font-size:13px;padding:2px 12px;border-radius:99px;white-space:nowrap;animation:bob 1.6s ease-in-out infinite}
 .node.t-text.todo .disc,.node.t-lesson.todo .disc{border:3px dashed light-dark(#b9bda4,#3d5a45)}
 .chest{position:absolute;transform:translate(-50%,-50%);z-index:2;padding:0;border:0;background:none;cursor:pointer;line-height:0}
-.chest.locked .chest-svg{filter:grayscale(.75) brightness(.95);opacity:.85}
+.chest.locked .chest-svg{filter:saturate(.55) brightness(.97)}
 .chest.ready{animation:chest-bounce 1.4s ease-in-out infinite}
 .chest.ready::before{content:"";position:absolute;inset:-22px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,60,.9),rgba(255,215,106,.35) 45%,transparent 68%);animation:glow 1.4s ease-in-out infinite;z-index:-1}
 .chest.opening .chest-svg{animation:chest-open .65s ease-out}
@@ -835,7 +835,6 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .trail-pim{position:absolute;z-index:3;width:84px;pointer-events:none;animation:bob 2.4s ease-in-out infinite}
 .trail-pim svg{display:block}
 .tp-bubble{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;white-space:nowrap;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:3px 10px;font-weight:800;font-size:13px;box-shadow:var(--shadow)}
-.deco{position:absolute;z-index:1;opacity:.85;pointer-events:none}
 .chest-modal{text-align:center}.chest-modal .chest-svg{margin:0 auto}.chest-modal h2{margin:.2em 0}
 .node-sheet .kind{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--brand-ink)}
 .node-sheet .kind .ic{width:16px;height:16px}.node-sheet h2{margin:.2em 0 .3em}.node-sheet .bar{margin:8px 0 12px}
@@ -851,7 +850,7 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 @media (max-width:560px){
   .path-stats .langs{margin-left:0}.trail{border-radius:20px}
   .node .lbl{width:140px;font-size:12px}.sign{min-width:0;max-width:88%}.sign b{font-size:15px}
-  .deco{display:none}.tp-bubble{font-size:12px}
+  .tp-bubble{font-size:12px}
 }
 @media (prefers-reduced-motion:reduce){.node.current .disc,.chest.ready,.chest.ready::before,.trail-pim,.node .start,.chest.opening .chest-svg,.chest-svg .loot{animation:none}}
 /* вход / выход в шапке — всегда на виду */
@@ -941,3 +940,21 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .settings .check{grid-column:1/-1;display:flex;gap:8px;align-items:center;font-weight:600}
 .settings .check input{width:20px;height:20px;flex:none}
 @media (max-width:640px){.leaders.students li{grid-template-columns:28px minmax(0,1fr) auto;gap:6px 10px}.leaders.students li>span:nth-child(3),.leaders.students .total{display:none!important}}
+
+/* Тропа: пейзаж */
+.trail{background:radial-gradient(light-dark(rgba(47,154,76,.10),rgba(134,220,157,.07)) 2px,transparent 2.5px) 0 0/34px 34px,
+  radial-gradient(ellipse 60% 40% at 15% 30%,light-dark(rgba(255,240,150,.35),rgba(255,220,120,.05)),transparent),
+  linear-gradient(180deg,light-dark(#e3f4cf,#132a1b),light-dark(#cfeab6,#10241a))}
+.trail-svg use{pointer-events:none}
+.stream .ripple{animation:ripple 2.4s linear infinite}.stream .ripple.r2{animation-duration:3.6s}
+.fly{animation:fly 9s ease-in-out infinite}.fly.f1{animation-duration:11s;animation-delay:-3s}.fly.f2{animation-duration:13s;animation-delay:-6s}
+.chest-svg .spark path{transform-box:fill-box;transform-origin:center;animation:twinkle 1.6s ease-in-out infinite}
+.chest-svg .spark path:nth-child(2){animation-delay:.5s}.chest-svg .spark path:nth-child(3){animation-delay:1s}
+.chest-svg.open .glow{transform-box:fill-box;transform-origin:center;animation:glow 2s ease-in-out infinite}
+.chest-modal .chest-svg{filter:drop-shadow(0 6px 12px rgba(255,190,40,.45))}
+@keyframes ripple{to{stroke-dashoffset:-72}}
+@keyframes fly{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(60px,-30px) rotate(12deg)}50%{transform:translate(110px,10px) rotate(-6deg)}75%{transform:translate(40px,30px) rotate(8deg)}}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.stream .ripple,.fly,.chest-svg .spark path,.chest-svg.open .glow{animation:none}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .trail-svg{filter:brightness(.8) saturate(.9)}}
+:root[data-theme=dark] .trail-svg{filter:brightness(.8) saturate(.9)}
