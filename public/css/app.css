@@ -161,6 +161,10 @@ button.big-word{cursor:pointer}.big-word .ic{width:28px;height:28px;color:var(--
 .texts{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
 .text-card{position:relative;display:grid;gap:4px;align-content:start;padding:20px;border-radius:var(--r);background:var(--card);border:2px solid var(--line);text-decoration:none;color:var(--ink);transition:transform .12s,border-color .12s}
 .text-card:hover{transform:translateY(-2px);border-color:var(--brand)}
+.text-art{margin:0;overflow:hidden;border-radius:16px;border:3px solid var(--gold);box-shadow:0 6px 18px rgba(15,42,25,.18)}
+.text-art svg{display:block;width:100%;height:100%}
+.text-art.banner{aspect-ratio:640/280;margin:4px 0 16px}
+.text-art.thumb{height:96px;margin:-20px -20px 8px;border:0;border-bottom:2px solid var(--line);border-radius:calc(var(--r) - 2px) calc(var(--r) - 2px) 0 0;box-shadow:none}
 .text-card b{font-size:20px;line-height:1.2}.text-card>span{color:var(--muted);font-size:14px}.text-card p{margin:6px 0 0;color:var(--muted);font-size:14px}
 .text-card em{display:flex;gap:4px;align-items:center;font-style:normal;color:var(--ok);font-weight:800;font-size:14px}.text-card em .ic{width:18px;height:18px}
 .lv{display:inline-block;justify-self:start;padding:2px 10px;border-radius:99px;background:var(--brand-soft);color:var(--brand-ink);font-weight:900;font-size:13px}
