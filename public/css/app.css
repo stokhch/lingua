@@ -802,3 +802,39 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 }
 @media (max-width:359px){.auth-btn span{display:none}.auth-btn{padding:8px!important}.auth-btn .ic{width:20px;height:20px}}
 @media (min-width:761px) and (max-width:1300px){.nav a span{display:none}.nav a{padding:10px}}
+
+/* классы: учитель и ученики */
+.class-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px}
+.class-link span{color:var(--muted);font-size:14px}.class-link div{display:grid;gap:2px}
+.inline-form{max-width:620px}
+.invite{gap:12px 20px}.invite-link{display:grid;flex:1 1 280px;min-width:0}
+.invite-link input{width:100%;font:600 14px Nunito,sans-serif;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--ink)}
+.tab-body{margin-top:16px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
+.tbl.students td:first-child,.tbl.students td:nth-child(8),.tbl.students td:last-child{text-align:left}
+.tbl.students td:last-child{white-space:nowrap;font-weight:700;color:var(--muted)}.tbl.students td.ok{color:var(--ok)}
+.tbl.by-lang td:first-child{text-align:left}.tbl.students tbody tr{cursor:pointer}.tbl.students tbody tr:hover,.tbl.students tbody tr:focus-visible{background:var(--bg2);outline:none}
+.tbl .num{white-space:nowrap}.tbl .ic{width:15px;height:15px;color:var(--coral);vertical-align:-2px}
+.tbl em{font-style:normal;font-size:12px}.tbl em.up{color:var(--ok)}.tbl em.down{color:var(--bad)}.tbl em.due{margin-left:6px;color:var(--coral)}
+.tbl .lv{font-size:12px;padding:1px 7px}.tbl .lv.cur{background:var(--brand);color:#fff}
+.class-board{max-width:720px}.class-board li{grid-template-columns:36px minmax(0,1fr) auto auto}
+.class-board .bar{height:6px;margin-top:4px}.class-board li.goal-hit{box-shadow:inset 3px 0 0 var(--ok)}
+.contests{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:18px}
+.contest{display:grid;gap:8px;align-content:start;padding:16px;border-radius:var(--r);background:var(--card);border:2px solid var(--line)}
+.contest.live{border-color:var(--gold);background:color-mix(in srgb,var(--sun) 8%,var(--card))}.contest.done{opacity:.85}
+.contest p{margin:0}.contest .class-board{max-width:none}.contest .class-board li{padding:8px 10px}
+.contest-head{display:flex;align-items:center;gap:8px}.contest-head b{flex:1;font-size:17px}
+.tag{padding:2px 10px;border-radius:99px;font-size:12px;font-weight:900;background:var(--bg2);color:var(--muted)}
+.tag.live{background:var(--sun);color:#2b1d00}.tag.done{background:var(--ok-soft);color:var(--ok)}
+.contest-form{max-width:820px;margin-bottom:22px}
+.cf-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cf-grid label{display:grid;gap:4px;font-weight:800;font-size:14px}
+.cf-grid input,.cf-grid select{font:600 15px Nunito,sans-serif;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:42px;width:100%}
+.consent{max-width:680px}.consent .check{display:flex;gap:10px;align-items:flex-start;font-weight:800;margin:14px 0}
+.consent .check input{width:20px;height:20px;flex:none;margin-top:2px}
+.recent{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.recent li{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:15px}
+.recent li:first-child{border-top:0}.recent .lv{font-size:12px;padding:1px 7px}.recent span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent em{font-style:normal;font-size:13px;color:var(--muted);white-space:nowrap}.recent em.learned{color:var(--ok)}.recent .ok{color:var(--ok);font-weight:800}
+@media (max-width:760px){.cf-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.cf-grid{grid-template-columns:1fr}.contests{grid-template-columns:1fr}.recent li{grid-template-columns:auto minmax(0,1fr) auto}.recent li>span:nth-child(3){display:none}.class-board li{grid-template-columns:28px minmax(0,1fr) auto;gap:6px 10px}.class-board li>span:nth-child(3){display:none!important}}
