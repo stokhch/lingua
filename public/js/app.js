@@ -15,6 +15,8 @@ import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
+import { renderGrammarTraining, grammarState } from './views/grammar-train.js';
+import { grammarPlan } from './grammar-drill.js';
 import { satiety, appleRow, APPLES, plea } from './pim.js';
 import { initPim, onRoute, feedHref } from './pimfx.js';
 import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
@@ -105,7 +107,7 @@ function route() {
   const param = rest.join('-');
   cleanup?.(); cleanup = null;
   const main = $('#view');
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (view === 'read' && a.dataset.nav === 'texts') || (['lesson', 'exam'].includes(view) && a.dataset.nav === 'grammar')));
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (view === 'read' && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar')));
   const views = {
     home: () => renderHome(main),
     dictionary: () => renderDictionary(main),
@@ -121,6 +123,7 @@ function route() {
     read: () => renderReader(main, param),
     grammar: () => renderGrammar(main),
     lesson: () => renderLesson(main, param),
+    gtrain: () => renderGrammarTraining(main, param),
     profile: () => renderProfile(main),
     progress: () => renderProgress(main),
     test: () => renderPlacement(main)
@@ -139,6 +142,7 @@ function renderHome(main) {
   const pim = satiety(s.xpLog, s.goal), mood = pim.mood;
   const nextText = TEXTS.find(t => !s.readTexts[t.id]) || TEXTS[0];
   const ready = c.new + c.learning;
+  const { lessons, g } = grammarState(), gp = grammarPlan(lessons, g);
   const R = 70, CIRC = 2 * Math.PI * R;
   main.innerHTML = `
   <section class="hero">
@@ -161,11 +165,12 @@ function renderHome(main) {
   </section>
   ${placementBanner()}
   <section class="band">
-    <div class="grid-3">
+    <div class="grid-3 grid-4">
       <a class="action primary" href="${c.due ? '#train-cards' : '#train'}">
         ${icon('cards')}<div><b>${c.due ? `Повторить ${c.due} ${plural(c.due, 'слово', 'слова', 'слов')}` : 'Тренировки'}</b><span>${c.due ? 'Слова, которые пора освежить в памяти' : ready ? `${ready} ${plural(ready, 'слово ждёт', 'слова ждут', 'слов ждут')} тренировки` : 'Добавьте слова, чтобы начать'}</span></div>
       </a>
       <a class="action" href="#read-${nextText.id}">${icon('read')}<div><b>${esc(nextText.title)}</b><span>${nextText.level} · ${esc(nextText.topic)}</span></div></a>
+      <a class="action" href="${gp.href}">${icon('grammar')}<div><b>${gp.kind === 'review' ? `Повторить ${gp.count} ${plural(gp.count, 'правило', 'правила', 'правил')}` : gp.kind === 'lesson' ? esc(gp.lesson.title) : 'Грамматика вперемешку'}</b><span>${gp.kind === 'review' ? `Грамматика · ${esc(gp.lesson.title)}${gp.count > 1 ? ' и др.' : ''}` : gp.kind === 'lesson' ? `Грамматика · ${g[gp.lesson.id] ? 'урок не сдан — попробуйте ещё раз' : 'следующий урок'}` : `Подтянуть: ${esc(gp.lesson.title)}`}</span></div></a>
       <a class="action" href="#sets">${icon('sets')}<div><b>Наборы слов</b><span>${Object.keys(SET_INFO).length} тем — добавьте в словарь одним кликом</span></div></a>
     </div>
   </section>
