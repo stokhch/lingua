@@ -4,13 +4,13 @@ import { esc, $, $$, icon, shuffle, plural } from '../ui.js';
 import * as G from '../game.js';
 import { speak, canSpeak } from '../speech.js';
 import { GRADES, intervalLabel } from '../srs.js';
-import { DICT } from '../data/dictionary.js';
+import { L, lower, fold, lettersOnly, keysBar } from '../lang.js';
 import { EXTRA, EXTRA_INFO, extraPlan, EXTRA_QUESTIONS } from './train-extra.js';
 
 const SESSION = 10;
 export const TRAIN_INFO = {
-  wt: { title: 'Слово — перевод', desc: 'Выберите правильный перевод английского слова', ic: 'swap' },
-  tw: { title: 'Перевод — слово', desc: 'Найдите английское слово по переводу', ic: 'swap' },
+  wt: { title: 'Слово — перевод', desc: 'Выберите правильный перевод слова', ic: 'swap' },
+  tw: { title: 'Перевод — слово', desc: 'Найдите иностранное слово по переводу', ic: 'swap' },
   au: { title: 'Аудирование', desc: 'Прослушайте слово и напишите его', ic: 'ear' },
   co: { title: 'Конструктор слов', desc: 'Соберите слово из букв', ic: 'puzzle' },
   cards: { title: 'Карточки', desc: 'Интервальное повторение изученных слов', ic: 'cards' },
@@ -28,7 +28,7 @@ function buildPlan(kind) {
     if (!pool.length) { pool = shuffle(G.allWords().filter(w => !w.srs)).slice(0, SESSION); practice = 'learn'; }
   } else {
     pool = G.wordsFor(kind).slice(0, SESSION);
-    if (kind === 'co') pool = pool.filter(w => w.w.replace(/[^a-z]/g, '').length <= 14);
+    if (kind === 'co') pool = pool.filter(w => lettersOnly(w.w).length <= 14);
   }
   if (!pool.length && G.allWords().length >= 4) { pool = shuffle(G.allWords()).slice(0, SESSION); practice = 'free'; }
   if ((G.allWords().length < 4 && kind !== 'cards') || !pool.length) return null;
@@ -40,7 +40,7 @@ export function renderTrainings(main) {
   const n = k => k === 'cards' ? c.due : G.TRAININGS.includes(k) ? G.wordsFor(k).length : k === 'storm' ? c.new + c.learning : null;
   main.innerHTML = `
   <section class="band">
-    <h1>Тренировки</h1>
+    <h1>Тренировки <span class="muted small-h">· ${L().name}</span></h1>
     <p class="lead">Каждое новое слово проходит четыре тренировки. После этого оно считается изученным и возвращается в «Карточках» через растущие интервалы: 1 день, 3 дня, неделю, месяц…</p>
     <div class="trainings">${Object.entries(TRAIN_INFO).map(([k, t]) => {
       const cnt = n(k);
@@ -54,7 +54,7 @@ export function renderTrainings(main) {
 export function distractors(word, field, n = 4) {
   const own = G.allWords().filter(w => w.w !== word.w).map(w => field === 't' ? w.t : w.w);
   const pool = shuffle([...new Set(own)]);
-  const extra = shuffle([...DICT.entries()]).map(([w, t]) => field === 't' ? t : w);
+  const extra = shuffle([...L().DICT.entries()]).map(([w, t]) => field === 't' ? t : w);
   const out = [];
   for (const v of [...pool, ...extra]) { if (out.length >= n) break; if (v !== word[field] && !out.includes(v)) out.push(v); }
   return out;
@@ -148,16 +148,17 @@ export const QUESTIONS = {
     stage.innerHTML = `
       ${can ? `<button class="play say" aria-label="Прослушать ещё раз">${icon('sound')}</button><p class="muted center">Напишите услышанное слово</p>` : `<div class="big-word">${esc(word.t)}</div><p class="muted center">Озвучка недоступна в этом браузере — напишите слово по переводу</p>`}
       <form class="type-form"><input id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Слово"><button class="btn">Проверить</button></form>
-      <button class="link" id="hint">Подсказка: показать перевод</button>`;
+      ${keysBar()}<button class="link" id="hint">Подсказка: показать перевод</button>`;
     if (can) { speak(word.w, store.state.rate); $('.say', stage).onclick = () => speak(word.w, store.state.rate * 0.8); }
     $('#hint').onclick = e => { e.target.textContent = word.t; };
     $('#typed').focus();
     $('.type-form', stage).onsubmit = e => {
       e.preventDefault();
-      const v = $('#typed').value.trim().toLowerCase();
+      const v = lower($('#typed').value.trim());
       if (!v) return;
       $('#typed').disabled = true; e.target.querySelector('button').disabled = true;
-      answer(word, v === word.w, v === word.w ? '' : `<br><small>Вы написали: ${esc(v)}</small>`);
+      const exact = v === word.w, close = !exact && fold(v) === fold(word.w);
+      answer(word, exact || close, exact ? '' : close ? `<br><small>Засчитано. Обратите внимание на буквы: ${esc(v)} → ${esc(word.w)}</small>` : `<br><small>Вы написали: ${esc(v)}</small>`);
     };
   },
 
@@ -184,7 +185,7 @@ export const QUESTIONS = {
     $('.tiles', stage).onclick = e => { const b = e.target.closest('.tile'); if (b && !b.disabled) pick(b); };
     const onType = e => {
       if (!stage.isConnected) return document.removeEventListener('keydown', onType);
-      const ch = e.key.toLowerCase(); if (ch.length !== 1) return;
+      const ch = lower(e.key); if (ch.length !== 1) return;
       const btn = $$('.tile:not([disabled])', stage).find(b => letters[b.dataset.k].ch === ch) || $$('.tile:not([disabled])', stage)[0];
       if (btn) { if (letters[btn.dataset.k].ch !== ch) { mistakes++; btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake'); } else pick(btn); }
     };
@@ -234,7 +235,7 @@ export function choice(stage, word, field, answer, head) {
 // ---------- Спринт ----------
 function sprint(main) {
   const own = G.allWords();
-  const src = own.length >= 8 ? own.map(w => ({ w: w.w, t: w.t })) : [...DICT.entries()].map(([w, t]) => ({ w, t }));
+  const src = own.length >= 8 ? own.map(w => ({ w: w.w, t: w.t })) : [...L().DICT.entries()].map(([w, t]) => ({ w, t }));
   let score = 0, combo = 0, time = 60, total = 0, item, truth, tick;
   main.innerHTML = `
   <section class="band narrow trainer">

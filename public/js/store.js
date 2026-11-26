@@ -13,7 +13,7 @@ const ls = {
 
 export function emptyState(name = 'Ученик') {
   return {
-    v: 1, name, goal: 50, rate: 0.9, createdAt: Date.now(),
+    v: 1, name, goal: 50, rate: 0.9, createdAt: Date.now(), lang: 'en',
     words: {}, xp: 0, xpLog: {}, streak: 0, bestStreak: 0, lastActive: null,
     readTexts: {}, grammar: {}, stats: { answers: 0, correct: 0, trainings: 0, perfect: 0 }, badges: {}
   };
@@ -109,7 +109,7 @@ export const store = {
   },
 
   resetProgress() {
-    const keep = { name: this.state.name, goal: this.state.goal, rate: this.state.rate };
+    const keep = { name: this.state.name, goal: this.state.goal, rate: this.state.rate, lang: this.state.lang || 'en' };
     this.state = { ...emptyState(), ...keep };
     return this.saveNow();
   },

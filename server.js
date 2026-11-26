@@ -6,7 +6,7 @@
 //   GET  /api/me                                  -> {user}
 //   GET  /api/state  / PUT /api/state {state}     -> прогресс пользователя
 //   GET  /api/leaderboard                         -> топ по XP за неделю и всего
-//   GET  /api/translate?q=word                    -> перевод слова, которого нет во встроенном словаре
+//   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
 import http from 'node:http';
@@ -130,14 +130,15 @@ function weekXp(state) {
 
 // ---------- перевод неизвестных слов (MyMemory, бесплатный публичный API) ----------
 const translateCache = new Map();
-async function translate(q) {
-  if (translateCache.has(q)) return translateCache.get(q);
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|ru`;
+async function translate(q, lang = 'en') {
+  const key = lang + ':' + q;
+  if (translateCache.has(key)) return translateCache.get(key);
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=${lang}|ru`;
   const r = await fetch(url, { signal: AbortSignal.timeout(6000) });
   const j = await r.json();
   const t = (j?.responseData?.translatedText || '').trim();
-  const out = t && t.toLowerCase() !== q.toLowerCase() ? t.toLowerCase() : '';
-  translateCache.set(q, out);
+  const out = t && t.toLocaleLowerCase(lang) !== q.toLocaleLowerCase(lang) ? t.toLowerCase() : '';
+  translateCache.set(key, out);
   return out;
 }
 
@@ -176,9 +177,11 @@ async function api(req, res, url) {
   }
 
   if (route === 'GET /api/translate') {
-    const q = (url.searchParams.get('q') || '').trim().toLowerCase().slice(0, 60);
-    if (!/^[a-z' -]+$/.test(q)) return send(res, 400, { error: 'bad word' });
-    try { return send(res, 200, { word: q, translation: await translate(q) }); }
+    const lang = url.searchParams.get('lang') === 'tr' ? 'tr' : 'en';
+    const q = (url.searchParams.get('q') || '').trim().toLocaleLowerCase(lang).slice(0, 60);
+    const ok = lang === 'tr' ? /^[a-zçğıöşüâîû' -]+$/ : /^[a-z' -]+$/;
+    if (!ok.test(q)) return send(res, 400, { error: 'bad word' });
+    try { return send(res, 200, { word: q, translation: await translate(q, lang) }); }
     catch { return send(res, 200, { word: q, translation: '' }); }
   }
 

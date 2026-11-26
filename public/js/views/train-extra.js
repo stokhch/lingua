@@ -3,27 +3,26 @@ import { store } from '../store.js';
 import { esc, $, $$, icon, shuffle, plural } from '../ui.js';
 import * as G from '../game.js';
 import { speak, canSpeak } from '../speech.js';
-import { DICT, lemma } from '../data/dictionary.js';
-import { TEXTS } from '../data/texts.js';
-import { PHRASES } from '../data/phrases.js';
+import { L, lower, fold, lettersOnly, keysBar } from '../lang.js';
 import { distractors } from './train.js';
 import { buildCrossword } from '../crossword.js';
 
 export const EXTRA_INFO = {
   storm: { title: 'Мозговой штурм', desc: '5 новых слов: знакомство и три тренировки подряд', ic: 'brain' },
   ctx: { title: 'Слово в контексте', desc: 'Вставьте пропущенное слово в предложение', ic: 'quote' },
-  phrase: { title: 'Конструктор фраз', desc: 'Соберите английскую фразу по переводу', ic: 'puzzle' },
+  phrase: { title: 'Конструктор фраз', desc: 'Соберите фразу по переводу', ic: 'puzzle' },
   dict: { title: 'Диктант', desc: 'Прослушайте фразу и запишите её', ic: 'pen' },
   fall: { title: 'Водопад', desc: 'Успейте выбрать перевод, пока слово падает', ic: 'drop' },
   cross: { title: 'Кроссворд', desc: 'Разгадайте кроссворд из слов словаря', ic: 'grid' }
 };
 
 // ---------- планы для пошаговых тренировок ----------
-const SENTENCES = [...TEXTS.flatMap(t => t.body.split(/(?<=[.!?])\s+/)), ...PHRASES.map(p => p.en)].map(s => s.trim()).filter(Boolean);
+const sentenceCache = {};
+const sentences = () => (sentenceCache[L().id] ||= [...L().TEXTS.flatMap(t => t.body.split(/(?<=[.!?])\s+/)), ...L().PHRASES.map(p => p.en)].map(s => s.trim()).filter(Boolean));
 
 function findSentence(w) {
-  const tokenRe = /[A-Za-z’'-]+/g;
-  const ordered = w.ctx ? [w.ctx, ...shuffle(SENTENCES)] : shuffle(SENTENCES);
+  const tokenRe = new RegExp(L().tokenRe.source, 'g'), { lemma } = L();
+  const ordered = w.ctx ? [w.ctx, ...shuffle(sentences())] : shuffle(sentences());
   for (const s of ordered) {
     for (const m of s.matchAll(tokenRe)) if (lemma(m[0]) === w.w) return { sent: s, form: m[0], at: m.index };
   }
@@ -36,7 +35,7 @@ export function extraPlan(kind) {
     if (all.length < 4) return null;
     let words = all.filter(w => !w.srs).sort((a, b) => a.added - b.added).slice(0, 5), practice = false;
     if (!words.length) { words = shuffle(all).slice(0, 5); practice = 'free'; }
-    const co = w => (w.w.replace(/[^a-z]/g, '').length <= 14 ? 'co' : 'au');
+    const co = w => (lettersOnly(w.w).length <= 14 ? 'co' : 'au');
     return { practice, steps: [
       ...words.map(word => ({ word, q: 'intro' })),
       ...shuffle(words).map(word => ({ word, q: 'wt' })),
@@ -55,12 +54,13 @@ export function extraPlan(kind) {
     }
     return items.length ? { practice: false, steps: shuffle(items).map(word => ({ word, q: 'ctx' })) } : null;
   }
+  const { PHRASES } = L();
   if (kind === 'phrase') return { practice: false, steps: shuffle(PHRASES).slice(0, 8).map(p => ({ word: { w: p.en, t: p.ru }, q: 'phrase' })) };
   if (kind === 'dict') return { practice: false, steps: shuffle(PHRASES).slice(0, 6).map(p => ({ word: { w: p.en, t: p.ru }, q: 'dict' })) };
   return undefined;
 }
 
-const norm = s => s.toLowerCase().replace(/[’`]/g, "'").replace(/[^a-z' ]/g, ' ').replace(/\s+/g, ' ').trim();
+const norm = s => lower(s).replace(/[’`]/g, "'").replace(/[^\p{L}' ]/gu, ' ').replace(/\s+/g, ' ').trim();
 
 export const EXTRA_QUESTIONS = {
   intro(stage, word, answer, next) {
@@ -124,8 +124,8 @@ export const EXTRA_QUESTIONS = {
     const can = canSpeak();
     stage.innerHTML = `
       ${can ? `<div class="row gap center"><button class="play say" aria-label="Прослушать">${icon('sound')}</button><button class="btn ghost" id="slow">Медленнее</button></div><p class="muted center">Запишите фразу целиком</p>`
-        : `<div class="big-word phrase-ru">${esc(word.t)}</div><p class="muted center">Озвучка недоступна — переведите фразу на английский</p>`}
-      <form class="type-form wide"><input id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Фраза"><button class="btn">Проверить</button></form>
+        : `<div class="big-word phrase-ru">${esc(word.t)}</div><p class="muted center">Озвучка недоступна — переведите фразу на ${L().acc}</p>`}
+      <form class="type-form wide"><input id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Фраза"><button class="btn">Проверить</button></form>${keysBar()}
       ${can ? '<button class="link" id="hint">Подсказка: перевод фразы</button>' : ''}`;
     if (can) {
       speak(word.w, store.state.rate);
@@ -138,8 +138,8 @@ export const EXTRA_QUESTIONS = {
       e.preventDefault();
       const v = $('#typed').value; if (!v.trim()) return;
       $('#typed').disabled = true; e.target.querySelector('button').disabled = true;
-      const ok = norm(v) === norm(word.w);
-      answer(word, ok, ok ? '' : `<br><small>Вы написали: ${esc(v)}</small>`);
+      const exact = norm(v) === norm(word.w), close = !exact && fold(norm(v)) === fold(norm(word.w));
+      answer(word, exact || close, exact ? '' : close ? `<br><small>Засчитано. Обратите внимание на буквы: ${esc(v)}</small>` : `<br><small>Вы написали: ${esc(v)}</small>`);
     };
   }
 };
@@ -147,7 +147,7 @@ export const EXTRA_QUESTIONS = {
 // ---------- Водопад ----------
 function wordSource() {
   const own = G.allWords();
-  return own.length >= 8 ? own.map(w => ({ w: w.w, t: w.t })) : [...DICT.entries()].map(([w, t]) => ({ w, t }));
+  return own.length >= 8 ? own.map(w => ({ w: w.w, t: w.t })) : [...L().DICT.entries()].map(([w, t]) => ({ w, t }));
 }
 
 function fall(main) {
@@ -205,9 +205,10 @@ function fall(main) {
 
 // ---------- Кроссворд ----------
 function cross(main) {
-  const ok = w => /^[a-z]{3,10}$/.test(w);
+  const letterRe = new RegExp(`^[${L().letters}]{3,10}$`);
+  const ok = w => letterRe.test(w) && w === lower(w);
   let cands = shuffle(G.allWords().filter(w => ok(w.w))).map(w => ({ w: w.w, t: w.t }));
-  if (cands.length < 6) cands = cands.concat(shuffle([...DICT.entries()].filter(([w]) => ok(w))).slice(0, 30).map(([w, t]) => ({ w, t })));
+  if (cands.length < 6) cands = cands.concat(shuffle([...L().DICT.entries()].filter(([w]) => ok(w))).slice(0, 30).map(([w, t]) => ({ w, t })));
   let cw = null;
   for (let tries = 0; tries < 8; tries++) { const c = buildCrossword(shuffle(cands).slice(0, 16)); if (c && (!cw || c.words.length > cw.words.length)) cw = c; if (cw?.words.length >= 7) break; }
   const cells = {};
@@ -227,7 +228,7 @@ function cross(main) {
       }).join('')}</div>
       <div class="clues">
         ${['across', 'down'].map(d => `<h3>${d === 'across' ? 'По горизонтали' : 'По вертикали'}</h3><ol>${cw.words.filter(p => p.dir === d).map(p => `<li data-id="${p.n}-${d}"><b>${p.n}.</b> ${esc(p.t)} <span class="muted">(${p.w.length})</span></li>`).join('')}</ol>`).join('')}
-        <div class="row gap"><button class="btn" id="check">Проверить</button><button class="btn ghost" id="hint">Открыть букву</button><button class="btn ghost" id="give">Сдаться</button></div>
+        ${keysBar()}<div class="row gap"><button class="btn" id="check">Проверить</button><button class="btn ghost" id="hint">Открыть букву</button><button class="btn ghost" id="give">Сдаться</button></div>
       </div>
     </div>
   </section>`;
@@ -250,7 +251,7 @@ function cross(main) {
   const grid = $('#cg');
   grid.addEventListener('focusin', e => { const k = e.target.dataset.k; if (!k) return; if (focusK === k && cells[k].words.length > 1) { /* повторный клик — смена направления */ } focusK = k; highlight(); });
   grid.addEventListener('click', e => { const k = e.target.dataset?.k; if (k && k === focusK && cells[k].words.length > 1) { dir = dir === 'across' ? 'down' : 'across'; highlight(); } });
-  grid.addEventListener('input', e => { const x = e.target; x.value = x.value.toLowerCase().replace(/[^a-z]/g, '').slice(-1); x.parentElement.classList.remove('bad'); if (x.value) move(x.dataset.k, 1); });
+  grid.addEventListener('input', e => { const x = e.target; x.value = lettersOnly(lower(x.value)).slice(-1); x.parentElement.classList.remove('bad'); if (x.value) move(x.dataset.k, 1); });
   grid.addEventListener('keydown', e => {
     const k = e.target.dataset.k; if (!k) return;
     if (e.key === 'Backspace' && !e.target.value) { move(k, -1); }

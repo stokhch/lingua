@@ -6,8 +6,7 @@ import * as G from './game.js';
 import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
-import { TEXTS } from './data/texts.js';
-import { SET_INFO } from './data/dictionary.js';
+import { L, LANGS, switchLang, wordCount } from './lang.js';
 
 const NAV = [
   ['home', 'Главная', 'home'], ['dictionary', 'Словарь', 'dict'], ['sets', 'Наборы', 'sets'],
@@ -23,6 +22,7 @@ function shell() {
     <a class="logo" href="#home" aria-label="Лингва — на главную">${mascot('happy', 40)}<span>Лингва</span></a>
     <nav class="nav" aria-label="Разделы">${NAV.map(([id, t, ic]) => `<a href="#${id}" data-nav="${id}">${icon(ic)}<span>${t}</span></a>`).join('')}</nav>
     <div class="hud">
+      <button class="pill lang" id="hud-lang" title="Изучаемый язык — сменить" aria-label="Сменить изучаемый язык">${icon('globe')}<b></b></button>
       <span class="pill streak" title="Дней подряд">${icon('fire')}<b id="hud-streak">0</b></span>
       <span class="pill xp" title="Опыт за сегодня / цель">${icon('star')}<b id="hud-xp">0</b></span>
       <a class="avatar" href="#profile" title="Профиль" id="hud-avatar"></a>
@@ -31,11 +31,41 @@ function shell() {
   <main id="view" tabindex="-1"></main>
   <footer class="foot">${fernBush(120, 11)}${fernBush(120, 23, 'right')}<p>Лингва — учебный open-source проект. Озвучка — синтез речи вашего браузера. <span id="sync"></span></p></footer>`;
   store.on(updateHud);
+  $('#hud-lang').onclick = pickLang;
   updateHud();
 }
 
+// ---------- выбор изучаемого языка ----------
+function pickLang() {
+  modal(`<h2>Какой язык учим?</h2><p class="muted">У каждого языка свой словарь, тексты и уроки. Опыт, стрик и достижения общие.</p>
+    <div class="lang-pick">${Object.values(LANGS).map(l => {
+      const n = wordCount(l.id);
+      return `<button class="lang-opt ${l.id === L().id ? 'on' : ''}" data-l="${l.id}"><span class="code">${l.code}</span><b>${l.name}</b><span class="muted">${n ? `${n} ${plural(n, 'слово', 'слова', 'слов')} в словаре` : 'словарь пуст'}</span></button>`;
+    }).join('')}</div>`,
+  (el, close) => { el.querySelector('.lang-pick').onclick = e => {
+    const b = e.target.closest('[data-l]'); if (!b) return;
+    close();
+    if (switchLang(b.dataset.l)) { updateHud(); toast(`Учим: ${L().acc}`); route(); }
+  }; });
+}
+
+// Кнопки с турецкими буквами (.xkeys) вставляют символ в последнее активное поле ввода
+let lastInput = null;
+document.addEventListener('focusin', e => { if (e.target.matches?.('input:not([type=checkbox]):not([type=radio]), textarea')) lastInput = e.target; });
+document.addEventListener('pointerdown', e => { if (e.target.closest('.xkeys button')) e.preventDefault(); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('.xkeys button'); if (!b) return;
+  const inp = lastInput?.isConnected && !lastInput.disabled ? lastInput : b.closest('form, .stage, .exercise, .clues, .band')?.querySelector('input:not([disabled])');
+  if (!inp) return;
+  if (inp.maxLength === 1) inp.value = b.dataset.ch;
+  else { const a = inp.selectionStart ?? inp.value.length, z = inp.selectionEnd ?? a; inp.setRangeText(b.dataset.ch, a, z, 'end'); }
+  inp.focus();
+  inp.dispatchEvent(new Event('input', { bubbles: true }));
+});
+
 function updateHud() {
   if (!store.state || !$('#hud-xp')) return;
+  $('#hud-lang b').textContent = L().code;
   $('#hud-streak').textContent = G.currentStreak();
   $('#hud-xp').textContent = `${G.todayXp()}/${store.state.goal}`;
   $('#hud-avatar').textContent = (store.state.name || '?').slice(0, 1).toUpperCase();
@@ -72,20 +102,22 @@ function route() {
 // ---------- Главная ----------
 function renderHome(main) {
   const s = store.state, c = G.counts(), lv = G.levelInfo(), tx = G.todayXp();
+  const { TEXTS, SET_INFO, firstSet } = L();
   const goalPct = Math.min(100, Math.round((tx / s.goal) * 100));
   const mood = tx >= s.goal ? 'happy' : tx > 0 ? 'calm' : 'sleepy';
   const nextText = TEXTS.find(t => !s.readTexts[t.id]) || TEXTS[0];
   const ready = c.new + c.learning;
-  const R = 70, L = 2 * Math.PI * R;
+  const R = 70, CIRC = 2 * Math.PI * R;
   main.innerHTML = `
   <section class="hero">
     ${lianas(11)}${fernBush(170, 2)}${fernBush(150, 9, 'right')}
     <div class="hero-pic">
-      <svg class="ring" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="${R}" class="ring-bg"/><circle cx="90" cy="90" r="${R}" class="ring-fg" stroke-dasharray="${L}" stroke-dashoffset="${L * (1 - goalPct / 100)}"/></svg>
+      <svg class="ring" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="${R}" class="ring-bg"/><circle cx="90" cy="90" r="${R}" class="ring-fg" stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC * (1 - goalPct / 100)}"/></svg>
       ${mascot(mood, 150)}
     </div>
     <div class="hero-text">
       <h1>${tx >= s.goal ? 'Цель на сегодня выполнена' : tx > 0 ? 'Хороший темп, ' + esc(s.name) : 'Привет, ' + esc(s.name) + '!'}</h1>
+      <p class="lang-line">Учим ${L().acc} · <button class="link" id="home-lang">сменить язык</button></p>
       <p class="lead">${tx >= s.goal ? 'Пим сыт и доволен. Можно повторить пару слов на завтра или почитать.' : `До дневной цели осталось <b>${s.goal - tx} XP</b>. Пим ждёт новых слов.`}</p>
       <div class="stat-row">
         <div class="stat"><b>${G.currentStreak()}</b><span>${plural(G.currentStreak(), 'день', 'дня', 'дней')} подряд</span></div>
@@ -108,15 +140,16 @@ function renderHome(main) {
     <div class="dict-meter">
       ${[['new', 'Новые'], ['learning', 'Изучаются'], ['learned', 'Изучены'], ['due', 'На повторение']].map(([k, t]) => `<a href="#dictionary" class="m ${k}"><b>${c[k]}</b><span>${t}</span></a>`).join('')}
     </div>
-    ${c.total === 0 ? `<div class="empty"><p>В словаре пока пусто. Начните с набора «${SET_INFO.verbs.title}» или откройте текст и нажимайте на незнакомые слова.</p><a class="btn" href="#set-verbs">Открыть набор</a></div>` : ''}
+    ${c.total === 0 ? `<div class="empty"><p>В словаре пока пусто. Начните с набора «${SET_INFO[firstSet].title}» или откройте текст и нажимайте на незнакомые слова.</p><a class="btn" href="#set-${firstSet}">Открыть набор</a></div>` : ''}
   </section>`;
+  $('#home-lang').onclick = pickLang;
 }
 
 // ---------- Вход и регистрация ----------
 function renderAuth() {
   app.innerHTML = `
   <div class="auth">
-    <div class="auth-pic">${lianas(7, 13)}${fernBush(160, 4)}${fernBush(140, 17, 'right')}${mascot('happy', 220)}<h1>Лингва</h1><p>Личный словарь, тренировки, тексты и грамматика — английский каждый день по 15 минут.</p></div>
+    <div class="auth-pic">${lianas(7, 13)}${fernBush(160, 4)}${fernBush(140, 17, 'right')}${mascot('happy', 220)}<h1>Лингва</h1><p>Личный словарь, тренировки, тексты и грамматика — английский и турецкий каждый день по 15 минут.</p></div>
     <form class="auth-form" id="auth-form" novalidate>
       <div class="tabs" role="tablist"><button type="button" class="on" data-k="login">Вход</button><button type="button" data-k="register">Регистрация</button></div>
       <label class="reg-only" hidden>Имя<input name="name" autocomplete="nickname" maxlength="40"></label>
@@ -180,6 +213,7 @@ function renderProfile(main) {
     <form class="settings" id="settings">
       <label>Имя<input name="name" value="${esc(s.name)}" maxlength="40"></label>
       <label>Дневная цель<select name="goal">${[20, 50, 100, 150, 250].map(g => `<option value="${g}" ${g === s.goal ? 'selected' : ''}>${g} XP — ${g <= 20 ? 'спокойно' : g <= 50 ? 'обычно' : g <= 100 ? 'серьёзно' : 'интенсив'}</option>`).join('')}</select></label>
+      <label>Изучаемый язык<select name="lang">${Object.values(LANGS).map(l => `<option value="${l.id}" ${l.id === L().id ? 'selected' : ''}>${l.name}</option>`).join('')}</select></label>
       <label>Скорость озвучки<select name="rate">${[[0.7, 'медленно'], [0.9, 'обычно'], [1.1, 'быстро']].map(([v, t]) => `<option value="${v}" ${v === s.rate ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
       <button class="btn" type="submit">Сохранить</button>
     </form>
@@ -194,14 +228,15 @@ function renderProfile(main) {
   $('#settings').onsubmit = e => {
     e.preventDefault(); const f = new FormData(e.target);
     s.name = String(f.get('name')).trim() || s.name; s.goal = Number(f.get('goal')); s.rate = Number(f.get('rate'));
-    store.save(); toast('Настройки сохранены'); renderProfile(main);
+    switchLang(String(f.get('lang')));
+    store.save(); updateHud(); toast('Настройки сохранены'); renderProfile(main);
   };
   $('#export').onclick = () => {
     const csv = G.allWords().map(w => `${w.w};${w.t.replace(/;/g, ',')}`).join('\n');
     modal(`<h2>Экспорт словаря</h2><p class="muted">Формат «слово;перевод». Скопируйте текст — его можно импортировать обратно или в другую программу с карточками.</p><textarea readonly rows="10">${esc(csv)}</textarea><div class="row gap"><button class="btn" id="copy">Скопировать</button><button class="btn ghost" data-close>Закрыть</button></div>`,
       (el) => { $('#copy', el).onclick = async () => { try { await navigator.clipboard.writeText(csv); toast('Скопировано'); } catch { $('textarea', el).select(); } }; });
   };
-  $('#import').onclick = () => modal(`<h2>Импорт слов</h2><p class="muted">По одному слову в строке: <code>word;перевод</code> (разделитель — точка с запятой или табуляция).</p><textarea rows="10" id="imp" placeholder="apple;яблоко"></textarea><div class="row gap"><button class="btn" id="do-imp">Импортировать</button><button class="btn ghost" data-close>Отмена</button></div>`,
+  $('#import').onclick = () => modal(`<h2>Импорт слов</h2><p class="muted">Слова попадут в словарь языка «${L().name}». По одному слову в строке: <code>word;перевод</code> (разделитель — точка с запятой или табуляция).</p><textarea rows="10" id="imp" placeholder="${L().sampleTr}"></textarea><div class="row gap"><button class="btn" id="do-imp">Импортировать</button><button class="btn ghost" data-close>Отмена</button></div>`,
     (el, close) => { $('#do-imp', el).onclick = () => {
       let n = 0;
       for (const line of $('#imp', el).value.split('\n')) { const [w, t] = line.split(/[;\t]/); if (w && t && G.addWord(w, t, '', 'импорт')) n++; }
