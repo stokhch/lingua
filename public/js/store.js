@@ -109,7 +109,7 @@ export const store = {
   },
 
   resetProgress() {
-    const keep = { name: this.state.name, goal: this.state.goal, rate: this.state.rate, lang: this.state.lang || 'en' };
+    const keep = { name: this.state.name, goal: this.state.goal, rate: this.state.rate, lang: this.state.lang || 'en', ...(this.state.hideFromAll ? { hideFromAll: true } : {}) };
     this.state = { ...emptyState(), ...keep };
     return this.saveNow();
   },
