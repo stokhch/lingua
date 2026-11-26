@@ -2,7 +2,11 @@
 // Голос выбирается под изучаемый язык: английский (en-GB / en-US), турецкий (tr-TR) или греческий (el-GR).
 // У карачаево-балкарского голоса в браузерах нет (tts: null) — озвучка для него отключена,
 // а тренировки на слух показывают задание текстом.
+// Если голоса нужного языка в системе нет (частый случай: греческий или турецкий в Chrome на Windows/macOS),
+// браузер читает текст голосом по умолчанию — то есть с английским произношением. Тогда звук берём
+// с сервера (/api/tts, mp3 на нужном языке), а встроенный синтез остаётся запасным вариантом.
 import { L } from './lang.js';
+import { ttsChunks } from './tts-chunks.js';
 
 const voices = {};
 function pickVoices() {
@@ -20,15 +24,51 @@ export const canSpeak = () => 'speechSynthesis' in window && !!L().tts;
 // Есть ли в системе голос для текущего языка (без него браузер может читать чужим акцентом)
 export const hasVoice = () => !canSpeak() || !!voices[L().id] || !(speechSynthesis.getVoices?.() || []).length;
 
-export function speak(text, rate = 0.9) {
-  if (!canSpeak() || !text) return false;
+let audio = null, playId = 0, fails = 0; // после 3 неудач подряд онлайн-озвучку больше не пробуем (например, статичная версия сайта)
+function stopAll() {
+  playId++;
+  if (audio) { try { audio.pause(); } catch {} audio = null; }
+  try { speechSynthesis.cancel(); } catch {}
+}
+
+function speakBrowser(text, rate, lang, voice) {
   try {
-    speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    const voice = voices[L().id];
-    u.lang = voice?.lang || L().tts; if (voice) u.voice = voice;
+    u.lang = voice?.lang || lang; if (voice) u.voice = voice;
     u.rate = rate;
     speechSynthesis.speak(u);
     return true;
+  } catch { return false; }
+}
+
+// Проигрывает куски mp3 по очереди; при ошибке сети/сервера — встроенный синтез с оставшимся текстом
+function speakOnline(text, rate, lang, tts) {
+  const parts = ttsChunks(text), id = ++playId;
+  const next = i => {
+    if (id !== playId || i >= parts.length) return;
+    const a = audio = new Audio(`api/tts?lang=${lang}&q=${encodeURIComponent(parts[i])}`);
+    a.playbackRate = Math.min(2, Math.max(0.5, rate / 0.9)); // 0.9 — обычная скорость в настройках
+    a.onended = () => { fails = 0; next(i + 1); };
+    const fail = () => {
+      if (id !== playId) return;
+      audio = null;
+      if (a.error) fails++;
+      speakBrowser(parts.slice(i).join(' '), rate, tts, null);
+    };
+    a.onerror = fail;
+    a.play()?.catch?.(e => { if (e?.name !== 'AbortError') fail(); });
+  };
+  next(0);
+  return true;
+}
+
+export function speak(text, rate = 0.9) {
+  if (!canSpeak() || !text) return false;
+  try {
+    stopAll();
+    const lang = L(), voice = voices[lang.id];
+    if (voice) return speakBrowser(text, rate, lang.tts, voice);
+    if (fails < 3 && typeof Audio !== 'undefined') return speakOnline(text, rate, lang.id, lang.tts);
+    return speakBrowser(text, rate, lang.tts, null);
   } catch { return false; }
 }
