@@ -4,6 +4,8 @@ import { store } from './store.js';
 import { esc, $, $$, icon, mascot, toast, modal, plural } from './ui.js';
 import * as G from './game.js';
 import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
+import { renderMySet } from './views/mysets.js';
+import { renderVerbs } from './views/verbs.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
@@ -86,12 +88,14 @@ function route() {
   const param = rest.join('-');
   cleanup?.(); cleanup = null;
   const main = $('#view');
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (view === 'set' && a.dataset.nav === 'sets') || (view === 'read' && a.dataset.nav === 'texts') || (view === 'lesson' && a.dataset.nav === 'grammar')));
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (view === 'read' && a.dataset.nav === 'texts') || (view === 'lesson' && a.dataset.nav === 'grammar')));
   const views = {
     home: () => renderHome(main),
     dictionary: () => renderDictionary(main),
     sets: () => renderSets(main),
     set: () => renderSet(main, param),
+    myset: () => renderMySet(main, param),
+    verbs: () => renderVerbs(main),
     train: () => (param ? renderTraining(main, param) : renderTrainings(main)),
     texts: () => renderTexts(main),
     read: () => renderReader(main, param),

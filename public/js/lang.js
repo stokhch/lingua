@@ -65,7 +65,7 @@ export const keysBar = () => L().extraKeys.length
   ? `<div class="xkeys" aria-label="Особые буквы">${L().extraKeys.map(k => `<button type="button" tabindex="-1" data-ch="${k}">${k}</button>`).join('')}</div>` : '';
 
 // Поля прогресса, у которых своя копия для каждого языка
-const PER_LANG = ['words', 'readTexts', 'grammar', 'materials', 'openedTexts'];
+const PER_LANG = ['words', 'readTexts', 'grammar', 'materials', 'openedTexts', 'mySets'];
 
 export function switchLang(id) {
   const s = store.state;
