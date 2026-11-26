@@ -91,7 +91,7 @@ function hideNudge() { clearTimeout(nudgeTimer); document.querySelector('.pim-nu
 export function onRoute(view, param) {
   hideNudge();
   if (view === 'train' && param) markStart();
-  if (!store.state || ['home', 'progress', 'train', 'test', 'exam', ''].includes(view)) return;
+  if (!store.state || ['home', 'progress', 'path', 'train', 'test', 'exam', ''].includes(view)) return;
   const s = sat();
   if (!hungry(s) || Date.now() - Number(lsGet(SNOOZE_KEY) || 0) < SNOOZE_MS) return;
   nudgeTimer = setTimeout(() => {

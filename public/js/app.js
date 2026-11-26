@@ -16,6 +16,7 @@ import { renderTrainings, renderTraining } from './views/train.js';
 import { renderShelf } from './views/library.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
+import { renderPath } from './views/path.js';
 import { renderGrammarTraining, grammarState } from './views/grammar-train.js';
 import { grammarPlan } from './grammar-drill.js';
 import { satiety, appleRow, APPLES, plea } from './pim.js';
@@ -108,7 +109,7 @@ function route() {
   const param = rest.join('-');
   cleanup?.(); cleanup = null;
   const main = $('#view');
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (['read', 'shelf'].includes(view) && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar')));
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (['read', 'shelf'].includes(view) && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar') || (view === 'path' && a.dataset.nav === 'progress')));
   const views = {
     home: () => renderHome(main),
     dictionary: () => renderDictionary(main),
@@ -128,6 +129,7 @@ function route() {
     gtrain: () => renderGrammarTraining(main, param),
     profile: () => renderProfile(main),
     progress: () => renderProgress(main),
+    path: () => renderPath(main),
     test: () => renderPlacement(main)
   };
   cleanup = (views[view] || views.home)() || null;
