@@ -1,0 +1,19 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# Бесплатный веб-сервис, автодеплой при каждом коммите в main.
+services:
+  - type: web
+    name: lingva
+    runtime: node
+    plan: free
+    branch: main
+    autoDeploy: true
+    buildCommand: npm install --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Строка подключения к бесплатному PostgreSQL (Neon, Supabase и т. п.).
+      # Без неё аккаунты и прогресс пропадут при перезапуске: диск на бесплатном тарифе временный.
+      - key: DATABASE_URL
+        sync: false

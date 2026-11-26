@@ -24,16 +24,41 @@ npm start            # или: node server.js
 # открыть http://localhost:3000
 ```
 
-Переменные окружения: `PORT` (по умолчанию 3000), `LINGVA_DATA` — папка для базы (по умолчанию `./data`, файл `db.json`).
+Переменные окружения:
+
+- `PORT` — порт (по умолчанию 3000);
+- `DATABASE_URL` — строка подключения к PostgreSQL. Если задана, база хранится там (таблица `lingva_store` создаётся сама), нужен `npm install` ради пакета `pg`;
+- `LINGVA_DATA` — папка для файловой базы, если `DATABASE_URL` не задан (по умолчанию `./data`, файл `db.json`).
+
+Без `DATABASE_URL` внешние пакеты не нужны: `node server.js` работает сразу после клонирования.
 
 Тесты: `npm test`.
 
 Без сервера: папку `public/` можно открыть любым статическим сервером (например, `python3 -m http.server` внутри `public`). Тогда сайт работает в режиме без регистрации и хранит прогресс в браузере.
 
+## Публикация на Render (бесплатно)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/stokhch/lingua)
+
+Диск бесплатного сервиса Render стирается при каждом перезапуске и деплое, поэтому аккаунты и прогресс нужно хранить во внешней базе. Подойдёт бесплатный PostgreSQL от [Neon](https://neon.tech).
+
+1. **База.** Зарегистрируйтесь на [neon.tech](https://neon.tech), создайте проект (регион поближе, например Frankfurt). На странице проекта нажмите **Connect** и скопируйте строку подключения вида `postgresql://user:pass@ep-....neon.tech/neondb?sslmode=require`.
+2. **Render.** Зарегистрируйтесь на [render.com](https://render.com) через GitHub и нажмите кнопку **Deploy to Render** выше (или **New → Blueprint** и выберите репозиторий `lingua`). Render прочитает `render.yaml`.
+3. На экране настройки вставьте строку из шага 1 в поле `DATABASE_URL` и нажмите **Apply / Deploy Blueprint**.
+4. Через 2–3 минуты сайт откроется по адресу вида `https://lingva-xxxx.onrender.com`. В логах должно быть `Хранилище: PostgreSQL (DATABASE_URL)`.
+
+Дальше каждый коммит в `main` выкатывается автоматически.
+
+Ограничения бесплатного тарифа: после 15 минут без посетителей сервис засыпает, и первое открытие занимает 30–60 секунд. Бесплатная база Render удаляется через 30 дней, поэтому в `render.yaml` она не используется; Neon бесплатен без срока. Вместо Neon подойдёт любой PostgreSQL, например Supabase (строка из **Connect → Session pooler**).
+
+Вся база хранится одной JSON-записью и загружается в память при старте. Для сотен и даже тысяч пользователей этого хватает; при большем росте стоит перейти на отдельные таблицы.
+
 ## Устройство
 
 ```
 server.js                 HTTP-сервер: статика + JSON API (auth, state, leaderboard, translate)
+storage.js                хранилище: PostgreSQL (DATABASE_URL) или файл data/db.json
+render.yaml               настройка деплоя на Render (Blueprint)
 public/index.html         оболочка SPA
 public/css/app.css        стили
 public/js/app.js          маршрутизация по #хэшу, главная, вход, профиль
@@ -56,7 +81,7 @@ API: `POST /api/register`, `POST /api/login`, `POST /api/logout`, `GET /api/me`,
 - Алгоритм FSRS ([ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs), MIT) вместо SM-2.
 - Загрузка своих текстов и субтитров, транскрипция и примеры из словарного API.
 - Другие языки: словарь и тексты лежат в `public/js/data`, их можно продублировать для нового языка.
-- PostgreSQL/SQLite вместо JSON-файла для большого числа пользователей.
+- Отдельные таблицы в PostgreSQL вместо одной JSON-записи для большого числа пользователей.
 
 Откуда взяты идеи — в [REFERENCES.md](REFERENCES.md).
 
