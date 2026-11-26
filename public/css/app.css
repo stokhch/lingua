@@ -400,3 +400,19 @@ body{background-color:var(--bg);
 @media (prefers-reduced-motion:reduce){.fern-row .fern-bush{animation:none}}
 .foot p{position:relative;z-index:5;width:fit-content;padding:10px 18px;border-radius:14px;background:color-mix(in srgb,var(--bg) 88%,transparent);box-shadow:0 2px 10px rgba(15,42,25,.12)}
 .fern-row{z-index:0}
+
+/* тест на уровень */
+.hero .lang-line a{color:#fff6d6;font-weight:800}
+.text-card em.for-you{color:var(--gold-ink)}
+.placement-intro,.placement-result{display:flex;gap:24px;align-items:center;margin-bottom:12px}
+.placement-intro .mascot,.placement-result .mascot{flex:none}
+.placement h2{margin-top:28px}
+.lv.big{font-size:28px;padding:4px 16px;vertical-align:middle;background:var(--sun);color:#2b2100}
+.pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.pick-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pick{display:grid;gap:2px;text-align:left;padding:14px 16px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.pick b{font-size:16px}.pick span{font-size:13px;color:var(--muted)}
+.pick:hover{border-color:var(--leaf)}.pick.on{border-color:var(--brand);background:var(--brand-soft)}
+.recs{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.placement-cta{max-width:none}
+@media (max-width:640px){.placement-intro,.placement-result{flex-direction:column;align-items:flex-start;gap:8px}.pick-grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}}

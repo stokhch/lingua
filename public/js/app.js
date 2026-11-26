@@ -7,6 +7,7 @@ import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { L, LANGS, switchLang, wordCount } from './lang.js';
+import { renderPlacement, placementBanner, myLevel } from './views/placement.js';
 
 const NAV = [
   ['home', 'Главная', 'home'], ['dictionary', 'Словарь', 'dict'], ['sets', 'Наборы', 'sets'],
@@ -92,7 +93,8 @@ function route() {
     read: () => renderReader(main, param),
     grammar: () => renderGrammar(main),
     lesson: () => renderLesson(main, param),
-    profile: () => renderProfile(main)
+    profile: () => renderProfile(main),
+    test: () => renderPlacement(main)
   };
   cleanup = (views[view] || views.home)() || null;
   main.focus({ preventScroll: true });
@@ -117,7 +119,7 @@ function renderHome(main) {
     </div>
     <div class="hero-text">
       <h1>${tx >= s.goal ? 'Цель на сегодня выполнена' : tx > 0 ? 'Хороший темп, ' + esc(s.name) : 'Привет, ' + esc(s.name) + '!'}</h1>
-      <p class="lang-line">Учим ${L().acc} · <button class="link" id="home-lang">сменить язык</button></p>
+      <p class="lang-line">Учим ${L().acc} · ${myLevel() ? `<a href="#test" title="Тест на уровень">уровень ${myLevel()}</a> · ` : ''}<button class="link" id="home-lang">сменить язык</button></p>
       <p class="lead">${tx >= s.goal ? 'Пим сыт и доволен. Можно повторить пару слов на завтра или почитать.' : `До дневной цели осталось <b>${s.goal - tx} XP</b>. Пим ждёт новых слов.`}</p>
       <div class="stat-row">
         <div class="stat"><b>${G.currentStreak()}</b><span>${plural(G.currentStreak(), 'день', 'дня', 'дней')} подряд</span></div>
@@ -126,6 +128,7 @@ function renderHome(main) {
       </div>
     </div>
   </section>
+  ${placementBanner()}
   <section class="band">
     <div class="grid-3">
       <a class="action primary" href="${c.due ? '#train-cards' : '#train'}">
@@ -187,6 +190,7 @@ function renderProfile(main) {
     <div class="profile-head">
       <div class="avatar big">${esc((s.name || '?').slice(0, 1).toUpperCase())}</div>
       <div><h1>${esc(s.name)}</h1><p class="muted">${store.mode === 'server' ? esc(store.user?.email) : 'Режим без регистрации'}</p>
+      <p class="muted">${L().name}: ${myLevel() ? `уровень <b>${myLevel()}</b> · ` : ''}<a href="#test">${myLevel() ? 'пройти тест заново' : 'определить уровень'}</a></p>
       <div class="level"><b>Уровень ${lv.level}</b><i class="bar"><i style="width:${lv.pct}%"></i></i><span>${lv.into} / ${lv.need} XP</span></div></div>
     </div>
     <div class="stat-row wide">
