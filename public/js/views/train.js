@@ -1,6 +1,6 @@
 // Тренировки: слово-перевод, перевод-слово, аудирование, конструктор слов, карточки (SRS) и спринт.
 import { store } from '../store.js';
-import { esc, $, $$, icon, shuffle, plural } from '../ui.js';
+import { esc, $, $$, icon, shuffle, plural, mascot } from '../ui.js';
 import * as G from '../game.js';
 import { speak, canSpeak } from '../speech.js';
 import { GRADES, intervalLabel } from '../srs.js';
@@ -55,6 +55,33 @@ export function renderTrainings(main) {
   if (c.total) bindFocusBar(() => renderTrainings(main));
 }
 
+// ---------- Пим рядом с вопросом: подпрыгивает от радости на верный ответ ----------
+const PIM_KINDS = ['wt', 'tw'];
+const CHEERS = ['Верно!', 'Ура!', 'Так держать!', 'Точно!', 'Молодец!', 'Здорово!', 'В яблочко!'];
+const STREAK_CHEERS = ['Три подряд!', 'Ты в ударе!', 'Какая серия!', 'Не остановить!'];
+const OOPS = ['Ничего, запомним', 'Почти! В другой раз', 'Ой… бывает', 'Посмотри внимательно'];
+const rnd = a => a[Math.floor(Math.random() * a.length)];
+function trainerPim(el) {
+  if (!el) return { react() {}, idle() {} };
+  const body = el.querySelector('.tp-body'), bubble = el.querySelector('.tp-say');
+  let combo = 0;
+  const set = (mood, cls, text) => {
+    body.innerHTML = mascot(mood, 84);
+    el.classList.remove('jump', 'big', 'oops'); void el.offsetWidth;
+    if (cls) el.classList.add(...cls.split(' '));
+    bubble.textContent = text || '';
+    bubble.classList.toggle('on', !!text);
+  };
+  return {
+    react(ok) {
+      combo = ok ? combo + 1 : 0;
+      if (ok) set('happy', combo >= 3 && combo % 3 === 0 ? 'jump big' : 'jump', combo >= 3 && combo % 3 === 0 ? rnd(STREAK_CHEERS) : rnd(CHEERS));
+      else set('sad', 'oops', rnd(OOPS));
+    },
+    idle() { set('calm', '', ''); }
+  };
+}
+
 // варианты ответа: перевод другого слова из словаря пользователя или встроенного словаря
 export function distractors(word, field, n = 4) {
   const own = G.allWords().filter(w => w.w !== word.w).map(w => field === 't' ? w.t : w.w);
@@ -84,9 +111,11 @@ export function renderTraining(main, kind) {
     <div class="train-top"><a class="back" href="#train">${icon('x')} <span>Закончить</span></a><b>${info.title}</b><span class="count" id="cnt"></span></div>
     <i class="bar"><i id="progress" style="width:0"></i></i>
     ${practice === 'free' ? '<p class="note">Новых слов для этой тренировки нет — повторяем все слова вперемешку.</p>' : practice === 'learn' ? '<p class="note">Повторять пока нечего — учим новые слова карточками.</p>' : ''}
+    ${PIM_KINDS.includes(kind) ? `<div class="trainer-pim" id="tpim" aria-hidden="true"><div class="tp-body">${mascot('calm', 84)}</div><span class="tp-say"></span></div>` : ''}
     <div id="stage" class="stage"></div>
   </section>`;
   const stage = $('#stage');
+  const pim = trainerPim($('#tpim'));
 
   const answer = (word, ok, extra = '') => {
     results.push({ word, ok });
@@ -94,6 +123,7 @@ export function renderTraining(main, kind) {
     const q = steps[i].q;
     if (ok) { if (practice !== 'free' && G.TRAININGS.includes(q) && G.hasWord(word.w)) G.markTrained(word.w, q); G.addXp(practice === 'free' ? 1 : 2); }
     stage.classList.add(ok ? 'right' : 'wrong');
+    pim.react(ok);
     const fb = document.createElement('div');
     fb.className = 'feedback ' + (ok ? 'ok' : 'bad');
     fb.innerHTML = `${icon(ok ? 'check' : 'x')}<div><b>${esc(word.w)}</b> — ${esc(word.t)}${extra}</div><button class="btn" id="next">Дальше</button>`;
@@ -130,6 +160,7 @@ export function renderTraining(main, kind) {
     $('#cnt').textContent = `${i + 1} / ${steps.length}`;
     $('#progress').style.width = `${(i / steps.length) * 100}%`;
     stage.className = 'stage';
+    pim.idle();
     QUESTIONS[q](stage, word, answer, next);
   };
   show();
