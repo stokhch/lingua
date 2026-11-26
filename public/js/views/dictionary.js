@@ -3,7 +3,7 @@ import { store } from '../store.js';
 import { esc, $, $$, icon, toast, plural } from '../ui.js';
 import * as G from '../game.js';
 import { speak } from '../speech.js';
-import { SETS, SET_INFO, DICT } from '../data/dictionary.js';
+import { L, lower, keysBar } from '../lang.js';
 import { translateWord } from '../translate.js';
 
 let filter = 'all', query = '';
@@ -12,12 +12,12 @@ export function renderDictionary(main) {
   const c = G.counts();
   main.innerHTML = `
   <section class="band">
-    <div class="head-row"><h1>Мой словарь</h1><span class="muted">${c.total} ${plural(c.total, 'слово', 'слова', 'слов')}</span></div>
+    <div class="head-row"><h1>Мой словарь</h1><span class="muted">${L().name} · ${c.total} ${plural(c.total, 'слово', 'слова', 'слов')}</span></div>
     <form class="add-word" id="add" autocomplete="off">
-      <input id="aw-word" placeholder="Новое слово, например: journey" aria-label="Английское слово" required>
+      <input id="aw-word" placeholder="Новое слово, например: ${L().sample}" aria-label="Слово (${L().acc})" required autocapitalize="off">
       <input id="aw-tr" placeholder="Перевод" aria-label="Перевод" required>
       <button class="btn" type="submit">${icon('plus')} Добавить</button>
-      <p class="hint" id="aw-hint"></p>
+      ${keysBar()}<p class="hint" id="aw-hint"></p>
     </form>
     <div class="toolbar">
       <div class="chips" role="tablist">
@@ -30,10 +30,10 @@ export function renderDictionary(main) {
 
   const list = $('#list');
   const draw = () => {
-    const q = query.trim().toLowerCase();
+    const q = lower(query.trim());
     const words = G.allWords()
       .filter(w => filter === 'all' || G.wordStatus(w) === filter)
-      .filter(w => !q || w.w.includes(q) || w.t.toLowerCase().includes(q))
+      .filter(w => !q || w.w.includes(q) || lower(w.t).includes(q))
       .sort((a, b) => b.added - a.added);
     if (!words.length) {
       list.innerHTML = `<li class="empty">${c.total ? 'Ничего не найдено.' : 'Словарь пуст. Добавьте слово выше, выберите <a href="#sets">набор</a> или нажимайте на слова в <a href="#texts">текстах</a>.'}</li>`;
@@ -92,15 +92,16 @@ export function renderSets(main) {
   main.innerHTML = `
   <section class="band">
     <h1>Наборы слов</h1>
-    <p class="lead">Тематические подборки из встроенного словаря. Откройте набор и добавьте нужные слова — они сразу появятся в тренировках.</p>
-    <div class="sets">${Object.entries(SET_INFO).map(([id, s]) => {
-      const words = SETS[id] || []; const have = words.filter(w => G.hasWord(w)).length;
+    <p class="lead">${L().name}: тематические подборки из встроенного словаря. Откройте набор и добавьте нужные слова — они сразу появятся в тренировках.</p>
+    <div class="sets">${Object.entries(L().SET_INFO).map(([id, s]) => {
+      const words = L().SETS[id] || []; const have = words.filter(w => G.hasWord(w)).length;
       return `<a class="set-card ${id}" href="#set-${id}"><b>${s.title}</b><span>${s.desc}</span><i class="bar"><i style="width:${Math.round((have / words.length) * 100)}%"></i></i><em>${have} из ${words.length} в словаре</em></a>`;
     }).join('')}</div>
   </section>`;
 }
 
 export function renderSet(main, id) {
+  const { SET_INFO, SETS, DICT } = L();
   const info = SET_INFO[id]; if (!info) { location.hash = 'sets'; return; }
   const words = SETS[id];
   const draw = () => {

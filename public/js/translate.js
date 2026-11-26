@@ -1,13 +1,13 @@
-// Перевод слова: сначала встроенный словарь, затем (если запущен сервер) онлайн-перевод через /api/translate.
-import { lookup } from './data/dictionary.js';
+// Перевод слова: сначала встроенный словарь текущего языка, затем (если запущен сервер) онлайн-перевод через /api/translate.
+import { L } from './lang.js';
 import { store } from './store.js';
 
 export async function translateWord(raw) {
-  const r = lookup(raw);
+  const r = L().lookup(raw);
   if (r.translation) return { ...r, source: 'dict' };
   if (store.serverAvailable && r.word) {
     try {
-      const j = await (await fetch('api/translate?q=' + encodeURIComponent(r.word))).json();
+      const j = await (await fetch(`api/translate?lang=${L().id}&q=` + encodeURIComponent(r.word))).json();
       if (j.translation) return { word: r.word, translation: j.translation, source: 'online' };
     } catch {}
   }

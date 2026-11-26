@@ -2,6 +2,7 @@
 import { store } from './store.js';
 import { newCard, review, isDue } from './srs.js';
 import { toast } from './ui.js';
+import { lower } from './lang.js';
 
 export const TRAININGS = ['wt', 'tw', 'au', 'co']; // слово-перевод, перевод-слово, аудирование, конструктор
 const S = () => store.state;
@@ -20,10 +21,10 @@ export function wordStatus(w) {
 }
 export const STATUS_LABEL = { new: 'Новое', learning: 'Изучается', learned: 'Изучено', due: 'Пора повторить' };
 
-export function hasWord(w) { return !!S().words[w.toLowerCase()]; }
+export function hasWord(w) { return !!S().words[lower(w)]; }
 
 export function addWord(word, translation, ctx = '', src = '') {
-  const key = word.trim().toLowerCase();
+  const key = lower(word.trim());
   if (!key || !translation.trim()) return false;
   if (S().words[key]) return false;
   S().words[key] = { w: key, t: translation.trim(), ctx: ctx.slice(0, 240), src, added: Date.now(), trained: {}, srs: null };

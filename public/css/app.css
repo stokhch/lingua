@@ -356,3 +356,23 @@ body{background-color:var(--bg);
 @media (max-width:760px){.auth-pic{padding-top:110px}.auth-pic .vine:nth-child(even){display:none}}
 .hero .lead{text-shadow:0 1px 3px rgba(5,25,12,.9),0 0 10px rgba(5,25,12,.6)}
 .foot .fern-bush{opacity:.8}
+
+/* ---------- выбор языка и турецкие буквы ---------- */
+.pill.lang{border:0;font:inherit;font-weight:900;color:inherit;cursor:pointer}
+.pill.lang .ic{width:18px;height:18px}
+.pill.lang:hover{filter:brightness(1.15)}
+.lang-line{margin:0 0 6px;font-weight:700;color:var(--muted)}
+.lang-line .link{font-weight:800}
+.lang-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px}
+.lang-opt{display:grid;gap:2px;justify-items:start;text-align:left;padding:16px;border-radius:var(--r);border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.lang-opt:hover{border-color:var(--gold)}
+.lang-opt.on{border-color:var(--brand);background:var(--brand-soft)}
+.lang-opt .code{font-weight:900;font-size:13px;letter-spacing:.08em;padding:2px 8px;border-radius:99px;background:var(--bg2);color:var(--gold-ink)}
+.lang-opt b{font-size:19px}
+.xkeys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
+.xkeys button{min-width:40px;min-height:40px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:800 18px Nunito,sans-serif;cursor:pointer}
+.xkeys button:hover{border-color:var(--gold)}
+.add-word .xkeys{grid-column:1/-1;justify-content:flex-start;margin:0}
+.small-h{font-size:.55em;font-weight:700}
+.hero .lang-line{color:var(--sun);text-shadow:0 1px 3px rgba(5,25,12,.9)}
+.hero .lang-line .link{color:#fff6d6;background:none;border:0;padding:0;font:inherit;font-weight:800;text-decoration:underline;cursor:pointer}
