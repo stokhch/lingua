@@ -4,6 +4,7 @@ import { esc, $, $$, icon, toast } from '../ui.js';
 import * as G from '../game.js';
 import { speak } from '../speech.js';
 import { translateWord, translateSentence } from '../translate.js';
+import { examRow } from './exam.js';
 import { L, lower, splitRe, keysBar } from '../lang.js';
 import { myLevel } from './placement.js';
 import { levelRank } from '../placement.js';
@@ -176,12 +177,12 @@ export function renderGrammar(main) {
   main.innerHTML = `
   <section class="band">
     <h1>Грамматика</h1>
-    <p class="lead">${L().name}: короткие уроки: объяснение по-русски и упражнения с проверкой. Урок засчитывается, если верно выполнено не меньше 70% заданий.</p>
+    <p class="lead">${L().name}: короткие уроки: объяснение по-русски и упражнения с проверкой. Урок засчитывается, если верно выполнено не меньше 70% заданий. В конце каждого курса — итоговый тест с оценкой и сертификатом.</p>
     <div class="courses">${COURSES.map(c => {
       const done = c.lessons.filter(l => g[l.id]?.passed).length;
       return `<div class="course"><div class="course-head"><span class="lv">${c.level}</span><h2>${esc(c.title)}</h2><span class="muted">${done} из ${c.lessons.length}</span></div>
         <i class="bar"><i style="width:${(done / c.lessons.length) * 100}%"></i></i>
-        <ol class="lessons">${c.lessons.map(l => `<li><a href="#lesson-${l.id}" class="${g[l.id]?.passed ? 'passed' : ''}">${g[l.id]?.passed ? icon('check') : '<i class="dot"></i>'}<span>${esc(l.title)}</span>${g[l.id] ? `<em>${g[l.id].best}%</em>` : ''}</a></li>`).join('')}</ol></div>`;
+        <ol class="lessons">${c.lessons.map(l => `<li><a href="#lesson-${l.id}" class="${g[l.id]?.passed ? 'passed' : ''}">${g[l.id]?.passed ? icon('check') : '<i class="dot"></i>'}<span>${esc(l.title)}</span>${g[l.id] ? `<em>${g[l.id].best}%</em>` : ''}</a></li>`).join('')}</ol>${examRow(c)}</div>`;
     }).join('')}</div>
   </section>`;
 }
