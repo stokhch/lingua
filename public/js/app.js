@@ -9,6 +9,7 @@ import { renderMySet } from './views/mysets.js';
 import { renderVerbs } from './views/verbs.js';
 import { renderFriends } from './views/friends.js';
 import { renderExtension } from './views/extension.js';
+import { renderExam } from './views/exam.js';
 import { pullInbox } from './inbox.js';
 import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
@@ -99,7 +100,7 @@ function route() {
   const param = rest.join('-');
   cleanup?.(); cleanup = null;
   const main = $('#view');
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (view === 'read' && a.dataset.nav === 'texts') || (view === 'lesson' && a.dataset.nav === 'grammar')));
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (view === 'read' && a.dataset.nav === 'texts') || (['lesson', 'exam'].includes(view) && a.dataset.nav === 'grammar')));
   const views = {
     home: () => renderHome(main),
     dictionary: () => renderDictionary(main),
@@ -109,6 +110,7 @@ function route() {
     verbs: () => renderVerbs(main),
     friends: () => renderFriends(main),
     extension: () => renderExtension(main),
+    exam: () => renderExam(main, param),
     train: () => (param ? renderTraining(main, param) : renderTrainings(main)),
     texts: () => renderTexts(main),
     read: () => renderReader(main, param),

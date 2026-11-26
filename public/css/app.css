@@ -625,6 +625,18 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .lang-opt .flags{display:inline-flex;gap:6px}
 .lang-opt .flag{width:auto;height:24px;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.15);display:block}
 
+/* итоговые тесты и сертификат */
+.exam-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.exam-mark{font-weight:900;font-size:14px;padding:3px 10px;border-radius:99px;background:var(--bg);color:var(--muted)}
+.exam-mark.m5{background:linear-gradient(180deg,#ffd76a,var(--sun));color:#2b1d00}.exam-mark.m4{background:var(--ok-soft);color:var(--ok)}.exam-mark.m3{background:var(--brand-soft);color:var(--brand-ink)}.exam-mark.m2{background:var(--bad-soft);color:var(--bad)}
+.exam-mark.big{font-size:18px;padding:6px 16px;display:inline-block;margin-bottom:10px}
+.exam-result{margin:8px 0 6px}
+.exam-answers li{align-items:flex-start}.exam-answers li div{display:grid}.exam-answers span{font-size:14px;color:var(--muted)}
+.cert{display:grid;justify-items:center;text-align:center;gap:4px;padding:36px 28px;margin:12px 0 20px;border-radius:20px;background:var(--card);border:3px double var(--gold);box-shadow:inset 0 0 0 8px color-mix(in srgb,var(--sun) 18%,var(--card)),var(--shadow)}
+.cert-top{display:flex;align-items:center;gap:14px;text-align:left;margin-bottom:10px}.cert-top span{font-weight:800;color:var(--gold-ink);letter-spacing:.06em;text-transform:uppercase;font-size:13px}.cert-top h1{margin:0;font-size:40px}
+.cert p{margin:4px 0}.cert-name{font-size:30px;margin:4px 0 8px;color:var(--brand-ink);border-bottom:2px solid var(--line);padding:0 24px 6px}
+.cert h3{font-size:22px;margin:4px 0 10px}.cert-grade b{color:var(--gold-ink)}
+@media print{.top,.foot,.no-print,.toasts,.fern-row,.lianas,.scenery,.postcard{display:none!important}body{background:#fff}.cert{box-shadow:none;break-inside:avoid}}
 /* ===== Пейзажи страны изучаемого языка ===== */
 .scenery{position:fixed;inset:64px 0 0;pointer-events:none;z-index:15;display:none}
 .scene{position:absolute;top:0;bottom:0;width:calc((100vw - 1240px) / 2);overflow:hidden;}
