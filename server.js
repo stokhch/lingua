@@ -9,6 +9,7 @@
 //   GET  /api/students                            -> все ученики: имя, уровень, XP, стрик, языки (кроме скрывшихся; students.js)
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
+//   GET  /api/tts?q=…&lang=en|tr|el             -> mp3 с озвучкой, когда в браузере нет голоса для языка
 //   GET  /api/lookup, /api/inbox, POST /api/inbox(/clear), GET /lingva-extension.zip -> расширение браузера (extension-api.js)
 //   GET  /api/invite (без входа), GET /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
 //   GET/POST /api/classes…, /api/join, /api/teacher/enable -> учитель, классы и соревнования (teacher.js)
@@ -170,6 +171,32 @@ async function translate(q, lang = 'en', sentence = false) {
   return out;
 }
 
+// ---------- онлайн-озвучка (если в браузере нет голоса нужного языка) ----------
+// Без этого Chrome на Windows/macOS без греческого (турецкого) голоса читает слово английским голосом.
+// Берём mp3 у Google Translate (тот же звук, что на translate.google.com) и кэшируем в памяти.
+const TTS_LANGS = new Set(['en', 'tr', 'el']);
+const ttsCache = new Map();
+const ttsHits = new Map();
+function limitedTts(ip) {
+  const now = Date.now();
+  const list = (ttsHits.get(ip) || []).filter(t => now - t < 60_000);
+  list.push(now);
+  ttsHits.set(ip, list);
+  if (ttsHits.size > 10000) ttsHits.clear();
+  return list.length > 120;
+}
+async function ttsAudio(q, lang) {
+  const key = lang + ':' + q;
+  if (ttsCache.has(key)) return ttsCache.get(key);
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encodeURIComponent(q)}`;
+  const r = await fetch(url, { signal: AbortSignal.timeout(8000), headers: { 'User-Agent': 'Mozilla/5.0' } });
+  if (!r.ok || !/audio/.test(r.headers.get('content-type') || '')) throw new Error('tts ' + r.status);
+  const buf = Buffer.from(await r.arrayBuffer());
+  if (ttsCache.size > 2000) ttsCache.clear();
+  ttsCache.set(key, buf);
+  return buf;
+}
+
 const social = createSocial({ getDb: () => db, persist, send, readJson, weekXp });
 const teacher = createTeacher({ getDb: () => db, persist, send, readJson });
 const ext = createExtensionApi({ root: ROOT, send, readJson, translate, persist });
@@ -217,6 +244,18 @@ async function api(req, res, url) {
     if (!ok.test(q)) return send(res, 400, { error: 'bad word' });
     try { return send(res, 200, { word: q, translation: await translate(q, lang) }); }
     catch { return send(res, 200, { word: q, translation: '' }); }
+  }
+
+  if (route === 'GET /api/tts') {
+    const lang = url.searchParams.get('lang');
+    const q = (url.searchParams.get('q') || '').replace(/\s+/g, ' ').trim();
+    if (!TTS_LANGS.has(lang) || !q || q.length > 200) return send(res, 400, { error: 'bad request' });
+    if (limitedTts(ip)) return send(res, 429, { error: 'Слишком много запросов' });
+    try {
+      const buf = await ttsAudio(q, lang);
+      res.writeHead(200, { 'Content-Type': 'audio/mpeg', 'Content-Length': buf.length, 'Cache-Control': 'public, max-age=604800' });
+      return res.end(buf);
+    } catch { return send(res, 502, { error: 'tts unavailable' }); }
   }
 
   if (await ext.handlePublic(route, req, res, url) !== false) return;
