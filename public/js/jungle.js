@@ -44,8 +44,8 @@ export function lianas(count = 9, seed = 7) {
   return `<div class="lianas" aria-hidden="true">${Array.from({ length: count }, (_, i) => {
     const left = (i + 0.3 + r() * 0.4) / count * 100;
     const len = Math.round(110 + r() * 170 + (i % 3 === 1 ? 60 : 0));
-    const dur = (3.4 + r() * 2.6).toFixed(2), delay = (-r() * 4).toFixed(2), swing = (2.5 + r() * 3).toFixed(1);
-    return `<span class="vine" style="left:${left.toFixed(1)}%;--dur:${dur}s;--delay:${delay}s;--swing:${swing}deg">${vine(len, seed * 31 + i * 17)}</span>`;
+    const dur = (3.4 + r() * 2.6).toFixed(2), delay = (-r() * 4).toFixed(2), amp = ['', ' s2', ' s3'][i % 3];
+    return `<span class="vine${amp}" style="left:${left.toFixed(1)}%;--dur:${dur}s;--delay:${delay}s">${vine(len, seed * 31 + i * 17)}</span>`;
   }).join('')}</div>`;
 }
 
@@ -79,4 +79,15 @@ export function fernBush(size = 180, seed = 5, side = 'left', palette = ['#1f6e3
     <span style="transform:rotate(16deg)">${fern(size, seed + 2, palette[2], true)}</span>
     <span style="transform:rotate(40deg)">${fern(size * 0.85, seed + 3, palette[0], true)}</span>
   </div>`;
+}
+
+// Подлесок: ряд крупных папоротников вдоль низа страницы, разной высоты и оттенков.
+export function fernRow(count = 9, seed = 41) {
+  const r = rng(seed);
+  const palettes = [['#1f6e35', '#2f9a4c', '#4cb562'], ['#175a2b', '#237a3b', '#3aa856'], ['#2b7d3a', '#6f9a2e', '#4cb562']];
+  return `<div class="fern-row" aria-hidden="true">${Array.from({ length: count }, (_, i) => {
+    const size = Math.round(190 + r() * 120), left = (i + 0.5) / count * 100 + (r() - 0.5) * 6;
+    const flip = r() > 0.5 ? ' flip' : '';
+    return `<span class="fr${flip}" style="left:${left.toFixed(1)}%;--d:${(-r() * 6).toFixed(2)}s;z-index:${1 + (i % 3)}">${fernBush(size, seed + i * 7, 'row', palettes[i % 3])}</span>`;
+  }).join('')}</div>`;
 }

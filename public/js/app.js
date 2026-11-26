@@ -1,5 +1,5 @@
 // Точка входа: маршрутизация по #хэшу, шапка, главная, вход и профиль.
-import { lianas, fernBush } from './jungle.js';
+import { lianas, fernBush, fernRow } from './jungle.js';
 import { store } from './store.js';
 import { esc, $, $$, icon, mascot, toast, modal, plural } from './ui.js';
 import * as G from './game.js';
@@ -29,7 +29,7 @@ function shell() {
     </div>
   </header>
   <main id="view" tabindex="-1"></main>
-  <footer class="foot">${fernBush(120, 11)}${fernBush(120, 23, 'right')}<p>Лингва — учебный open-source проект. Озвучка — синтез речи вашего браузера. <span id="sync"></span></p></footer>`;
+  <footer class="foot">${fernRow()}<p>Лингва — учебный open-source проект. Озвучка — синтез речи вашего браузера. <span id="sync"></span></p></footer>`;
   store.on(updateHud);
   $('#hud-lang').onclick = pickLang;
   updateHud();

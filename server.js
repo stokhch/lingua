@@ -100,19 +100,25 @@ function readJson(req) {
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.svg': 'image/svg+xml', '.json': 'application/json', '.png': 'image/png', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json' };
 
+// Статика: браузер каждый раз сверяет ETag, поэтому после деплоя сразу видна новая версия CSS и JS
+// (без этого браузер мог часами показывать старый дизайн из кэша).
+function sendFile(req, res, data, type) {
+  const etag = '"' + crypto.createHash('sha1').update(data).digest('base64url') + '"';
+  const headers = { 'Content-Type': type, 'Cache-Control': 'no-cache', ETag: etag };
+  if (req.headers['if-none-match'] === etag) { res.writeHead(304, headers); return res.end(); }
+  res.writeHead(200, headers);
+  res.end(req.method === 'HEAD' ? undefined : data);
+}
+
 async function serveStatic(req, res, pathname) {
   let file = path.normalize(path.join(PUBLIC, decodeURIComponent(pathname)));
   if (!file.startsWith(PUBLIC)) { res.writeHead(403); return res.end(); }
   try {
     const st = await fsp.stat(file);
     if (st.isDirectory()) file = path.join(file, 'index.html');
-    const data = await fsp.readFile(file);
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
-    res.end(data);
+    sendFile(req, res, await fsp.readFile(file), MIME[path.extname(file)] || 'application/octet-stream');
   } catch {
-    const data = await fsp.readFile(path.join(PUBLIC, 'index.html'));
-    res.writeHead(200, { 'Content-Type': MIME['.html'] });
-    res.end(data);
+    sendFile(req, res, await fsp.readFile(path.join(PUBLIC, 'index.html')), MIME['.html']);
   }
 }
 
