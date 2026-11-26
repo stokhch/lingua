@@ -15,7 +15,8 @@ import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
-import { satiety, appleRow, APPLES } from './pim.js';
+import { satiety, appleRow, APPLES, plea } from './pim.js';
+import { initPim, onRoute, feedHref } from './pimfx.js';
 import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
 import { flagsFor } from './flags.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
@@ -125,6 +126,7 @@ function route() {
     test: () => renderPlacement(main)
   };
   cleanup = (views[view] || views.home)() || null;
+  onRoute(views[view] ? view : 'home', param);
   main.focus({ preventScroll: true });
   window.scrollTo(0, 0);
 }
@@ -141,15 +143,15 @@ function renderHome(main) {
   main.innerHTML = `
   <section class="hero">
     ${lianas(11)}${fernBush(170, 2)}${fernBush(150, 9, 'right')}
-    <div class="hero-pic">
+    <div class="hero-pic pim-${pim.state}">
       <svg class="ring" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="${R}" class="ring-bg"/><circle cx="90" cy="90" r="${R}" class="ring-fg" stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC * (1 - goalPct / 100)}"/></svg>
-      ${mascot(mood, 150)}
+      ${mascot(mood, 150)}${pim.state === 'hungry' || pim.state === 'starving' ? '<span class="rumble" aria-hidden="true">урр…</span>' : ''}
     </div>
     <div class="hero-text">
       <h1>${tx > 0 || pim.state === 'starving' ? pim.title : 'Привет, ' + esc(s.name) + '!'}</h1>
       <p class="lang-line">Учим ${L().acc} · ${myLevel() ? `<a href="#test" title="Тест на уровень">уровень ${myLevel()}</a> · ` : ''}<button class="link" id="home-lang">сменить язык</button></p>${L().beta ? `<p class="beta-note">${L().beta}. Озвучки для этого языка в браузерах нет.</p>` : ''}
       <a class="feed" href="#progress" title="Сытость Пима — подробнее на странице «Прогресс»"><span class="apples">${appleRow(pim)}</span><span>${pim.apples} из ${APPLES} яблок</span></a>
-      <p class="lead">${tx >= s.goal ? `${pim.hint} Можно повторить пару слов на завтра или почитать.` : `${pim.hint} До полной миски — <b>${pim.left} XP</b>.`}</p>
+      <div class="hero-bubble st-${pim.state}"><p>${esc(plea(pim, new Date(), 'home'))}</p>${tx < s.goal ? `<div class="row gap"><a class="btn feed-btn" href="${feedHref()}">${icon('heart')} Покормить Пима</a><span>до полной миски — <b>${pim.left} XP</b></span></div>` : ''}</div>
       <div class="stat-row">
         <div class="stat"><b>${G.currentStreak()}</b><span>${plural(G.currentStreak(), 'день', 'дня', 'дней')} подряд</span></div>
         <div class="stat"><b>${lv.level}</b><span>уровень</span><i class="bar"><i style="width:${lv.pct}%"></i></i></div>
@@ -301,6 +303,7 @@ function renderProfile(main) {
 function start() {
   shell();
   G.checkBadges();
+  initPim();
   window.onhashchange = route;
   route();
   pullInbox();

@@ -6,6 +6,7 @@ import { speak, canSpeak } from '../speech.js';
 import { L, lower, fold, lettersOnly, keysBar, cellForm } from '../lang.js';
 import { distractors } from './train.js';
 import { buildCrossword } from '../crossword.js';
+import { resultBlock } from '../pimfx.js';
 
 export const EXTRA_INFO = {
   storm: { title: 'Мозговой штурм', desc: '5 новых слов: знакомство и три тренировки подряд', ic: 'brain' },
@@ -196,7 +197,7 @@ function fall(main) {
   const end = () => {
     document.removeEventListener('keydown', onKey);
     G.addXp(score, 'водопад'); G.countTraining('fall');
-    main.innerHTML = `<section class="band narrow"><h1>${lives > 0 ? 'Все слова пойманы!' : 'Жизни закончились'}</h1><p class="lead">Поймано ${score} из ${n} ${plural(n, 'слова', 'слов', 'слов')} · +${score} XP</p><div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div></section>`;
+    main.innerHTML = `<section class="band narrow"><h1>${lives > 0 ? 'Все слова пойманы!' : 'Жизни закончились'}</h1><p class="lead">Поймано ${score} из ${n} ${plural(n, 'слова', 'слов', 'слов')} · +${score} XP</p>${resultBlock()}<div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div></section>`;
     $('#again').onclick = () => fall(main);
   };
   hearts(); nextWord();
@@ -276,7 +277,7 @@ function cross(main) {
     if (!gaveUp) G.addXp(5, 'кроссворд разгадан');
     G.countTraining('cross');
     $$('.cell input').forEach(x => { x.disabled = true; });
-    $('.clues .row').innerHTML = `<p class="lead">${gaveUp ? `Разгадано ${solved.size} из ${cw.words.length}` : 'Кроссворд разгадан!'}</p><button class="btn" id="again">Новый кроссворд</button><a class="btn ghost" href="#train">Другие тренировки</a>`;
+    $('.clues .row').innerHTML = `${resultBlock()}<p class="lead">${gaveUp ? `Разгадано ${solved.size} из ${cw.words.length}` : 'Кроссворд разгадан!'}</p><button class="btn" id="again">Новый кроссворд</button><a class="btn ghost" href="#train">Другие тренировки</a>`;
     $('#again').onclick = () => cross(main);
   };
   $('#check').onclick = () => check();
