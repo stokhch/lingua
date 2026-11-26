@@ -5,7 +5,10 @@
 import * as p1 from './part1.js';
 import * as p2 from './part2.js';
 import * as p3 from './part3.js';
-const PARTS = [p1, p2, p3];
+import * as p4 from './part4.js';
+const PARTS = [p1, p2, p3, p4];
 export const LIBRARY = PARTS.flatMap(p => p.TEXTS);
 export const LIBRARY_FORMS = Object.assign({}, ...PARTS.map(p => p.FORMS || {}));
 export const LIBRARY_WORDS = PARTS.flatMap(p => p.WORDS.trim().split('\n').filter(Boolean));
+// Наборы слов из песен (часть 4): добавляются в конец списка наборов
+export const SONG_SETS = p4.SONG_SETS;

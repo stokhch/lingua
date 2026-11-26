@@ -1,6 +1,6 @@
 // Встроенный англо-русский словарь проекта (составлен вручную для этого проекта).
 // Формат блоков: "слово|перевод" — по строке на слово. Ключ блока = тематический набор.
-import { LIBRARY_WORDS, LIBRARY_FORMS } from './en/library/index.js';
+import { LIBRARY_WORDS, LIBRARY_FORMS, SONG_SETS } from './en/library/index.js';
 const RAW = {
 core: `the|определённый артикль
 a|неопределённый артикль
@@ -769,6 +769,12 @@ export const SET_INFO = {
   adjectives: { title: 'Прилагательные', icon: 'adjectives', desc: 'Описываем мир' },
   education: { title: 'Учёба', icon: 'education', desc: 'Школа, язык, экзамены' }
 };
+
+// Наборы слов из песен библиотеки — после тематических
+for (const [id, s] of Object.entries(SONG_SETS)) {
+  RAW[id] = s.words;
+  SET_INFO[id] = { title: s.title, icon: 'education', desc: s.desc };
+}
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]

@@ -70,3 +70,23 @@ test('Иллюстрации к материалам: у каждого art ес
   for (const k of ART_KEYS) assert.ok(used.some(t => t.art === k), `рисунок ${k} не используется`);
   assert.equal(textArt({ art: 'нет-такого' }), '');
 });
+
+test('Английские песни: карточки с короткой цитатой, пересказом, переводом, ссылками, набором и рисунком', async () => {
+  const en = await import('../public/js/data/dictionary.js');
+  const songs = EN.filter(t => t.id.startsWith('en-l-song-'));
+  assert.ok(songs.length >= 10);
+  assert.ok(new Set(songs.map(t => t.level)).size >= 3, 'песни разных уровней');
+  for (const t of songs) {
+    assert.equal(t.kind, 'song', t.id);
+    assert.equal(shelfOf(t), 'songs', t.id);
+    assert.ok(t.summary?.length > 80 && t.translation && t.note, t.id);
+    assert.ok(t.links?.length >= 1 && t.links.every(l => /^https:\/\//.test(l.href)), t.id);
+    assert.ok(t.art, t.id);
+    // цитата из песни — не больше двух строк в начале (полный текст не приводим)
+    assert.ok(t.body.split('\n\n')[0].split('\n').length <= 2, t.id);
+    assert.ok(en.SETS[t.set]?.length >= 10 && en.SET_INFO[t.set]?.title, t.id);
+    for (const w of en.SETS[t.set]) assert.ok(en.DICT.get(w), `${t.set}: ${w}`);
+    const miss = t.body.match(/[A-Za-z’'-]+/g).filter(w => !en.lookup(w).translation && w.split('-').some(p => p && !en.lookup(p).translation));
+    assert.deepEqual(miss, [], t.id);
+  }
+});
