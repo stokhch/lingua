@@ -79,3 +79,14 @@ test('Карачаево-балкарский: транслитерация дл
   assert.equal(krcToTurkish('ешик, къая'), 'yeşik, kaya');
   assert.equal(krcToTurkish('чычхан бла киштик!'), 'çıçhan bla kiştik!');
 });
+
+test('Карачаево-балкарский: перевод в казахскую кириллицу для казахского голоса', async () => {
+  const { krcToKazakh } = await import('../public/js/data/krc/translit.js');
+  assert.equal(krcToKazakh('Джол'), 'жол');
+  assert.equal(krcToKazakh('къайда'), 'қайда');
+  assert.equal(krcToKazakh('кёз'), 'көз');
+  assert.equal(krcToKazakh('юй'), 'үй');
+  assert.equal(krcToKazakh('барыргъа'), 'барырға');
+  assert.equal(krcToKazakh('Минги тау'), 'миңи таұ');
+  assert.equal(krcToKazakh('чычхан бла киштик!'), 'чычхан бла киштик!');
+});

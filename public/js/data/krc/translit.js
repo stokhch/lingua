@@ -25,3 +25,20 @@ export function krcToTurkish(text) {
   }
   return out;
 }
+
+// Казахская кириллица — для озвучки казахским голосом (основной вариант, турецкий — запасной).
+// Казахский — тоже тюркский язык, и в его кириллице есть нужные буквы: къ → қ, гъ → ғ, нг → ң, ё → ө, ю → ү,
+// у → ұ (казахское «у» звучит как [w], поэтому ў → у), дж → ж.
+const KK = { ё: 'ө', ю: 'ү', у: 'ұ', ў: 'у', ъ: '', ь: '' };
+const TWO_KK = { дж: 'ж', гъ: 'ғ', къ: 'қ', хъ: 'х', нг: 'ң' };
+
+export function krcToKazakh(text) {
+  const s = String(text ?? '').toLowerCase();
+  let out = '';
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i], two = TWO_KK[c + s[i + 1]];
+    if (two !== undefined) { out += two; i++; continue; }
+    out += KK[c] ?? c;
+  }
+  return out;
+}

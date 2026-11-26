@@ -15,7 +15,7 @@ import { TEXTS as krcTexts } from './data/krc/texts.js';
 import { COURSES as krcCourses, ALL_LESSONS as krcLessons } from './data/krc/grammar.js';
 import { PHRASES as krcPhrases } from './data/krc/phrases.js';
 import { RESOURCES as krcResources } from './data/krc/resources.js';
-import { krcToTurkish } from './data/krc/translit.js';
+import { krcToTurkish, krcToKazakh } from './data/krc/translit.js';
 import * as elDict from './data/el/dictionary.js';
 import { TEXTS as elTexts } from './data/el/texts.js';
 import { COURSES as elCourses, ALL_LESSONS as elLessons } from './data/el/grammar.js';
@@ -55,11 +55,11 @@ export const LANGS = {
     DICT: elDict.DICT, SETS: elDict.SETS, SET_INFO: elDict.SET_INFO, lemma: elDict.lemma, lookup: elDict.lookup,
     TEXTS: elTexts, COURSES: elCourses, ALL_LESSONS: elLessons, PHRASES: elPhrases
   },
-  // Карачаево-балкарский: кириллица, своего голоса синтеза речи нет — читает турецкий голос (близкий тюркский язык)
-  // по транслитерации в турецкую латиницу (voice: 'tr', ttsText). Онлайн-переводчик его не знает.
+  // Карачаево-балкарский: кириллица, своего голоса синтеза речи нет — читает казахский голос (близкий тюркский язык)
+  // по переводу в казахскую кириллицу (къ → қ, ё → ө…); если казахского нет — турецкий (ttsFallback). Онлайн-переводчик его не знает.
   krc: {
     id: 'krc', code: 'КБ', name: 'Карачаево-балкарский', acc: 'карачаево-балкарский', gen: 'карачаево-балкарского', flag: '🏔️',
-    tts: 'tr-TR', voice: 'tr', ttsText: krcToTurkish, online: false,
+    tts: 'kk-KZ', voice: 'kk', ttsText: krcToKazakh, ttsFallback: { tts: 'tr-TR', voice: 'tr', ttsText: krcToTurkish }, online: false,
     beta: 'Бета: материалы требуют проверки носителем языка',
     letters: 'А-Яа-яЁёЎў', tokenRe: /[А-Яа-яЁёЎў’'-]+/g, extraKeys: [],
     sample: 'джол', sampleTr: 'алма;яблоко', firstSet: 'core',
