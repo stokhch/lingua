@@ -1,5 +1,6 @@
 // Новогреческо-русский словарь Лингвы: наборы слов, поиск начальной формы для перевода по клику.
 import { RAW } from './words.js';
+import { LIBRARY_WORDS, LIBRARY_FORMS } from './library/index.js';
 
 export const SET_INFO = {
   start: { title: 'Первые слова', icon: 'core', desc: 'Приветствия и вежливость — с них начинаем' },
@@ -156,7 +157,7 @@ for (const [set, block] of Object.entries(RAW)) {
     if (!SETS[set].includes(w)) SETS[set].push(w);
   }
 }
-for (const line of EXTRA.split('\n')) { const [w, t] = line.split('|'); add(w, t); }
+for (const line of [...EXTRA.split('\n'), ...LIBRARY_WORDS]) { const [w, t] = line.split('|'); add(w, t); }
 
 // ---------- поиск начальной формы ----------
 // Греческий — флективный язык: у существительных меняются окончания по падежам (ο δρόμος — του δρόμου —
@@ -221,6 +222,8 @@ const FORMS = {
   ποσων: 'πόσος', ποσα: 'πόσος', ποσοι: 'πόσος', ποσεσ: 'πόσος'
 };
 
+Object.assign(FORMS, LIBRARY_FORMS);
+
 // Окончания, которые отрезаем (без ударений). Сначала короткие: так основа остаётся длиннее (μέτρι-ο → μέτριος,
 // а не μέτρ-ιο → μετρό).
 const VERB_ENDINGS = [
@@ -264,7 +267,7 @@ function find(stem, verbal, onlyVerbs = false) {
   // основы с приращением и сменой согласной бывают только у глаголов
   const verbStems = [...alts(stem)];
   if (/^[εη]/.test(stem) && stem.length >= 4) verbStems.push(stem.slice(1), ...alts(stem.slice(1))); // έ-γραψ-α, ή-θελ-α
-  for (const s of verbStems) for (const e of onlyVerbs ? LEM_VERB : [...LEM_VERB, '']) { const hit = INDEX.get(s + e); if (hit) return hit; }
+  for (const s of verbStems) for (const e of LEM_VERB) { const hit = INDEX.get(s + e); if (hit) return hit; }
   return '';
 }
 
