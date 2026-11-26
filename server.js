@@ -8,6 +8,7 @@
 //   GET  /api/leaderboard                         -> топ по XP за неделю и всего
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
+//   GET  /api/lookup, /api/inbox, POST /api/inbox(/clear), GET /lingva-extension.zip -> расширение браузера (extension-api.js)
 //   GET  /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
@@ -18,6 +19,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { openStore } from './storage.js';
 import { createSocial } from './social.js';
+import { createExtensionApi } from './extension-api.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(ROOT, 'public');
@@ -164,6 +166,7 @@ async function translate(q, lang = 'en', sentence = false) {
 }
 
 const social = createSocial({ getDb: () => db, persist, send, readJson, weekXp });
+const ext = createExtensionApi({ root: ROOT, send, readJson, translate, persist });
 
 // ---------- маршруты API ----------
 async function api(req, res, url) {
@@ -208,6 +211,8 @@ async function api(req, res, url) {
     catch { return send(res, 200, { word: q, translation: '' }); }
   }
 
+  if (await ext.handlePublic(route, req, res, url) !== false) return;
+
   if (route === 'GET /api/translate-sentence') {
     const lang = url.searchParams.get('lang') === 'tr' ? 'tr' : 'en';
     const q = (url.searchParams.get('q') || '').replace(/\s+/g, ' ').trim().slice(0, 450);
@@ -229,6 +234,7 @@ async function api(req, res, url) {
     return send(res, 200, { ok: true });
   }
   if (await social.handle(route, req, res, session) !== false) return;
+  if (await ext.handleAuthed(route, req, res, session) !== false) return;
   return send(res, 404, { error: 'Not found' });
 }
 
@@ -236,6 +242,7 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   try {
     if (url.pathname.startsWith('/api/')) return await api(req, res, url);
+    if (url.pathname === '/lingva-extension.zip') return await ext.handlePublic('GET /lingva-extension.zip', req, res, url);
     if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); return res.end(); }
     return await serveStatic(req, res, url.pathname);
   } catch (e) {
