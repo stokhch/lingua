@@ -156,20 +156,56 @@ function acropolis() {
 }
 
 // ---------- Греция: Санторини ----------
+// Кальдера: слоистый обрыв, по нему уступами — белые домики с плоскими и сводчатыми крышами,
+// церковь с синим куполом и звонницей, ветряная мельница наверху, внизу море и вулканический островок.
 function santorini() {
-  const house = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fbfaf6"/><rect x="${x + w * .35}" y="${y + h * .45}" width="${w * .3}" height="${h * .5}" rx="${w * .15}" fill="#2f6fb5"/>`;
+  const edge = y => n(158 - (y - 470) * .26);           // левый край обрыва на высоте y
+  const W8 = [38, 30, 44, 34, 40, 28, 46, 36];
+  const house = (x, base, w, h, i) => {
+    const vault = i % 4 === 1;
+    return `<rect x="${x}" y="${base - h}" width="${w}" height="${h}" fill="#fbfaf6"/>` +
+      `<rect x="${n(x + w - 5)}" y="${base - h}" width="5" height="${h}" fill="#e3e6ea"/>` +
+      (vault ? `<path d="M${x} ${base - h}a${w / 2} ${h * .3} 0 0 1 ${w} 0z" fill="#fbfaf6"/>` : `<rect x="${x - 1}" y="${base - h - 3}" width="${w + 2}" height="3" fill="#eef0f2"/>`) +
+      `<rect x="${n(x + w * .22)}" y="${base - 15}" width="8" height="15" fill="${i % 3 ? '#2f6fb5' : '#1f4f8a'}"/>` +
+      (w > 32 ? `<rect x="${n(x + w * .6)}" y="${base - h + 9}" width="7" height="7" fill="#2f6fb5"/>` : '');
+  };
+  const rows = [480, 526, 572, 618, 664, 710];
+  let houses = '';
+  rows.forEach((base, r) => {
+    let x = edge(base) + 10, i = r * 3;
+    while (x < W - 10) {
+      const w = W8[i % W8.length], h = 30 + (i * 7) % 12;
+      if (!(r === 0 && x > 196 && x < 262) && (i * 5 + r) % 4 !== 2) houses += house(n(x), base, Math.min(w, W - x), h, i);
+      x += w + 5 + (i % 3) * 3; i++;
+    }
+    // подпорная стена террасы
+    houses += `<rect x="${edge(base) + 6}" y="${base}" width="${W}" height="5" fill="#e8dcc6"/>`;
+  });
+  const church = `<g transform="translate(228 480)">
+    <rect x="-26" y="-36" width="52" height="36" fill="#fbfaf6"/><rect x="-28" y="-40" width="56" height="5" fill="#eef0f2"/>
+    <rect x="-16" y="-50" width="32" height="12" fill="#fbfaf6"/><path d="M-18 -50a18 18 0 0 1 36 0z" fill="#2f6fb5"/>
+    <path d="M0 -68v-12M-5 -75h10" stroke="#fbfaf6" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M-6 0v-14a6 6 0 0 1 12 0v14z" fill="#1f4f8a"/></g>
+  <g transform="translate(266 480)">
+    <path d="M-10 0v-58h20v58z" fill="#fbfaf6"/><path d="M-13 -58h26l-13 -10z" fill="#fbfaf6"/>
+    <path d="M-5 -46v-8a5 5 0 0 1 10 0v8z" fill="#2f6fb5"/><path d="M-5 -30v-8a5 5 0 0 1 10 0v8z" fill="#2f6fb5"/>
+    <circle cx="0" cy="-44" r="2.5" fill="#d9a521"/><path d="M0 -68v-10M-4 -74h8" stroke="#2f6fb5" stroke-width="2" stroke-linecap="round"/></g>`;
+  const mill = `<g transform="translate(176 444)"><path d="M-12 0l3 -40h18l3 40z" fill="#fbfaf6"/><path d="M-10 -40a10 8 0 0 1 20 0z" fill="#8a6a4a"/>
+    ${[0, 60, 120, 180, 240, 300].map(a => `<g transform="rotate(${a} 0 -42)"><path d="M0 -42v-26" stroke="#6a5a4a" stroke-width="1.5"/><path d="M0 -50l8 -16l-2 -2l-6 6z" fill="#fff" opacity=".9"/></g>`).join('')}
+    <rect x="-3" y="-12" width="6" height="12" fill="#2f6fb5"/></g>`;
   return `<defs>${sky('skS', [[0, '#4aa0e0'], [.55, '#bfe4f7'], [1, '#f7e2c0']])}</defs>
-  <rect width="${W}" height="${H}" fill="url(#skS)"/>${sun(70, 300, 30, '#ffe08a', .4)}${cloud(230, 140, .8)}${birds(220, 260, '#335')}
+  <rect width="${W}" height="${H}" fill="url(#skS)"/>${sun(70, 290, 30, '#ffe08a', .4)}${cloud(230, 140, .8)}${birds(110, 360, '#335')}
   ${water(620, '#2a7fc2', '#a9dcf3')}
-  <path d="M110 560q60-30 210-40V${H}H90q-10-200 20-440z" fill="#a8664a"/>
-  <path d="M150 600q60-20 170-26V${H}H130z" fill="#bb7856"/>
-  ${house(140, 520, 50, 40)}${house(196, 500, 44, 46)}${house(246, 484, 60, 50)}${house(170, 572, 56, 38)}${house(236, 548, 48, 44)}${house(150, 630, 46, 40)}${house(206, 612, 60, 44)}${house(270, 604, 44, 50)}${house(180, 690, 52, 40)}${house(244, 672, 56, 46)}
-  <path d="M250 484a20 20 0 0 1 40 0z" fill="#2f6fb5"/><circle cx="270" cy="458" r="3" fill="#fff"/><path d="M270 461v-8M266 457h8" stroke="#fff" stroke-width="2"/>
-  <path d="M196 500a14 14 0 0 1 28 0z" fill="#2f6fb5"/><path d="M206 612a16 16 0 0 1 32 0z" fill="#2f6fb5"/>
-  <!-- колокольня -->
-  <g transform="translate(150 470)"><rect x="-14" y="0" width="28" height="50" fill="#fbfaf6"/><path d="M-14 0a14 14 0 0 1 28 0z" fill="#2f6fb5"/><rect x="-6" y="14" width="12" height="16" rx="6" fill="#7a5a3a"/></g>
+  <!-- вулканический островок в кальдере -->
+  <path d="M-10 700q30 -26 70 -22q30 4 46 22z" fill="#4a3f3a"/><path d="M10 694q24 -14 50 -12" stroke="#6a5a50" stroke-width="3" fill="none"/>
+  <!-- слоистый обрыв -->
+  <path d="M${edge(1000)} ${H}L${edge(740)} 740Q${edge(600) - 6} 560 ${edge(470) - 4} 470Q170 444 200 446L${W} 438V${H}z" fill="#9a5a40"/>
+  <path d="M${edge(1000) + 6} ${H}L${edge(760) + 6} 760L${W} 750V${H}z" fill="#5a4038"/>
+  <path d="M${edge(820)} 820L${W} 806M${edge(900)} 900L${W} 890" stroke="#7a5a4a" stroke-width="6" opacity=".6"/>
+  <path d="M${edge(740)} 740L${W} 728" stroke="#c98a5a" stroke-width="8" opacity=".7"/>
+  ${houses}${church}${mill}
   <!-- парусник -->
-  <g transform="translate(70 720)"><path d="M-30 0h60l-10 12h-40z" fill="#fbfaf6"/><path d="M0 -60v60M0 -56l26 50H0z" fill="#fff" stroke="#c9c9c9" stroke-width="1"/><path d="M0 -50l-20 44H0z" fill="#e8eef2"/></g>`;
+  <g transform="translate(56 770)"><path d="M-30 0h60l-10 12h-40z" fill="#fbfaf6"/><path d="M0 -60v60M0 -56l26 50H0z" fill="#fff" stroke="#c9c9c9" stroke-width="1"/><path d="M0 -50l-20 44H0z" fill="#e8eef2"/></g>`;
 }
 
 const SCENES = {
