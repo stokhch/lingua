@@ -579,3 +579,12 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .irr-form input.ok{border-color:#18a564;background:var(--ok-soft)}.irr-form input.bad{border-color:var(--coral);background:var(--bad-soft)}
 .train-card.irr{border-style:dashed}
 @media (max-width:640px){.irr-form{grid-template-columns:1fr 1fr}.irr-form .btn{grid-column:1/-1}.irr td,.irr th{padding-inline:8px}.irr td.tr{font-size:14px}}
+
+/* звания */
+.rank{display:inline-flex;align-items:center;gap:6px;margin:4px 0 6px;padding:4px 12px 4px 8px;border:0;border-radius:99px;background:linear-gradient(180deg,#ffd76a,var(--sun));color:#2b1d00;font:800 15px Nunito,sans-serif;cursor:pointer;box-shadow:0 2px 0 var(--gold)}
+.rank .ic{width:18px;height:18px}
+.profile-head p.small{margin:0 0 6px}
+.ranks{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ranks li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--bg2);color:var(--muted)}
+.ranks li span{font-weight:900;font-size:13px}.ranks li.got{color:var(--ink)}.ranks li.got .ic{color:var(--ok)}
+.ranks li.now{background:linear-gradient(180deg,#ffe9a8,var(--sun));color:#2b1d00}.ranks li em{font-style:normal;font-size:12px;font-weight:800}
