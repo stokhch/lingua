@@ -79,3 +79,26 @@ test('Карачаево-балкарский: транслитерация дл
   assert.equal(krcToTurkish('ешик, къая'), 'yeşik, kaya');
   assert.equal(krcToTurkish('чычхан бла киштик!'), 'çıçhan bla kiştik!');
 });
+
+test('Карачаево-балкарский: перевод в казахскую кириллицу для казахского голоса', async () => {
+  const { krcToKazakh } = await import('../public/js/data/krc/translit.js');
+  assert.equal(krcToKazakh('Джол'), 'жол');
+  assert.equal(krcToKazakh('къайда'), 'қайда');
+  assert.equal(krcToKazakh('кёз'), 'көз');
+  assert.equal(krcToKazakh('юй'), 'үй');
+  assert.equal(krcToKazakh('барыргъа'), 'барырға');
+  assert.equal(krcToKazakh('Минги тау'), 'миңи таұ');
+  assert.equal(krcToKazakh('чычхан бла киштик!'), 'чычхан бла киштик!');
+});
+
+test('Карачаево-балкарский: сказки с иллюстрациями и переводом', async () => {
+  const { hasArt, textArt } = await import('../public/js/text-art.js');
+  const ids = ['krc-tale-elder', 'krc-tale-share', 'krc-tale-olmezbiy', 'krc-tale-goat', 'krc-tale-crane'];
+  for (const id of ids) {
+    const t = TEXTS.find(x => x.id === id);
+    assert.ok(t && t.topic === 'Сказки', id);
+    assert.ok(hasArt(t), `нет рисунка у ${id}`);
+    assert.match(textArt(t), /<svg[^>]*>.*<\/svg>/s, id);
+    assert.ok(t.translation && t.summary, id);
+  }
+});

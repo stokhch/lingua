@@ -30,6 +30,7 @@ import { flagsFor } from './flags.js';
 import { dayPlanHtml } from './views/dayplan.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 import { BOARDS, standing, nudgeText, reminderFor } from './rating.js';
+import { initInstall, installCard, fillInstallCard, installSettings, bindInstallSettings } from './install.js';
 
 const NAV = [
   ['home', 'Главная', 'home'], ['dictionary', 'Словарь', 'dict'], ['sets', 'Наборы', 'sets'],
@@ -206,6 +207,7 @@ function renderHome(main) {
   ${plan}
   <section class="band" id="home-rating" hidden></section>
   ${placementBanner()}
+  ${installCard()}
   <section class="band">
     <div class="grid-3 grid-4">
       <a class="action primary" href="${c.due ? '#train-cards' : '#train'}">
@@ -225,6 +227,7 @@ function renderHome(main) {
   </section>`;
   $('#home-lang').onclick = pickLang;
   fillHomeRating();
+  return fillInstallCard();
 }
 
 // ---------- Вход и регистрация ----------
@@ -299,6 +302,7 @@ function renderProfile(main, param = '') {
     <h2>Достижения</h2>
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
+  ${installSettings()}
   <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#messages">${icon('mail')}<div><b>Сообщения</b><span>Переписка с друзьями и одноклассниками, поздравления с достижениями и подарки-картинки</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
   <section class="band">
     <h2>Настройки</h2>
@@ -344,6 +348,7 @@ function renderProfile(main, param = '') {
     }; });
   $('#reset').onclick = () => modal(`<h2>Сбросить прогресс?</h2><p>Словарь, опыт, стрик и достижения будут удалены. Отменить это нельзя.</p><div class="row gap"><button class="btn danger" id="yes">Да, сбросить</button><button class="btn ghost" data-close>Отмена</button></div>`,
     (el, close) => { $('#yes', el).onclick = async () => { await store.resetProgress(); close(); toast('Прогресс сброшен'); renderProfile(main); }; });
+  bindInstallSettings();
   $('#logout') && ($('#logout').onclick = logoutNow);
   $('#login') && ($('#login').onclick = () => { location.hash = ''; renderAuth(); });
 
@@ -419,5 +424,6 @@ async function boot() {
   if (ok) start(); else renderAuth();
 }
 
+initInstall();
 window.addEventListener('keydown', e => { if (e.key === 'Escape' && document.activeElement?.blur) document.activeElement.blur(); });
 boot();

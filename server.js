@@ -9,7 +9,7 @@
 //   GET  /api/students                            -> все ученики: имя, уровень, XP, стрик, языки (кроме скрывшихся; students.js)
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
-//   GET  /api/tts?q=…&lang=en|tr|el             -> mp3 с озвучкой, когда в браузере нет голоса для языка
+//   GET  /api/tts?q=…&lang=en|tr|el|kk            -> mp3 с озвучкой, когда в браузере нет голоса для языка
 //   GET  /api/lookup, /api/inbox, POST /api/inbox(/clear), GET /lingva-extension.zip -> расширение браузера (extension-api.js)
 //   GET  /api/invite (без входа), GET /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
 //   GET /api/messages…, POST /api/messages/send|block|report|settings, /api/reports… -> личные сообщения, поздравления и подарки (messages.js)
@@ -176,7 +176,7 @@ async function translate(q, lang = 'en', sentence = false) {
 // ---------- онлайн-озвучка (если в браузере нет голоса нужного языка) ----------
 // Без этого Chrome на Windows/macOS без греческого (турецкого) голоса читает слово английским голосом.
 // Берём mp3 у Google Translate (тот же звук, что на translate.google.com) и кэшируем в памяти.
-const TTS_LANGS = new Set(['en', 'tr', 'el']);
+const TTS_LANGS = new Set(['en', 'tr', 'el', 'kk']); // kk — казахский голос для карачаево-балкарского
 const ttsCache = new Map();
 const ttsHits = new Map();
 function limitedTts(ip) {
