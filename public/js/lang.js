@@ -29,7 +29,7 @@ export const LANGS = {
     id: 'tr', code: 'TR', name: 'Турецкий', acc: 'турецкий', gen: 'турецкого', flag: '🇹🇷',
     tts: 'tr-TR', voiceRe: /^tr/i, preferVoice: /tr[-_]TR/i,
     letters: 'A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû', tokenRe: /[A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû’'-]+/g, extraKeys: ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'â'],
-    sample: 'yolculuk', sampleTr: 'elma;яблоко', firstSet: 'core',
+    sample: 'yolculuk', sampleTr: 'elma;яблоко', firstSet: 'start',
     lower: trDict.lower,
     DICT: trDict.DICT, SETS: trDict.SETS, SET_INFO: trDict.SET_INFO, lemma: trDict.lemma, lookup: trDict.lookup,
     TEXTS: trTexts, COURSES: trCourses, ALL_LESSONS: trLessons, PHRASES: trPhrases

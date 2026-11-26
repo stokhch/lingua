@@ -1,6 +1,62 @@
 // Тексты на турецком для чтения с переводом по клику. Все тексты написаны специально для Лингвы.
 export const TEXTS = [
   {
+    id: 'tr-merhaba', level: 'A0', topic: 'Знакомство', title: 'Merhaba!',
+    body: `— Merhaba! Benim adım Ali. Senin adın ne?
+
+— Merhaba, Ali! Benim adım Anna.
+
+— Memnun oldum, Anna. Nerelisin?
+
+— Rusyalıyım. Sen nerelisin?
+
+— Ben Türküm. İstanbul'da yaşıyorum. Nasılsın?
+
+— İyiyim, teşekkür ederim. Sen nasılsın?
+
+— Ben de iyiyim. Görüşürüz!
+
+— Hoşça kal!`
+  },
+  {
+    id: 'tr-kafe', level: 'A0', topic: 'Еда', title: 'Kafede',
+    body: `— Hoş geldiniz! Buyurun.
+
+— Merhaba. Bir çay, lütfen.
+
+— Şekerli mi, şekersiz mi?
+
+— Şekersiz, lütfen. Bir de simit.
+
+— Tabii. Başka bir şey?
+
+— Hayır, teşekkürler. Ne kadar?
+
+— Çay on lira, simit on beş lira. Toplam yirmi beş lira.
+
+— Buyurun.
+
+— Teşekkürler. Afiyet olsun!`
+  },
+  {
+    id: 'tr-bu-ne', level: 'A0', topic: 'Первые слова', title: 'Bu Ne?',
+    body: `Bu bir ev. Ev büyük ve beyaz. Bu bir kedi. Kedi küçük ve siyah.
+
+Şu bir ağaç. Ağaç çok yüksek. Şu bir araba. Araba kırmızı.
+
+— Bu ne? — Bu bir kitap. — Kitap yeni mi? — Hayır, kitap eski.
+
+— Bu kim? — Bu Ayşe. O öğrenci.`
+  },
+  {
+    id: 'tr-oda', level: 'A0', topic: 'Дом', title: 'Benim Odam',
+    body: `Bu benim odam. Odamda bir yatak, bir masa ve iki sandalye var.
+
+Masada üç kitap, bir defter ve bir lamba var. Pencere büyük. Odamda televizyon yok, ama bilgisayar var.
+
+Odam küçük ama çok rahat. Ben odamı çok seviyorum.`
+  },
+  {
     id: 'tr-sabah', level: 'A1', topic: 'Повседневная жизнь', title: 'Benim Sabahım',
     body: `Her gün saat yedide kalkarım. Önce pencereyi açarım ve gökyüzüne bakarım. Sonra mutfağa giderim ve çay yaparım. Kedim masada oturur ve beni izler.
 

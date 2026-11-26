@@ -164,8 +164,8 @@ export function renderLesson(main, id) {
         G.recordAnswer(ok);
         $$('.opt', box).forEach(b => { b.disabled = true; if (norm(b.dataset.v) === norm(ex.a)) b.classList.add('right'); else if (b.dataset.v === val) b.classList.add('wrong'); });
         $('#ans') && ($('#ans').disabled = true);
-        $('.gap-fill', box).textContent = ex.a.split('/')[0];
-        $('.gap-fill', box).classList.add(ok ? 'ok' : 'bad');
+        const gap = $('.gap-fill', box); // в вопросе без пропуска «___» подставлять нечего
+        if (gap) { gap.textContent = ex.a.split('/')[0]; gap.classList.add(ok ? 'ok' : 'bad'); }
         $('#fb').innerHTML = `<div class="feedback ${ok ? 'ok' : 'bad'}">${icon(ok ? 'check' : 'x')}<div>${ok ? 'Верно!' : `Правильный ответ: <b>${esc(ex.a.split('/')[0])}</b>`}</div><button class="btn" id="next">Дальше</button></div>`;
         $('#next').focus();
         $('#next').onclick = () => { i++; step(); };
