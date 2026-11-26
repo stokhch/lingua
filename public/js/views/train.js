@@ -108,7 +108,7 @@ export function renderTraining(main, kind) {
 
   const finish = () => {
     const ok = results.filter(r => r.ok).length;
-    G.finishTraining(ok, results.length);
+    G.finishTraining(ok, results.length, kind);
     main.innerHTML = `
     <section class="band narrow">
       <h1>${ok === results.length ? 'Без единой ошибки!' : 'Тренировка завершена'}</h1>
@@ -274,7 +274,7 @@ function sprint(main) {
     if (time <= 0) {
       clearInterval(tick); document.removeEventListener('keydown', onKey);
       const xp = Math.round(score / 20);
-      G.addXp(xp, 'спринт'); store.state.stats.trainings++; store.save();
+      G.addXp(xp, 'спринт'); G.countTraining('sprint');
       main.innerHTML = `<section class="band narrow"><h1>Время вышло</h1><p class="lead">${score} очков · ${total} ${plural(total, 'ответ', 'ответа', 'ответов')} · +${xp} XP</p><div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div></section>`;
       $('#again').onclick = () => sprint(main);
     }

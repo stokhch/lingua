@@ -3,22 +3,15 @@ import { store } from './store.js';
 import { newCard, review, isDue } from './srs.js';
 import { toast } from './ui.js';
 import { lower } from './lang.js';
+import { TRAININGS, wordStatus, dayKey, emptyDay, pruneDays } from './stats.js';
 
-export const TRAININGS = ['wt', 'tw', 'au', 'co']; // слово-перевод, перевод-слово, аудирование, конструктор
+export { TRAININGS, wordStatus };
 const S = () => store.state;
 
-export const today = (d = new Date()) => {
-  const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-  return z.toISOString().slice(0, 10);
-};
+export const today = dayKey;
 const yesterday = () => today(new Date(Date.now() - 86400000));
 
 // ---------- слова ----------
-export function wordStatus(w) {
-  if (w.srs) return isDue(w.srs) ? 'due' : 'learned';
-  const n = TRAININGS.filter(k => w.trained?.[k]).length;
-  return n === 0 ? 'new' : 'learning';
-}
 export const STATUS_LABEL = { new: 'Новое', learning: 'Изучается', learned: 'Изучено', due: 'Пора повторить' };
 
 export function hasWord(w) { return !!S().words[lower(w)]; }
@@ -52,12 +45,13 @@ export function markTrained(word, training) {
 export function gradeCard(word, grade) {
   const w = S().words[word]; if (!w) return;
   if (!w.srs) { // карточки для ещё не изученного слова засчитываем как тренировку
-    if (grade >= 2) TRAININGS.forEach(k => (w.trained = { ...w.trained, [k]: true }));
+    if (grade >= 2) { TRAININGS.forEach(k => (w.trained = { ...w.trained, [k]: true })); w.learnedAt = Date.now(); }
     w.srs = review(newCard(), grade);
   } else {
     w.srs = review(w.srs, grade);
   }
   if (grade === 0) { w.trained = {}; w.srs = null; } // забытое слово возвращается на изучение
+  day().r++;
   store.save();
 }
 
@@ -91,18 +85,36 @@ export function addXp(n, why = '') {
   }
   s.xp += n;
   s.xpLog[d] = before + n;
+  const x = day().x, lang = s.lang || 'en';
+  x[lang] = (x[lang] || 0) + n;
   if (why) toast(`+${n} XP · ${why}`, 'xp');
-  if (before < s.goal && s.xpLog[d] >= s.goal) toast('Дневная цель выполнена! Ёжик Пим доволен', 'goal');
+  if (before < s.goal && s.xpLog[d] >= s.goal) toast('Дневная цель выполнена — Пим сыт и доволен!', 'goal');
   if (levelInfo().level > lvl) toast(`Новый уровень: ${levelInfo().level}!`, 'level');
   store.save();
   checkBadges();
 }
 
+// Запись дневника за сегодня (для страницы «Прогресс»)
+export function day() {
+  const s = S(), d = today();
+  s.days ||= {};
+  if (!s.days[d]) { s.days[d] = emptyDay(); pruneDays(s.days); }
+  return s.days[d];
+}
+
 export function recordAnswer(ok) {
   const st = S().stats; st.answers++; if (ok) st.correct++;
+  const d = day(); d.a++; if (ok) d.c++;
 }
-export function finishTraining(correct, total) {
+// Учёт завершённой тренировки: всего, по видам и за день
+export function countTraining(kind) {
   const st = S().stats; st.trainings++;
+  if (kind) { st.byType ||= {}; st.byType[kind] = (st.byType[kind] || 0) + 1; }
+  day().t++;
+  store.save();
+}
+export function finishTraining(correct, total, kind) {
+  const st = S().stats; countTraining(kind);
   if (total >= 5 && correct === total) st.perfect++;
   addXp(5 + (total >= 5 && correct === total ? 5 : 0), 'тренировка завершена');
 }

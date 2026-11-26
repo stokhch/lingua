@@ -195,7 +195,7 @@ function fall(main) {
   document.addEventListener('keydown', onKey);
   const end = () => {
     document.removeEventListener('keydown', onKey);
-    G.addXp(score, 'водопад'); store.state.stats.trainings++; store.save();
+    G.addXp(score, 'водопад'); G.countTraining('fall');
     main.innerHTML = `<section class="band narrow"><h1>${lives > 0 ? 'Все слова пойманы!' : 'Жизни закончились'}</h1><p class="lead">Поймано ${score} из ${n} ${plural(n, 'слова', 'слов', 'слов')} · +${score} XP</p><div class="row gap"><button class="btn" id="again">Ещё раз</button><a class="btn ghost" href="#train">Другие тренировки</a></div></section>`;
     $('#again').onclick = () => fall(main);
   };
@@ -273,7 +273,7 @@ function cross(main) {
   };
   const finish = gaveUp => {
     if (!gaveUp) G.addXp(5, 'кроссворд разгадан');
-    store.state.stats.trainings++; store.save();
+    G.countTraining('cross');
     $$('.cell input').forEach(x => { x.disabled = true; });
     $('.clues .row').innerHTML = `<p class="lead">${gaveUp ? `Разгадано ${solved.size} из ${cw.words.length}` : 'Кроссворд разгадан!'}</p><button class="btn" id="again">Новый кроссворд</button><a class="btn ghost" href="#train">Другие тренировки</a>`;
     $('#again').onclick = () => cross(main);

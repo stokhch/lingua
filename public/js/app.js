@@ -6,11 +6,14 @@ import * as G from './game.js';
 import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
+import { renderProgress } from './views/progress.js';
+import { satiety, appleRow, APPLES } from './pim.js';
 import { L, LANGS, switchLang, wordCount } from './lang.js';
 
 const NAV = [
   ['home', 'Главная', 'home'], ['dictionary', 'Словарь', 'dict'], ['sets', 'Наборы', 'sets'],
-  ['train', 'Тренировки', 'train'], ['texts', 'Тексты', 'read'], ['grammar', 'Грамматика', 'grammar']
+  ['train', 'Тренировки', 'train'], ['texts', 'Тексты', 'read'], ['grammar', 'Грамматика', 'grammar'],
+  ['progress', 'Прогресс', 'chart']
 ];
 
 const app = $('#app');
@@ -23,8 +26,8 @@ function shell() {
     <nav class="nav" aria-label="Разделы">${NAV.map(([id, t, ic]) => `<a href="#${id}" data-nav="${id}">${icon(ic)}<span>${t}</span></a>`).join('')}</nav>
     <div class="hud">
       <button class="pill lang" id="hud-lang" title="Изучаемый язык — сменить" aria-label="Сменить изучаемый язык">${icon('globe')}<b></b></button>
-      <span class="pill streak" title="Дней подряд">${icon('fire')}<b id="hud-streak">0</b></span>
-      <span class="pill xp" title="Опыт за сегодня / цель">${icon('star')}<b id="hud-xp">0</b></span>
+      <a class="pill streak" href="#progress" title="Дней подряд — открыть прогресс">${icon('fire')}<b id="hud-streak">0</b></a>
+      <a class="pill xp" href="#progress" title="Опыт за сегодня / цель — открыть прогресс">${icon('star')}<b id="hud-xp">0</b></a>
       <a class="avatar" href="#profile" title="Профиль" id="hud-avatar"></a>
     </div>
   </header>
@@ -93,7 +96,8 @@ function route() {
     read: () => renderReader(main, param),
     grammar: () => renderGrammar(main),
     lesson: () => renderLesson(main, param),
-    profile: () => renderProfile(main)
+    profile: () => renderProfile(main),
+    progress: () => renderProgress(main)
   };
   cleanup = (views[view] || views.home)() || null;
   main.focus({ preventScroll: true });
@@ -105,7 +109,7 @@ function renderHome(main) {
   const s = store.state, c = G.counts(), lv = G.levelInfo(), tx = G.todayXp();
   const { TEXTS, SET_INFO, firstSet } = L();
   const goalPct = Math.min(100, Math.round((tx / s.goal) * 100));
-  const mood = tx >= s.goal ? 'happy' : tx > 0 ? 'calm' : 'sleepy';
+  const pim = satiety(s.xpLog, s.goal), mood = pim.mood;
   const nextText = TEXTS.find(t => !s.readTexts[t.id]) || TEXTS[0];
   const ready = c.new + c.learning;
   const R = 70, CIRC = 2 * Math.PI * R;
@@ -117,9 +121,10 @@ function renderHome(main) {
       ${mascot(mood, 150)}
     </div>
     <div class="hero-text">
-      <h1>${tx >= s.goal ? 'Цель на сегодня выполнена' : tx > 0 ? 'Хороший темп, ' + esc(s.name) : 'Привет, ' + esc(s.name) + '!'}</h1>
+      <h1>${tx > 0 || pim.state === 'starving' ? pim.title : 'Привет, ' + esc(s.name) + '!'}</h1>
       <p class="lang-line">Учим ${L().acc} · <button class="link" id="home-lang">сменить язык</button></p>${L().beta ? `<p class="beta-note">${L().beta}. Озвучки для этого языка в браузерах нет.</p>` : ''}
-      <p class="lead">${tx >= s.goal ? 'Пим сыт и доволен. Можно повторить пару слов на завтра или почитать.' : `До дневной цели осталось <b>${s.goal - tx} XP</b>. Пим ждёт новых слов.`}</p>
+      <a class="feed" href="#progress" title="Сытость Пима — подробнее на странице «Прогресс»"><span class="apples">${appleRow(pim)}</span><span>${pim.apples} из ${APPLES} яблок</span></a>
+      <p class="lead">${tx >= s.goal ? `${pim.hint} Можно повторить пару слов на завтра или почитать.` : `${pim.hint} До полной миски — <b>${pim.left} XP</b>.`}</p>
       <div class="stat-row">
         <div class="stat"><b>${G.currentStreak()}</b><span>${plural(G.currentStreak(), 'день', 'дня', 'дней')} подряд</span></div>
         <div class="stat"><b>${lv.level}</b><span>уровень</span><i class="bar"><i style="width:${lv.pct}%"></i></i></div>
@@ -198,7 +203,7 @@ function renderProfile(main) {
     </div>
   </section>
   <section class="band">
-    <h2>Опыт за две недели</h2>
+    <div class="sec-head"><h2>Опыт за две недели</h2><a class="link" href="#progress">Вся статистика</a></div>
     <div class="xp-chart" role="img" aria-label="XP по дням">
       ${days.map(x => `<div class="col ${x.xp >= s.goal ? 'hit' : ''}" title="${x.d.toLocaleDateString('ru-RU')}: ${x.xp} XP"><i style="height:${Math.round((x.xp / max) * 100)}%"></i><span>${x.d.getDate()}</span></div>`).join('')}
       <div class="goal-line" style="bottom:calc(${(s.goal / max).toFixed(3)} * (100% - 22px) + 22px)"><span>цель ${s.goal}</span></div>
