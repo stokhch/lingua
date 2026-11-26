@@ -771,6 +771,21 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .g-weak{list-style:none;padding:0;margin:0;display:grid;gap:6px}.g-weak li{display:flex;gap:8px}.g-weak em{margin-left:auto;font-style:normal;color:var(--muted);font-weight:700}
 .resources h3{margin:18px 0 8px;font-size:17px}.res-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}.res-list li{display:grid;gap:2px;padding:12px 14px;border-radius:var(--r);border:2px solid var(--line);overflow-wrap:anywhere}.res-list a{font-weight:800}.res-list span{opacity:.75;font-size:15px}
 
+/* библиотека: полки */
+.ic.flip{transform:scaleX(-1)}
+.lib-search{width:min(100%,520px);margin:0 0 14px}
+.shelf-chips{display:flex;flex-wrap:wrap;gap:6px}
+.shelf-chips .chip{display:inline-flex;align-items:center;gap:6px;text-decoration:none}.shelf-chips .chip .ic{width:18px;height:18px}.shelf-chips .chip i{font-style:normal;font-weight:900;color:var(--muted)}
+.shelf{padding-top:8px;padding-bottom:8px}
+.shelf-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.shelf-head>.ic{width:40px;height:40px;padding:8px;border-radius:12px;background:var(--brand-soft);color:var(--brand-ink);flex:none}
+.shelf-head>div{flex:1}.shelf-head h2{margin:0}.shelf-head h2 a{color:inherit;text-decoration:none}.shelf-head h2 a:hover{text-decoration:underline}.shelf-head p{margin:0;font-size:14px}
+.shelf-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,280px);gap:14px;overflow-x:auto;padding:4px 2px 14px;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+.shelf-row>*{scroll-snap-align:start}
+.add-card{font:inherit;text-align:left;cursor:pointer;border-style:dashed;align-content:center;justify-items:start}.add-card>.ic{width:34px;height:34px;color:var(--brand-ink)}
+.shelf-bar{max-width:420px;margin:-6px 0 16px}
+@media (max-width:640px){.shelf-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-inline:-16px;padding-inline:16px}.shelf-chips .chip{flex:none}.shelf-row{grid-auto-columns:minmax(230px,78vw)}.shelf-head .btn{display:none}}
+
 /* вход / выход в шапке — всегда на виду */
 .auth-btn{border:0;cursor:pointer;font:900 15px Nunito,sans-serif;gap:6px}
 .top .auth-btn.in{background:linear-gradient(180deg,#ffd76a,var(--sun));color:#2b1d00;box-shadow:0 2px 0 var(--gold)}

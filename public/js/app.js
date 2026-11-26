@@ -13,6 +13,7 @@ import { renderExam } from './views/exam.js';
 import { pullInbox } from './inbox.js';
 import { rankFor, RANKS } from './ranks.js';
 import { renderTrainings, renderTraining } from './views/train.js';
+import { renderShelf } from './views/library.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
 import { renderGrammarTraining, grammarState } from './views/grammar-train.js';
@@ -128,7 +129,7 @@ function route() {
   const param = rest.join('-');
   cleanup?.(); cleanup = null;
   const main = $('#view');
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (view === 'read' && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar')));
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (['read', 'shelf'].includes(view) && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar')));
   const views = {
     home: () => renderHome(main),
     dictionary: () => renderDictionary(main),
@@ -141,6 +142,7 @@ function route() {
     exam: () => renderExam(main, param),
     train: () => (param ? renderTraining(main, param) : renderTrainings(main)),
     texts: () => renderTexts(main),
+    shelf: () => renderShelf(main, param),
     read: () => renderReader(main, param),
     grammar: () => renderGrammar(main),
     lesson: () => renderLesson(main, param),

@@ -2,8 +2,37 @@
 // Модуль без DOM и без store — проверяется в tests/materials.test.js.
 
 export const KINDS = {
-  text: 'Текст', song: 'Песня', subs: 'Субтитры', video: 'Видео'
+  text: 'Текст', dialog: 'Диалог', song: 'Песня', poem: 'Стихи', subs: 'Субтитры', video: 'Видео'
 };
+
+// Полки библиотеки. У текста можно явно указать shelf; иначе полка выводится из topic и kind (см. shelfOf).
+export const SHELVES = [
+  { id: 'reading', title: 'Тексты для чтения', desc: 'Короткие рассказы о жизни, работе, путешествиях — основа чтения по уровням', icon: 'read' },
+  { id: 'dialogs', title: 'Диалоги', desc: 'Живые разговоры: в магазине, в дороге, в гостях', icon: 'quote' },
+  { id: 'phrasebook', title: 'Разговорник', desc: 'Готовые фразы по ситуациям — от знакомства до врача', icon: 'dict' },
+  { id: 'tales', title: 'Сказки и истории', desc: 'Народные сказки и легенды', icon: 'star' },
+  { id: 'wisdom', title: 'Народная мудрость', desc: 'Пословицы, загадки, благопожелания', icon: 'brain' },
+  { id: 'culture', title: 'Культура и история', desc: 'Традиции, история, края и кухня', icon: 'globe' },
+  { id: 'songs', title: 'Песни и стихи', desc: 'Тексты песен и стихотворения', icon: 'sound' },
+  { id: 'own', title: 'Мои материалы', desc: 'Ваши тексты, песни, субтитры и видео', icon: 'plus' }
+];
+const SHELF_BY_TOPIC = {
+  'Диалоги': 'dialogs', 'Разговорник': 'phrasebook', 'Сказки': 'tales', 'Легенды': 'tales',
+  'Народная мудрость': 'wisdom', 'Пословицы': 'wisdom', 'Культура': 'culture', 'История': 'culture', 'География': 'culture',
+  'Песни': 'songs', 'Стихи': 'songs'
+};
+export function shelfOf(t) {
+  if (t.own) return 'own';
+  if (t.shelf && SHELVES.some(x => x.id === t.shelf)) return t.shelf;
+  if (t.kind === 'song' || t.kind === 'poem') return 'songs';
+  return SHELF_BY_TOPIC[t.topic] || 'reading';
+}
+// Формат: явный kind, а для диалогов и разговорника — «Диалог»
+export function formatOf(t) {
+  if (t.kind && KINDS[t.kind]) return t.kind;
+  const sh = shelfOf(t);
+  return sh === 'dialogs' || sh === 'phrasebook' ? 'dialog' : 'text';
+}
 export const MAX_BODY = 20000;   // символов в одном материале
 export const MAX_ITEMS = 40;     // материалов на язык
 
