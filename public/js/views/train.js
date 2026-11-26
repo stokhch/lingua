@@ -6,6 +6,7 @@ import { speak, canSpeak } from '../speech.js';
 import { GRADES, intervalLabel } from '../srs.js';
 import { L, lower, fold, lettersOnly, keysBar } from '../lang.js';
 import { EXTRA, EXTRA_INFO, extraPlan, EXTRA_QUESTIONS } from './train-extra.js';
+import { focusBar, bindFocusBar } from './mysets.js';
 
 const SESSION = 10;
 export const TRAIN_INFO = {
@@ -25,29 +26,31 @@ function buildPlan(kind) {
   let pool, practice = false;
   if (kind === 'cards') {
     pool = G.dueWords().slice(0, 20);
-    if (!pool.length) { pool = shuffle(G.allWords().filter(w => !w.srs)).slice(0, SESSION); practice = 'learn'; }
+    if (!pool.length) { pool = shuffle(G.trainWords().filter(w => !w.srs)).slice(0, SESSION); practice = 'learn'; }
   } else {
     pool = G.wordsFor(kind).slice(0, SESSION);
     if (kind === 'co') pool = pool.filter(w => lettersOnly(w.w).length <= 14);
   }
-  if (!pool.length && G.allWords().length >= 4) { pool = shuffle(G.allWords()).slice(0, SESSION); practice = 'free'; }
-  if ((G.allWords().length < 4 && kind !== 'cards') || !pool.length) return null;
+  if (!pool.length && G.trainWords().length >= 4) { pool = shuffle(G.trainWords()).slice(0, SESSION); practice = 'free'; }
+  if ((G.trainWords().length < 4 && kind !== 'cards') || !pool.length) return null;
   return { steps: shuffle(pool).map(word => ({ word, q: kind })), practice };
 }
 
 export function renderTrainings(main) {
   const c = G.counts();
-  const n = k => k === 'cards' ? c.due : G.TRAININGS.includes(k) ? G.wordsFor(k).length : k === 'storm' ? c.new + c.learning : null;
+  const n = k => k === 'cards' ? G.dueWords().length : G.TRAININGS.includes(k) ? G.wordsFor(k).length : k === 'storm' ? G.trainWords().filter(w => !w.srs).length : null;
   main.innerHTML = `
   <section class="band">
     <h1>Тренировки <span class="muted small-h">· ${L().name}</span></h1>
     <p class="lead">Каждое новое слово проходит четыре тренировки. После этого оно считается изученным и возвращается в «Карточках» через растущие интервалы: 1 день, 3 дня, неделю, месяц…</p>
+    ${c.total ? focusBar() : ''}
     <div class="trainings">${Object.entries(TRAIN_INFO).map(([k, t]) => {
       const cnt = n(k);
       return `<a class="train-card ${k}" href="#train-${k}">${icon(t.ic)}<b>${t.title}</b><span>${t.desc}</span>${cnt === null ? '<em>в любое время</em>' : `<em class="${cnt ? 'ready' : ''}">${cnt ? `${cnt} ${plural(cnt, 'слово', 'слова', 'слов')} готово` : 'нет слов'}</em>`}</a>`;
-    }).join('')}</div>
+    }).join('')}${L().id === 'en' ? `<a class="train-card irr" href="#verbs">${icon('grammar')}<b>Неправильные глаголы</b><span>Напишите Past Simple и Past Participle</span><em>112 глаголов</em></a>` : ''}</div>
     ${c.total < 4 ? `<div class="empty"><p>Для тренировок нужно хотя бы 4 слова в словаре.</p><a class="btn" href="#sets">Выбрать набор слов</a></div>` : ''}
   </section>`;
+  if (c.total) bindFocusBar(() => renderTrainings(main));
 }
 
 // варианты ответа: перевод другого слова из словаря пользователя или встроенного словаря
@@ -234,7 +237,7 @@ export function choice(stage, word, field, answer, head) {
 
 // ---------- Спринт ----------
 function sprint(main) {
-  const own = G.allWords();
+  const own = G.trainWords();
   const src = own.length >= 8 ? own.map(w => ({ w: w.w, t: w.t })) : [...L().DICT.entries()].map(([w, t]) => ({ w, t }));
   let score = 0, combo = 0, time = 60, total = 0, item, truth, tick;
   main.innerHTML = `

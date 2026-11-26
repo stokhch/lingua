@@ -30,7 +30,7 @@ function findSentence(w) {
 }
 
 export function extraPlan(kind) {
-  const all = G.allWords();
+  const all = G.trainWords();
   if (kind === 'storm') {
     if (all.length < 4) return null;
     let words = all.filter(w => !w.srs).sort((a, b) => a.added - b.added).slice(0, 5), practice = false;
@@ -146,7 +146,7 @@ export const EXTRA_QUESTIONS = {
 
 // ---------- Водопад ----------
 function wordSource() {
-  const own = G.allWords();
+  const own = G.trainWords();
   return own.length >= 8 ? own.map(w => ({ w: w.w, t: w.t })) : [...L().DICT.entries()].map(([w, t]) => ({ w, t }));
 }
 
@@ -207,7 +207,7 @@ function fall(main) {
 function cross(main) {
   const letterRe = new RegExp(`^[${L().letters}]{3,10}$`);
   const ok = w => letterRe.test(w) && w === lower(w);
-  let cands = shuffle(G.allWords().filter(w => ok(w.w))).map(w => ({ w: w.w, t: w.t }));
+  let cands = shuffle(G.trainWords().filter(w => ok(w.w))).map(w => ({ w: w.w, t: w.t }));
   if (cands.length < 6) cands = cands.concat(shuffle([...L().DICT.entries()].filter(([w]) => ok(w))).slice(0, 30).map(([w, t]) => ({ w, t })));
   let cw = null;
   for (let tries = 0; tries < 8; tries++) { const c = buildCrossword(shuffle(cands).slice(0, 16)); if (c && (!cw || c.words.length > cw.words.length)) cw = c; if (cw?.words.length >= 7) break; }
