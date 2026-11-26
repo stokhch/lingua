@@ -8,6 +8,7 @@ import { renderDictionary, renderSets, renderSet } from './views/dictionary.js';
 import { renderMySet } from './views/mysets.js';
 import { renderVerbs } from './views/verbs.js';
 import { renderFriends } from './views/friends.js';
+import { renderClasses, renderClass, renderJoin, resumeJoin } from './views/teacher.js';
 import { renderStudents } from './views/students.js';
 import { renderExtension } from './views/extension.js';
 import { renderExam } from './views/exam.js';
@@ -142,6 +143,9 @@ function route() {
     myset: () => renderMySet(main, param),
     verbs: () => renderVerbs(main),
     friends: () => renderFriends(main),
+    classes: () => renderClasses(main),
+    class: () => renderClass(main, param),
+    join: () => renderJoin(main, param),
     students: () => renderStudents(main),
     extension: () => renderExtension(main),
     exam: () => renderExam(main, param),
@@ -286,7 +290,7 @@ function renderProfile(main) {
     <h2>Достижения</h2>
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
-  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
+  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
   <section class="band" id="leaders"></section>
   <section class="band">
     <h2>Настройки</h2>
@@ -351,6 +355,7 @@ function start() {
   G.checkBadges();
   initPim();
   window.onhashchange = route;
+  resumeJoin(); // приглашение в класс, открытое до входа
   route();
   pullInbox();
   acceptInvite().then(name => { if (name && location.hash === '#friends') route(); });
