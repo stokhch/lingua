@@ -962,3 +962,7 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 @media (prefers-reduced-motion:reduce){.stream .ripple,.fly,.chest-svg .spark path,.chest-svg.open .glow{animation:none}}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .trail-svg{filter:brightness(.8) saturate(.9)}}
 :root[data-theme=dark] .trail-svg{filter:brightness(.8) saturate(.9)}
+
+/* Рейтинг дня и недели */
+.rating-me{display:flex;align-items:center;gap:8px;margin:-4px 0 12px;font-weight:800;max-width:620px}.rating-me .ic{width:20px;height:20px;color:var(--gold)}
+.rating-card{max-width:620px}.rating-card div>span{display:block;margin-top:2px}.rating-card div>span b{display:inline;font-size:inherit;color:var(--ink)}

@@ -5,7 +5,7 @@
 //   POST /api/logout
 //   GET  /api/me                                  -> {user}
 //   GET  /api/state  / PUT /api/state {state}     -> прогресс пользователя
-//   GET  /api/leaderboard                         -> топ по XP за неделю и всего
+//   GET  /api/leaderboard?day=YYYY-MM-DD          -> топ по XP за день, неделю и всего
 //   GET  /api/students                            -> все ученики: имя, уровень, XP, стрик, языки (кроме скрывшихся; students.js)
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
@@ -231,8 +231,12 @@ async function api(req, res, url) {
 
   if (route === 'GET /api/leaderboard') {
     const me = auth(req)?.user?.id;
-    const rows = Object.values(db.users).filter(u => u.id === me || !u.state?.hideFromAll).map(u => ({ me: u.id === me, name: u.name, xp: u.state?.xp || 0, week: weekXp(u.state), streak: u.state?.streak || 0 }));
-    return send(res, 200, { week: [...rows].sort((a, b) => b.week - a.week).slice(0, 20), total: [...rows].sort((a, b) => b.xp - a.xp).slice(0, 20) });
+    // День берём по календарю того, кто смотрит (?day=YYYY-MM-DD), но не дальше суток от UTC
+    const utc = Date.now(), asked = url.searchParams.get('day') || '';
+    const okDay = /^\d{4}-\d{2}-\d{2}$/.test(asked) && Math.abs(Date.parse(asked + 'T12:00:00Z') - utc) < 2 * 86400000;
+    const day = okDay ? asked : new Date(utc).toISOString().slice(0, 10);
+    const rows = Object.values(db.users).filter(u => u.id === me || !u.state?.hideFromAll).map(u => ({ me: u.id === me, name: u.name, xp: u.state?.xp || 0, week: weekXp(u.state), today: u.state?.xpLog?.[day] || 0, streak: u.state?.streak || 0 }));
+    return send(res, 200, { day: [...rows].sort((a, b) => b.today - a.today).slice(0, 20), week: [...rows].sort((a, b) => b.week - a.week).slice(0, 20), total: [...rows].sort((a, b) => b.xp - a.xp).slice(0, 20) });
   }
 
   if (route === 'GET /api/students') return send(res, 200, studentsList(db.users, auth(req)?.user?.id, weekXp));
