@@ -37,7 +37,9 @@ const P = {
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   logout: '<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',
-  login: '<path d="M14 4h5v16h-5M9 8l4 4-4 4M3 12h10"/>'
+  login: '<path d="M14 4h5v16h-5M9 8l4 4-4 4M3 12h10"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+  gift: '<rect x="3" y="9" width="18" height="5" rx="1"/><path d="M5 14v6h14v-6M12 9v11M12 9c-2-5-7-5-7-2s4 2 7 2c3 0 7 1 7-2s-5-3-7 2"/>'
 };
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[name] || ''}</svg>`;
 

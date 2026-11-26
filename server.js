@@ -12,6 +12,7 @@
 //   GET  /api/tts?q=…&lang=en|tr|el             -> mp3 с озвучкой, когда в браузере нет голоса для языка
 //   GET  /api/lookup, /api/inbox, POST /api/inbox(/clear), GET /lingva-extension.zip -> расширение браузера (extension-api.js)
 //   GET  /api/invite (без входа), GET /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
+//   GET /api/messages…, POST /api/messages/send|block|report|settings, /api/reports… -> личные сообщения, поздравления и подарки (messages.js)
 //   GET/POST /api/classes…, /api/join, /api/teacher/enable -> учитель, классы и соревнования (teacher.js)
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
@@ -23,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { openStore } from './storage.js';
 import { createSocial } from './social.js';
 import { createTeacher } from './teacher.js';
+import { createMessages } from './messages.js';
 import { studentsList } from './students.js';
 import { createExtensionApi } from './extension-api.js';
 
@@ -198,6 +200,9 @@ async function ttsAudio(q, lang) {
 }
 
 const social = createSocial({ getDb: () => db, persist, send, readJson, weekXp });
+// Модераторы жалоб на сообщения: e-mail через запятую в LINGVA_ADMINS
+const ADMINS = String(process.env.LINGVA_ADMINS || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+const messages = createMessages({ getDb: () => db, persist, send, readJson, codeOf: social.codeOf, byCode: social.byCode, admins: ADMINS });
 const teacher = createTeacher({ getDb: () => db, persist, send, readJson });
 const ext = createExtensionApi({ root: ROOT, send, readJson, translate, persist });
 
@@ -286,6 +291,7 @@ async function api(req, res, url) {
     return send(res, 200, { ok: true });
   }
   if (await social.handle(route, req, res, session) !== false) return;
+  if (await messages.handle(route, req, res, session, url) !== false) return;
   if (await teacher.handle(route, req, res, session, url) !== false) return;
   if (await ext.handleAuthed(route, req, res, session) !== false) return;
   return send(res, 404, { error: 'Not found' });

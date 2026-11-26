@@ -31,7 +31,7 @@ export function renderFriends(main) {
     const done = duels.filter(d => d.result);
     main.innerHTML = `
     <section class="band">
-      <div class="toolbar"><h1>Друзья и дуэли</h1><span class="row gap"><a class="btn ghost small" href="#students">${icon('chart')} Все ученики</a><a class="btn ghost small" href="#classes">${icon('user')} Классы</a></span></div>
+      <div class="toolbar"><h1>Друзья и дуэли</h1><span class="row gap"><a class="btn ghost small" href="#messages">${icon('mail')} Сообщения</a><a class="btn ghost small" href="#students">${icon('chart')} Все ученики</a><a class="btn ghost small" href="#classes">${icon('user')} Классы</a></span></div>
       <p class="lead">Учитесь вместе: сравнивайте опыт за неделю и вызывайте друзей на дуэль по словам. Кто ответит верно на больше слов, тот и победил, а при равенстве побеждает тот, кто быстрее.</p>
       <div class="friend-code">
         <div><span class="muted">Ваш код для друзей</span><b id="my-code">${esc(code)}</b></div>
@@ -50,7 +50,7 @@ export function renderFriends(main) {
       ${friends.length ? `<ol class="leaders friends">${table.map((f, i) => `<li class="${f.isMe ? 'me' : ''}"><span class="pos">${i + 1}</span>
         <div class="fr-name"><b>${esc(f.name)}${f.isMe ? ' (вы)' : ''}</b><span>${esc(rankFor(f.level).title)} · ур. ${f.level} · ${LANGS[f.lang]?.code || ''} · ${ago(f.active)}</span></div>
         <span title="Дней подряд">${icon('fire')}${f.streak}</span><span class="num">${f.week} XP</span>
-        ${f.isMe ? '<span></span>' : `<span class="fr-act"><button class="btn small" data-duel="${esc(f.code)}" data-name="${esc(f.name)}">Дуэль</button><button class="icon-btn" data-rm="${esc(f.code)}" data-name="${esc(f.name)}" title="Удалить из друзей" aria-label="Удалить ${esc(f.name)} из друзей">${icon('x')}</button></span>`}</li>`).join('')}</ol>`
+        ${f.isMe ? '<span></span>' : `<span class="fr-act"><a class="icon-btn" href="#messages-${esc(f.code)}" title="Написать" aria-label="Написать ${esc(f.name)}">${icon('mail')}</a><button class="btn small" data-duel="${esc(f.code)}" data-name="${esc(f.name)}">Дуэль</button><button class="icon-btn" data-rm="${esc(f.code)}" data-name="${esc(f.name)}" title="Удалить из друзей" aria-label="Удалить ${esc(f.name)} из друзей">${icon('x')}</button></span>`}</li>`).join('')}</ol>`
         : `<div class="empty"><p>Пока никого. Отправьте другу ссылку-приглашение или код <b>${esc(code)}</b>, либо добавьте его код выше — дружба взаимная.</p></div>`}
     </section>
     ${waiting.length || done.length ? `<section class="band"><h2>Дуэли</h2><div class="duels">${[...waiting, ...done].slice(0, 20).map(d => duelCard(d)).join('')}</div></section>` : ''}`;
