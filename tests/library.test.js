@@ -43,3 +43,18 @@ test('Полки: английская библиотека заполняет �
   for (const sh of ['reading', 'dialogs', 'phrasebook', 'tales', 'wisdom', 'culture', 'songs']) assert.ok(used.has(sh), sh);
   for (const t of lib) assert.ok(t.title && t.body && ['A1', 'A2', 'B1', 'B2', 'C1'].includes(t.level), t.id);
 });
+
+test('Иллюстрации к материалам: у каждого art есть рисунок, SVG собирается', async () => {
+  const { textArt, hasArt, ART_KEYS } = await import('../public/js/text-art.js');
+  const used = EL.filter(t => t.art);
+  assert.ok(used.length >= 7);
+  for (const t of used) {
+    assert.ok(hasArt(t), `нет рисунка ${t.art} у ${t.id}`);
+    const svg = textArt(t);
+    assert.match(svg, /^<figure class="text-art banner"><svg [^>]*>[\s\S]*<\/svg><\/figure>$/);
+    assert.ok(!/NaN|undefined/.test(svg), t.art);
+    assert.ok(!/id="(\w+)"/.test(textArt(t, 'thumb').replace(/id="\w+t"/g, '')), 'id в полоске с суффиксом');
+  }
+  for (const k of ART_KEYS) assert.ok(used.some(t => t.art === k), `рисунок ${k} не используется`);
+  assert.equal(textArt({ art: 'нет-такого' }), '');
+});

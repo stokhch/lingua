@@ -7,6 +7,7 @@ import { myLevel } from './placement.js';
 import { levelRank } from '../placement.js';
 import { KINDS, SHELVES, shelfOf, formatOf, wordTotal, newWordCount } from '../materials.js';
 import { openMaterialEditor } from './materials.js';
+import { textArt } from '../text-art.js';
 
 const ROW = 8; // карточек в ряду полки на главной странице библиотеки
 const F = { level: 'all', kind: 'all', status: 'all', topic: 'all', sort: 'level' };
@@ -35,7 +36,7 @@ function statsFor(list) {
 
 function card(t, st) {
   const status = textStatus(t.id), words = st.n;
-  return `<a class="text-card lv-${t.level}" href="#read-${t.id}"><span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${t.kind !== 'text' ? `${KINDS[t.kind] || ''} · ` : ''}${esc(t.topic || 'Без темы')} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span><span class="fresh">${st.fresh ? `новых для вас слов: ${st.fresh}` : 'все слова уже в словаре'}</span>${status === 'done' ? `<em>${icon('check')} прочитано</em>` : status === 'reading' ? '<em class="reading">читаю</em>' : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}${t.own ? '<i class="own-tag">моё</i>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
+  return `<a class="text-card lv-${t.level}" href="#read-${t.id}">${textArt(t, 'thumb')}<span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${t.kind !== 'text' ? `${KINDS[t.kind] || ''} · ` : ''}${esc(t.topic || 'Без темы')} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span><span class="fresh">${st.fresh ? `новых для вас слов: ${st.fresh}` : 'все слова уже в словаре'}</span>${status === 'done' ? `<em>${icon('check')} прочитано</em>` : status === 'reading' ? '<em class="reading">читаю</em>' : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}${t.own ? '<i class="own-tag">моё</i>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
 }
 
 // Порядок на полке по умолчанию: сначала не прочитанные, ближе к уровню ученика, затем проще

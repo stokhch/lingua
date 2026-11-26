@@ -9,6 +9,7 @@ import { L, lower, splitRe, keysBar, fold } from '../lang.js';
 import { KINDS, SHELVES, youtubeId } from '../materials.js';
 import { openMaterialEditor, deleteMaterial } from './materials.js';
 import { allTexts } from './library.js';
+import { textArt } from '../text-art.js';
 import * as D from '../grammar-drill.js';
 import { grammarCards, grammarState } from './grammar-train.js';
 
@@ -40,6 +41,7 @@ export function renderReader(main, id) {
     <a class="back" href="#shelf-${t.shelf}">${icon('back')} ${esc(SHELVES.find(x => x.id === t.shelf)?.title || 'Все материалы')}</a>
     <article class="reader">
       <div class="meta"><span class="lv">${t.level}</span> ${t.kind && t.kind !== 'text' ? `${KINDS[t.kind]} · ` : ''}${esc(t.topic || '')}${t.own ? ` · <button class="link" id="edit-mat">изменить</button> · <button class="link danger" id="del-mat">удалить</button>` : ''}</div>
+      ${textArt(t)}
       <h1>${esc(t.title)}</h1>
       ${t.note ? `<p class="text-note">${esc(t.note)}${t.link ? ` <a href="${esc(t.link.href)}" target="_blank" rel="noopener">${esc(t.link.label)}</a>` : ''}</p>` : ''}
       ${t.summary ? `<p class="text-note"><b>О чём ${t.kind === 'song' ? 'песня' : t.kind === 'poem' ? 'стихотворение' : 'текст'}:</b> ${esc(t.summary)}</p>` : ''}
