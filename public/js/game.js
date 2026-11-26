@@ -4,6 +4,7 @@ import { newCard, review, isDue } from './srs.js';
 import { toast } from './ui.js';
 import { lower, L } from './lang.js';
 import { TRAININGS, wordStatus, dayKey, emptyDay, pruneDays } from './stats.js';
+import { chunkWords } from './trail.js';
 import { bump } from './dayplan.js';
 
 export { TRAININGS, wordStatus };
@@ -37,6 +38,7 @@ export function focusInfo() {
   const [kind, id] = [f.slice(0, f.indexOf(':')), f.slice(f.indexOf(':') + 1)];
   if (kind === 'set' && L().SETS[id]) return { id: f, title: L().SET_INFO[id]?.title || id, keys: new Set(L().SETS[id]) };
   if (kind === 'my' && s.mySets?.[id]) return { id: f, title: s.mySets[id].title, keys: new Set(s.mySets[id].words) };
+  if (kind === 'trail') { const ws = chunkWords(L(), id); const set = id.slice(0, id.lastIndexOf('.')); if (ws.length) return { id: f, title: `${L().SET_INFO[set]?.title || set} · шаг тропы`, keys: new Set(ws) }; }
   return null;
 }
 export function setFocus(f) {
