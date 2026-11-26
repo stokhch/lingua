@@ -3,7 +3,8 @@
 // У каждой части свои слова (WORDS: «слово|перевод») и формы (FORMS: форма → начальная форма),
 // чтобы перевод по клику находил каждое слово.
 import * as p1 from './part1.js';
-const PARTS = [p1];
+import * as p2 from './part2.js';
+const PARTS = [p1, p2];
 export const LIBRARY = PARTS.flatMap(p => p.TEXTS);
 export const LIBRARY_FORMS = Object.assign({}, ...PARTS.map(p => p.FORMS || {}));
 export const LIBRARY_WORDS = PARTS.flatMap(p => p.WORDS.trim().split('\n').filter(Boolean));
