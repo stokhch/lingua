@@ -28,6 +28,7 @@ import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
 import { flagsFor } from './flags.js';
 import { dayPlanHtml } from './views/dayplan.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
+import { BOARDS, standing, nudgeText, reminderFor } from './rating.js';
 
 const NAV = [
   ['home', 'Главная', 'home'], ['dictionary', 'Словарь', 'dict'], ['sets', 'Наборы', 'sets'],
@@ -156,7 +157,7 @@ function route() {
     grammar: () => renderGrammar(main),
     lesson: () => renderLesson(main, param),
     gtrain: () => renderGrammarTraining(main, param),
-    profile: () => renderProfile(main),
+    profile: () => renderProfile(main, param),
     progress: () => renderProgress(main),
     path: () => renderPath(main),
     test: () => renderPlacement(main)
@@ -198,6 +199,7 @@ function renderHome(main) {
     </div>
   </section>
   ${plan}
+  <section class="band" id="home-rating" hidden></section>
   ${placementBanner()}
   <section class="band">
     <div class="grid-3 grid-4">
@@ -217,6 +219,7 @@ function renderHome(main) {
     ${c.total === 0 ? `<div class="empty"><p>В словаре пока пусто. Начните с набора «${SET_INFO[firstSet].title}» или откройте текст и нажимайте на незнакомые слова.</p><a class="btn" href="#set-${firstSet}">Открыть набор</a></div>` : ''}
   </section>`;
   $('#home-lang').onclick = pickLang;
+  fillHomeRating();
 }
 
 // ---------- Вход и регистрация ----------
@@ -259,7 +262,7 @@ function renderAuth() {
 }
 
 // ---------- Профиль ----------
-function renderProfile(main) {
+function renderProfile(main, param = '') {
   const s = store.state, lv = G.levelInfo();
   const days = Array.from({ length: 14 }, (_, i) => { const d = new Date(Date.now() - (13 - i) * 86400000); return { d, xp: s.xpLog[G.today(d)] || 0 }; });
   const max = Math.max(s.goal, ...days.map(x => x.xp));
@@ -279,6 +282,7 @@ function renderProfile(main) {
       <div class="stat"><b>${acc}%</b><span>верных ответов</span></div>
     </div>
   </section>
+  <section class="band" id="leaders"></section>
   <section class="band">
     <div class="sec-head"><h2>Опыт за две недели</h2><a class="link" href="#progress">Вся статистика</a></div>
     <div class="xp-chart" role="img" aria-label="XP по дням">
@@ -291,7 +295,6 @@ function renderProfile(main) {
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
   <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
-  <section class="band" id="leaders"></section>
   <section class="band">
     <h2>Настройки</h2>
     <form class="settings" id="settings">
@@ -339,14 +342,56 @@ function renderProfile(main) {
   $('#logout') && ($('#logout').onclick = logoutNow);
   $('#login') && ($('#login').onclick = () => { location.hash = ''; renderAuth(); });
 
-  // Рейтинг (только с сервером)
+  // Рейтинг дня и недели (только с сервером) — сразу под статистикой
   const lb = $('#leaders');
   if (store.mode === 'server') {
-    lb.innerHTML = '<h2>Рейтинг недели</h2><p class="muted">Загрузка…</p>';
-    store.saveNow().then(() => store.api('GET', 'api/leaderboard')).then(d => {
-      lb.innerHTML = `<h2>Рейтинг недели</h2><ol class="leaders">${d.week.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span><b>${esc(r.name)}</b><span>${icon('fire')}${r.streak}</span><span class="num">${r.week} XP</span></li>`).join('')}</ol>`;
-    }).catch(() => { lb.innerHTML = ''; });
+    let tab = lsGet(LS_BOARD) === 'day' ? 'day' : 'week', data = null;
+    const draw = () => {
+      const b = BOARDS[tab], rows = data[tab] || [];
+      lb.innerHTML = `<div class="sec-head"><h2>${b.title}</h2><div class="seg" role="tablist" aria-label="Рейтинг">${Object.entries(BOARDS).map(([k, x]) => `<button role="tab" data-board="${k}" aria-selected="${k === tab}">${x.short}</button>`).join('')}</div></div>
+        <p class="rating-me">${icon('trophy')}<span>${esc(nudgeText(standing(rows, b.key), b.key))}</span></p>
+        ${rows.length ? `<ol class="leaders">${rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span><b>${esc(r.name)}</b><span>${icon('fire')}${r.streak}</span><span class="num">${r[b.key]} XP</span></li>`).join('')}</ol>` : ''}`;
+      $$('[data-board]', lb).forEach(x => x.onclick = () => { tab = x.dataset.board; lsSet(LS_BOARD, tab); draw(); });
+    };
+    lb.innerHTML = '<h2>Рейтинг дня и недели</h2><p class="muted">Загрузка…</p>';
+    loadBoards(true).then(d => { data = d; draw(); if (param === 'leaders') lb.scrollIntoView({ block: 'start' }); }).catch(() => { lb.innerHTML = ''; });
   } else lb.remove();
+}
+
+// ---------- Рейтинг: загрузка и напоминания ----------
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const LS_BOARD = 'lingva-board', LS_RANK = 'lingva-rank-seen';
+let boardsCache = null;
+function loadBoards(fresh = false) {
+  if (!fresh && boardsCache && Date.now() - boardsCache.at < 30000) return boardsCache.p;
+  const p = store.saveNow().then(() => store.api('GET', `api/leaderboard?day=${G.today()}`));
+  boardsCache = { at: Date.now(), p };
+  p.catch(() => { boardsCache = null; });
+  return p;
+}
+
+// Карточка на главной: место в рейтинге дня и недели, ссылка на таблицу
+function fillHomeRating() {
+  const el = $('#home-rating');
+  if (!el || store.mode !== 'server') return;
+  loadBoards().then(d => {
+    if (!el.isConnected) return;
+    const line = k => { const b = BOARDS[k]; return `<span><b>${b.short}:</b> ${esc(nudgeText(standing(d[k], b.key), b.key))}</span>`; };
+    el.innerHTML = `<a class="action rating-card" href="#profile-leaders">${icon('trophy')}<div><b>Рейтинг дня и недели</b>${line('day')}${line('week')}</div></a>`;
+    el.hidden = false;
+  }).catch(() => {});
+}
+
+// Тост-напоминание при входе: раз в день, а если обогнали за неделю — сразу
+function remindRating() {
+  if (store.mode !== 'server') return;
+  setTimeout(() => loadBoards().then(d => {
+    let prev = {}; try { prev = JSON.parse(lsGet(LS_RANK) || '{}'); } catch {}
+    const r = reminderFor(d, prev, G.today());
+    lsSet(LS_RANK, JSON.stringify(r.save));
+    if (r.text) toast(r.text, 'level');
+  }).catch(() => {}), 4000);
 }
 
 // ---------- запуск ----------
@@ -358,6 +403,7 @@ function start() {
   resumeJoin(); // приглашение в класс, открытое до входа
   route();
   pullInbox();
+  remindRating();
   acceptInvite().then(name => { if (name && location.hash === '#friends') route(); });
 }
 
