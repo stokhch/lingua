@@ -3,35 +3,76 @@ import { store } from '../store.js';
 import { esc, $, $$, icon, toast } from '../ui.js';
 import * as G from '../game.js';
 import { speak } from '../speech.js';
-import { translateWord } from '../translate.js';
+import { translateWord, translateSentence } from '../translate.js';
 import { L, lower, splitRe, keysBar } from '../lang.js';
+import { myLevel } from './placement.js';
+import { levelRank } from '../placement.js';
+import { KINDS, wordTotal, newWordCount, youtubeId } from '../materials.js';
+import { openMaterialEditor, deleteMaterial } from './materials.js';
 
-let levelFilter = 'all';
+const F = { tab: 'all', level: 'all', kind: 'all', status: 'all', topic: 'all', sort: 'level' };
 let lessonKey = null;
 
+// Все тексты текущего языка: встроенная библиотека + свои материалы ученика
+export const allTexts = () => [...L().TEXTS.map(t => ({ ...t, kind: t.kind || 'text' })), ...Object.values(store.state.materials || {}).map(m => ({ ...m, own: true }))];
+const textStatus = id => store.state.readTexts[id] ? 'done' : store.state.openedTexts?.[id] ? 'reading' : 'new';
+
 export function renderTexts(main) {
-  const s = store.state, { TEXTS } = L();
-  const levels = [...new Set(TEXTS.map(t => t.level))];
-  if (levelFilter !== 'all' && !levels.includes(levelFilter)) levelFilter = 'all';
+  const s = store.state, { lemma, tokenRe } = L();
+  const has = k => !!s.words[k];
   const draw = () => {
+    const all = allTexts();
+    const levels = [...new Set(all.map(t => t.level))].sort((a, b) => levelRank(a) - levelRank(b));
+    const topics = [...new Set(all.map(t => t.topic).filter(Boolean))].sort();
+    const kinds = [...new Set(all.map(t => t.kind))];
+    if (F.level !== 'all' && !levels.includes(F.level)) F.level = 'all';
+    if (F.topic !== 'all' && !topics.includes(F.topic)) F.topic = 'all';
+    const stats = new Map(all.map(t => [t.id, { n: wordTotal(t.body, tokenRe), fresh: newWordCount(t.body, tokenRe, lemma, has) }]));
+    let list = all.filter(t => (F.tab === 'all' || (F.tab === 'own') === !!t.own)
+      && (F.level === 'all' || t.level === F.level) && (F.kind === 'all' || t.kind === F.kind)
+      && (F.topic === 'all' || t.topic === F.topic) && (F.status === 'all' || textStatus(t.id) === F.status));
+    const share = t => stats.get(t.id).fresh / Math.max(1, stats.get(t.id).n);
+    const sorters = {
+      level: (a, b) => levelRank(a.level) - levelRank(b.level),
+      fresh: (a, b) => share(a) - share(b),
+      recent: (a, b) => (b.added || 0) - (a.added || 0),
+      short: (a, b) => stats.get(a.id).n - stats.get(b.id).n
+    };
+    list = [...list].sort(sorters[F.sort] || sorters.level);
+    const own = Object.keys(s.materials || {}).length;
+    const sel = (key, opts) => `<select data-f="${key}" aria-label="Фильтр">${opts.map(([v, t]) => `<option value="${esc(v)}" ${F[key] === v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>`;
     main.innerHTML = `
     <section class="band">
-      <h1>Тексты</h1>
-      <p class="lead">${L().name}: читайте и нажимайте на незнакомые слова: появится перевод, а слово можно сразу отправить в словарь вместе с предложением из текста.</p>
-      <div class="chips">${['all', ...levels].map(l => `<button class="chip ${levelFilter === l ? 'on' : ''}" data-l="${l}">${l === 'all' ? 'Все уровни' : l}</button>`).join('')}</div>
-      <div class="texts">${TEXTS.filter(t => levelFilter === 'all' || t.level === levelFilter).map(t => {
-        const words = t.body.split(/\s+/).length;
-        return `<a class="text-card lv-${t.level}" href="#read-${t.id}"><span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${esc(t.topic)} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span>${s.readTexts[t.id] ? `<em>${icon('check')} прочитано</em>` : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
-      }).join('')}</div>
+      <div class="toolbar"><h1>Тексты и материалы</h1><button class="btn" id="add-mat">${icon('plus')} Свой материал</button></div>
+      <p class="lead">${L().name}: читайте и нажимайте на незнакомые слова: появится перевод, а слово можно сразу отправить в словарь вместе с предложением. Добавляйте свои тексты, песни и субтитры к видео — они станут такими же интерактивными.</p>
+      <div class="chips">${[['all', 'Все'], ['lib', 'Библиотека'], ['own', `Мои материалы · ${own}`]].map(([k, t]) => `<button class="chip ${F.tab === k ? 'on' : ''}" data-tab="${k}">${t}</button>`).join('')}</div>
+      <div class="filters">
+        ${sel('level', [['all', 'Все уровни'], ...levels.map(l => [l, l + (l === myLevel() ? ' · ваш' : '')])])}
+        ${sel('kind', [['all', 'Любой формат'], ...kinds.map(k => [k, KINDS[k] || k])])}
+        ${sel('topic', [['all', 'Все темы'], ...topics.map(t => [t, t])])}
+        ${sel('status', [['all', 'Любой статус'], ['new', 'Не начаты'], ['reading', 'Читаю'], ['done', 'Прочитаны']])}
+        ${sel('sort', [['level', 'Сначала проще'], ['fresh', 'Меньше новых слов'], ['short', 'Сначала короткие'], ['recent', 'Недавно добавленные']])}
+      </div>
+      <div class="texts">${list.map(t => {
+        const st = stats.get(t.id), words = st.n, status = textStatus(t.id);
+        return `<a class="text-card lv-${t.level}" href="#read-${t.id}"><span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${t.kind !== 'text' ? `${KINDS[t.kind] || ''} · ` : ''}${esc(t.topic || 'Без темы')} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span><span class="fresh">${st.fresh ? `новых для вас слов: ${st.fresh}` : 'все слова уже в словаре'}</span>${status === 'done' ? `<em>${icon('check')} прочитано</em>` : status === 'reading' ? '<em class="reading">читаю</em>' : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}${t.own ? '<i class="own-tag">моё</i>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
+      }).join('') || `<div class="empty"><p>${F.tab === 'own' && !own ? 'Своих материалов пока нет. Вставьте текст статьи, песни или субтитры — и читайте с переводом по клику.' : 'Ничего не найдено — попробуйте другие фильтры.'}</p>${F.tab === 'own' && !own ? '<button class="btn" id="add-mat2">Добавить материал</button>' : ''}</div>`}</div>
     </section>`;
-    $$('.chip').forEach(b => b.onclick = () => { levelFilter = b.dataset.l; draw(); });
+    $$('[data-tab]').forEach(b => b.onclick = () => { F.tab = b.dataset.tab; draw(); });
+    $$('[data-f]').forEach(x => x.onchange = () => { F[x.dataset.f] = x.value; draw(); });
+    const add = () => openMaterialEditor(null, m => { location.hash = 'read-' + m.id; });
+    $('#add-mat').onclick = add;
+    $('#add-mat2') && ($('#add-mat2').onclick = add);
   };
   draw();
 }
 
 export function renderReader(main, id) {
-  const { TEXTS, lemma } = L();
-  const t = TEXTS.find(x => x.id === id); if (!t) { location.hash = 'texts'; return; }
+  const { lemma } = L();
+  const t = allTexts().find(x => x.id === id); if (!t) { location.hash = 'texts'; return; }
+  if (!store.state.readTexts[t.id] && !store.state.openedTexts?.[t.id]) { (store.state.openedTexts ||= {})[t.id] = Date.now(); store.save(); }
+  const vid = youtubeId(t.video);
+  const src = /^https?:[/][/]/.test(t.source || '') ? t.source : '';
   const wordRe = splitRe();
   const paras = t.body.split(/\n\s*\n/);
   const tokenized = paras.map((p, pi) => {
@@ -44,10 +85,12 @@ export function renderReader(main, id) {
   <section class="band reader-wrap">
     <a class="back" href="#texts">${icon('back')} Все тексты</a>
     <article class="reader">
-      <div class="meta"><span class="lv">${t.level}</span> ${esc(t.topic)}</div>
+      <div class="meta"><span class="lv">${t.level}</span> ${t.kind && t.kind !== 'text' ? `${KINDS[t.kind]} · ` : ''}${esc(t.topic || '')}${t.own ? ` · <button class="link" id="edit-mat">изменить</button> · <button class="link danger" id="del-mat">удалить</button>` : ''}</div>
       <h1>${esc(t.title)}</h1>
       ${t.note ? `<p class="text-note">${esc(t.note)}${t.link ? ` <a href="${esc(t.link.href)}" target="_blank" rel="noopener">${esc(t.link.label)}</a>` : ''}</p>` : ''}
-      <div class="legend"><span class="mine">в словаре</span><span class="known">изучено</span><span>нажмите на слово для перевода</span></div>
+      ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
+      ${src ? `<p class="muted small">Источник: <a href="${esc(src)}" target="_blank" rel="noopener nofollow">${esc(src.replace(/^https?:[/][/](www[.])?/, '').slice(0, 60))}</a></p>` : ''}
+      <div class="legend"><span class="mine">в словаре</span><span class="known">изучено</span><span>нажмите на слово — перевод слова и всего предложения</span></div>
       <div class="body" id="body">${tokenized}</div>
       <div class="done-row">${store.state.readTexts[t.id] ? `<p class="muted">${icon('check')} Текст прочитан</p>` : '<button class="btn big" id="done">Я прочитал(а) текст · +10 XP</button>'}</div>
     </article>
@@ -95,6 +138,17 @@ export function renderReader(main, id) {
       : `${res.translation ? `<p class="tr">${esc(res.translation)}</p>` : '<p class="muted">Перевода нет во встроенном словаре — впишите свой:</p>'}
          <form class="pop-add"><input name="t" value="${esc(res.translation)}" aria-label="Перевод" ${res.translation ? 'hidden' : 'required'}><button class="btn small">${icon('plus')} В словарь</button>${res.translation ? '<button type="button" class="link edit">изменить</button>' : ''}</form>
          ${res.source === 'online' ? '<p class="muted small">Машинный перевод</p>' : ''}`;
+    const sb = document.createElement('div');
+    sb.className = 'pop-sent';
+    sb.innerHTML = `<button class="link" type="button">Перевести всё предложение</button>`;
+    pop.append(sb);
+    $('button', sb).onclick = async () => {
+      sb.innerHTML = '<p class="muted small">Переводим…</p>';
+      const tr = await translateSentence(ctx);
+      if (pop !== myPop) return;
+      sb.innerHTML = tr ? `<p class="sent-tr">${esc(tr)}</p><p class="muted small">Машинный перевод предложения</p>` : `<p class="muted small">${store.serverAvailable ? 'Не удалось перевести — попробуйте позже.' : 'Перевод предложений работает, когда сайт открыт через сервер Лингвы.'}</p>`;
+      place();
+    };
     place();
     const form = $('.pop-add', pop);
     if (form) {
@@ -105,7 +159,9 @@ export function renderReader(main, id) {
       };
     }
   };
-  const outside = e => { if (pop && !pop.contains(e.target) && !e.target.closest('.tk')) closePop(); };
+  $('#edit-mat') && ($('#edit-mat').onclick = () => openMaterialEditor(store.state.materials[t.id], () => renderReader(main, t.id)));
+  $('#del-mat') && ($('#del-mat').onclick = () => deleteMaterial(t.id, () => { location.hash = 'texts'; }));
+  const outside = e => { if (pop && !e.composedPath().includes(pop) && !e.target.closest('.tk')) closePop(); };
   document.addEventListener('click', outside);
   $('#done') && ($('#done').onclick = () => {
     store.state.readTexts[t.id] = Date.now(); G.addXp(10, 'текст прочитан');
