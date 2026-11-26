@@ -6,7 +6,7 @@ import { PHRASES } from '../public/js/data/krc/phrases.js';
 import { ALL_LESSONS } from '../public/js/data/krc/grammar.js';
 
 const TOKEN = /[\p{L}’'-]+/gu;
-const NAMES = new Set(['Аслан', 'Мурат', 'Зухра', 'Къасбот', 'Тамбиев']);
+const NAMES = new Set(['Аслан', 'Мурат', 'Зухра', 'Къасбот', 'Тамбиев', 'Сосуркъа', 'Сосурукъ', 'Сосурукъгъа', 'Хурла', 'Альберт', 'Узденов']);
 
 test('Карачаево-балкарский: аффиксы отрезаются до словарной формы', () => {
   const cases = {
