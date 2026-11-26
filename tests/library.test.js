@@ -44,10 +44,22 @@ test('Полки: английская библиотека заполняет �
   for (const t of lib) assert.ok(t.title && t.body && ['A1', 'A2', 'B1', 'B2', 'C1'].includes(t.level), t.id);
 });
 
+test('Английская библиотека: популярные сказки и текст о городах, все слова переводятся', async () => {
+  const en = await import('../public/js/data/dictionary.js');
+  const ids = ['en-l-tale-pigs', 'en-l-tale-hen', 'en-l-tale-goldilocks', 'en-l-tale-beanstalk', 'en-l-tale-whittington', 'en-l-cities'];
+  for (const id of ids) {
+    const t = EN.find(x => x.id === id);
+    assert.ok(t && t.art, id);
+    const miss = t.body.match(/[A-Za-z’'-]+/g).filter(w => !en.lookup(w).translation && w.split('-').some(p => p && !en.lookup(p).translation));
+    assert.deepEqual(miss, [], id);
+  }
+  assert.equal(EN.filter(t => ids.slice(0, 5).includes(t.id)).every(t => shelfOf(t) === 'tales'), true);
+});
+
 test('Иллюстрации к материалам: у каждого art есть рисунок, SVG собирается', async () => {
   const { textArt, hasArt, ART_KEYS } = await import('../public/js/text-art.js');
-  const used = EL.filter(t => t.art);
-  assert.ok(used.length >= 7);
+  const used = [...EL, ...EN].filter(t => t.art);
+  assert.ok(used.length >= 13);
   for (const t of used) {
     assert.ok(hasArt(t), `нет рисунка ${t.art} у ${t.id}`);
     const svg = textArt(t);
