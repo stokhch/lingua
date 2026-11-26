@@ -5,7 +5,7 @@ import * as G from '../game.js';
 import { speak } from '../speech.js';
 import { translateWord, translateSentence } from '../translate.js';
 import { examRow } from './exam.js';
-import { L, lower, splitRe, keysBar } from '../lang.js';
+import { L, lower, splitRe, keysBar, fold } from '../lang.js';
 import { myLevel } from './placement.js';
 import { levelRank } from '../placement.js';
 import { KINDS, wordTotal, newWordCount, youtubeId } from '../materials.js';
@@ -217,14 +217,17 @@ export function renderLesson(main, id) {
       box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       const check = val => {
         const answers = ex.a.split('/').map(norm);
-        const ok = answers.includes(norm(val));
+        const exact = answers.includes(norm(val));
+        // без ударений / диакритики — засчитываем, но показываем правильное написание
+        const close = !exact && ex.type !== 'choice' && answers.some(a => fold(a) === fold(norm(val)));
+        const ok = exact || close;
         if (ok) right++;
         G.recordAnswer(ok);
         $$('.opt', box).forEach(b => { b.disabled = true; if (norm(b.dataset.v) === norm(ex.a)) b.classList.add('right'); else if (b.dataset.v === val) b.classList.add('wrong'); });
         $('#ans') && ($('#ans').disabled = true);
         const gap = $('.gap-fill', box); // в вопросе без пропуска «___» подставлять нечего
         if (gap) { gap.textContent = ex.a.split('/')[0]; gap.classList.add(ok ? 'ok' : 'bad'); }
-        $('#fb').innerHTML = `<div class="feedback ${ok ? 'ok' : 'bad'}">${icon(ok ? 'check' : 'x')}<div>${ok ? 'Верно!' : `Правильный ответ: <b>${esc(ex.a.split('/')[0])}</b>`}</div><button class="btn" id="next">Дальше</button></div>`;
+        $('#fb').innerHTML = `<div class="feedback ${ok ? 'ok' : 'bad'}">${icon(ok ? 'check' : 'x')}<div>${close ? `Засчитано! Пишется так: <b>${esc(ex.a.split('/')[0])}</b>` : ok ? 'Верно!' : `Правильный ответ: <b>${esc(ex.a.split('/')[0])}</b>`}</div><button class="btn" id="next">Дальше</button></div>`;
         $('#next').focus();
         $('#next').onclick = () => { i++; step(); };
       };

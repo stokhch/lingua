@@ -161,7 +161,7 @@ export const QUESTIONS = {
       if (!v) return;
       $('#typed').disabled = true; e.target.querySelector('button').disabled = true;
       const exact = v === word.w, close = !exact && fold(v) === fold(word.w);
-      answer(word, exact || close, exact ? '' : close ? `<br><small>Засчитано. Обратите внимание на буквы: ${esc(v)} → ${esc(word.w)}</small>` : `<br><small>Вы написали: ${esc(v)}</small>`);
+      answer(word, exact || close, exact ? '' : close ? `<br><small>Засчитано. Обратите внимание на ${L().id === 'el' ? 'ударение и буквы' : 'буквы'}: ${esc(v)} → ${esc(word.w)}</small>` : `<br><small>Вы написали: ${esc(v)}</small>`);
     };
   },
 

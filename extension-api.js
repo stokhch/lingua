@@ -1,5 +1,5 @@
 // API для расширения браузера и выдача самого расширения архивом.
-//   GET  /api/lookup?lang=en|tr|krc&q=word      -> перевод по встроенному словарю (с учётом форм слова), иначе онлайн
+//   GET  /api/lookup?lang=en|tr|el|krc&q=word      -> перевод по встроенному словарю (с учётом форм слова), иначе онлайн
 //   POST /api/inbox  { lang, word, translation, ctx, src }  -> слово из расширения ждёт, пока сайт заберёт его в словарь
 //   GET  /api/inbox                              -> { items }
 //   POST /api/inbox/clear { upto }               -> удалить забранные слова
@@ -10,9 +10,10 @@ import path from 'node:path';
 import * as en from './public/js/data/dictionary.js';
 import * as tr from './public/js/data/tr/dictionary.js';
 import * as krc from './public/js/data/krc/dictionary.js';
+import * as el from './public/js/data/el/dictionary.js';
 
-const DICTS = { en, tr, krc };
-const LETTERS = { en: /^[a-z' -]+$/i, tr: /^[a-zçğıöşüâîû' -]+$/i, krc: /^[а-яёў' -]+$/i };
+const DICTS = { en, tr, el, krc };
+const LETTERS = { en: /^[a-z' -]+$/i, tr: /^[a-zçğıöşüâîû' -]+$/i, krc: /^[а-яёў' -]+$/i, el: /^[\u0370-\u03ff' -]+$/i };
 const MAX_INBOX = 300;
 const str = (v, n) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
 

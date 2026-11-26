@@ -16,7 +16,7 @@ import { renderTrainings, renderTraining } from './views/train.js';
 import { renderTexts, renderReader, renderGrammar, renderLesson } from './views/learn.js';
 import { renderProgress } from './views/progress.js';
 import { satiety, appleRow, APPLES } from './pim.js';
-import { L, LANGS, switchLang, wordCount } from './lang.js';
+import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
 import { flagsFor } from './flags.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 
@@ -64,7 +64,7 @@ function pickLang() {
   }; });
 }
 
-// Кнопки с турецкими буквами (.xkeys) вставляют символ в последнее активное поле ввода
+// Кнопки с особыми буквами (.xkeys: турецкие, греческие) вставляют символ в последнее активное поле ввода
 let lastInput = null;
 document.addEventListener('focusin', e => { if (e.target.matches?.('input:not([type=checkbox]):not([type=radio]), textarea')) lastInput = e.target; });
 document.addEventListener('pointerdown', e => { if (e.target.closest('.xkeys button')) e.preventDefault(); });
@@ -72,7 +72,11 @@ document.addEventListener('click', e => {
   const b = e.target.closest('.xkeys button'); if (!b) return;
   const inp = lastInput?.isConnected && !lastInput.disabled ? lastInput : b.closest('form, .stage, .exercise, .clues, .band')?.querySelector('input:not([disabled])');
   if (!inp) return;
-  if (inp.maxLength === 1) inp.value = b.dataset.ch;
+  if (b.dataset.ch === '´') { // ударение: меняем гласную перед курсором (в клетке кроссворда — саму букву)
+    const at = inp.maxLength === 1 ? inp.value.length : (inp.selectionStart ?? inp.value.length);
+    const ch = toggleAccent(inp.value[at - 1]);
+    if (ch) { inp.setRangeText(ch, at - 1, at, 'end'); }
+  } else if (inp.maxLength === 1) inp.value = b.dataset.ch;
   else { const a = inp.selectionStart ?? inp.value.length, z = inp.selectionEnd ?? a; inp.setRangeText(b.dataset.ch, a, z, 'end'); }
   inp.focus();
   inp.dispatchEvent(new Event('input', { bubbles: true }));

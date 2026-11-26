@@ -151,6 +151,7 @@ function weekXp(state) {
 
 // ---------- перевод неизвестных слов (MyMemory, бесплатный публичный API) ----------
 const translateCache = new Map();
+const ONLINE_LANGS = new Set(['en', 'tr', 'el']);
 async function translate(q, lang = 'en', sentence = false) {
   const key = lang + ':' + (sentence ? 's:' : '') + q;
   if (translateCache.has(key)) return translateCache.get(key);
@@ -203,9 +204,9 @@ async function api(req, res, url) {
   }
 
   if (route === 'GET /api/translate') {
-    const lang = url.searchParams.get('lang') === 'tr' ? 'tr' : 'en';
+    const lang = ONLINE_LANGS.has(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'en';
     const q = (url.searchParams.get('q') || '').trim().toLocaleLowerCase(lang).slice(0, 60);
-    const ok = lang === 'tr' ? /^[a-zçğıöşüâîû' -]+$/ : /^[a-z' -]+$/;
+    const ok = { tr: /^[a-zçğıöşüâîû' -]+$/, el: /^[α-ωάέήίόύώϊϋΐΰ' -]+$/ }[lang] || /^[a-z' -]+$/;
     if (!ok.test(q)) return send(res, 400, { error: 'bad word' });
     try { return send(res, 200, { word: q, translation: await translate(q, lang) }); }
     catch { return send(res, 200, { word: q, translation: '' }); }
@@ -214,7 +215,7 @@ async function api(req, res, url) {
   if (await ext.handlePublic(route, req, res, url) !== false) return;
 
   if (route === 'GET /api/translate-sentence') {
-    const lang = url.searchParams.get('lang') === 'tr' ? 'tr' : 'en';
+    const lang = ONLINE_LANGS.has(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'en';
     const q = (url.searchParams.get('q') || '').replace(/\s+/g, ' ').trim().slice(0, 450);
     if (!q || limitedTr(ip)) return send(res, q ? 429 : 400, { error: q ? 'Слишком много запросов' : 'empty' });
     try { return send(res, 200, { translation: await translate(q, lang, true) }); }

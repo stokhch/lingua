@@ -14,7 +14,7 @@ async function draw() {
          <form id="login"><label>E-mail<input name="email" type="email" required autocomplete="email"></label>
          <label>Пароль<input name="password" type="password" required autocomplete="current-password"></label>
          <p class="err" id="err"></p><button>Войти</button></form>`}</div>
-    <label>Язык, который вы учите<select id="lang"><option value="en">Английский</option><option value="tr">Турецкий</option><option value="krc">Карачаево-балкарский</option></select></label>
+    <label>Язык, который вы учите<select id="lang"><option value="en">Английский</option><option value="tr">Турецкий</option><option value="el">Греческий</option><option value="krc">Карачаево-балкарский</option></select></label>
     <label class="check"><input type="checkbox" id="dbl" ${s.dblclick ? 'checked' : ''}> Перевод по двойному клику</label>
     <details><summary class="muted">Адрес сайта Лингвы</summary><form id="srv"><label><input name="server" value="${esc(s.server)}" required></label><button class="ghost">Сохранить адрес</button></form></details>`;
   document.getElementById('lang').value = s.lang;
