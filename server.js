@@ -7,6 +7,7 @@
 //   GET  /api/state  / PUT /api/state {state}     -> прогресс пользователя
 //   GET  /api/leaderboard                         -> топ по XP за неделю и всего
 //   GET  /api/translate?q=word&lang=en|tr         -> перевод слова, которого нет во встроенном словаре
+//   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
 
 import http from 'node:http';
@@ -81,6 +82,16 @@ function limited(ip) {
   attempts.set(ip, list);
   return list.length > 20;
 }
+// лимит на перевод предложений: не больше 30 в минуту с одного адреса
+const trHits = new Map();
+function limitedTr(ip) {
+  const now = Date.now();
+  const list = (trHits.get(ip) || []).filter(t => now - t < 60_000);
+  list.push(now);
+  trHits.set(ip, list);
+  if (trHits.size > 10000) trHits.clear();
+  return list.length > 30;
+}
 
 // ---------- помощники HTTP ----------
 function send(res, status, data) {
@@ -136,14 +147,16 @@ function weekXp(state) {
 
 // ---------- перевод неизвестных слов (MyMemory, бесплатный публичный API) ----------
 const translateCache = new Map();
-async function translate(q, lang = 'en') {
-  const key = lang + ':' + q;
+async function translate(q, lang = 'en', sentence = false) {
+  const key = lang + ':' + (sentence ? 's:' : '') + q;
   if (translateCache.has(key)) return translateCache.get(key);
   const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=${lang}|ru`;
   const r = await fetch(url, { signal: AbortSignal.timeout(6000) });
   const j = await r.json();
   const t = (j?.responseData?.translatedText || '').trim();
-  const out = t && t.toLocaleLowerCase(lang) !== q.toLocaleLowerCase(lang) ? t.toLowerCase() : '';
+  const same = !t || t.toLocaleLowerCase(lang) === q.toLocaleLowerCase(lang);
+  const out = same ? '' : sentence ? t : t.toLowerCase();
+  if (translateCache.size > 5000) translateCache.clear();
   translateCache.set(key, out);
   return out;
 }
@@ -189,6 +202,14 @@ async function api(req, res, url) {
     if (!ok.test(q)) return send(res, 400, { error: 'bad word' });
     try { return send(res, 200, { word: q, translation: await translate(q, lang) }); }
     catch { return send(res, 200, { word: q, translation: '' }); }
+  }
+
+  if (route === 'GET /api/translate-sentence') {
+    const lang = url.searchParams.get('lang') === 'tr' ? 'tr' : 'en';
+    const q = (url.searchParams.get('q') || '').replace(/\s+/g, ' ').trim().slice(0, 450);
+    if (!q || limitedTr(ip)) return send(res, q ? 429 : 400, { error: q ? 'Слишком много запросов' : 'empty' });
+    try { return send(res, 200, { translation: await translate(q, lang, true) }); }
+    catch { return send(res, 200, { translation: '' }); }
   }
 
   const session = auth(req);
