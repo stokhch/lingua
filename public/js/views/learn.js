@@ -214,6 +214,7 @@ export function renderLesson(main, id) {
       const passed = pct >= 70;
       store.state.grammar[lesson.id] = { ...prev, best: Math.max(pct, prev?.best || 0), passed: passed || !!prev?.passed, at: Date.now() };
       D.lessonDone(store.state.grammar, lesson.id, right, lesson.exercises.length);
+      G.planTick('grammar');
       G.addXp(right + (passed && !prev?.passed ? 15 : 0), passed && !prev?.passed ? 'урок пройден' : 'упражнения');
       box.innerHTML = `<div class="exercise result"><h2>${passed ? 'Урок пройден' : 'Почти получилось'}</h2><p class="lead">${right} из ${lesson.exercises.length} верно (${pct}%)</p>
         <div class="row gap"><button class="btn ${passed ? 'ghost' : ''}" id="retry">Пройти ещё раз</button>${nextL ? `<a class="btn ${passed ? '' : 'ghost'}" href="#lesson-${nextL.id}">Следующий урок</a>` : ''}<a class="btn ghost" href="#gtrain-mix.${lesson.id}">Закрепить в тренировке</a><a class="btn ghost" href="#grammar">К списку</a></div>${passed && !prev?.passed ? '<p class="muted small">Правило вернётся на повторение завтра — в «Тренировках» и на главной.</p>' : ''}</div>`;
