@@ -5,8 +5,9 @@ import * as G from '../game.js';
 import { L, LANGS, switchLang } from '../lang.js';
 import { buildTrail, chunkWords, CHEST_XP } from '../trail.js';
 import { sat } from '../pimfx.js';
+import { ensureDefs, chestSvg, bigItem, smallItem, use, stream, rnd } from '../trail-art.js';
 
-const ROW = 112, HEAD = 96, PAD = 40;
+const ROW = 112, HEAD = 190, PAD = 30;
 const TYPE_IC = { words: 'cards', text: 'read', lesson: 'grammar' };
 const TYPE_NAME = { words: 'Слова', text: 'Текст', lesson: 'Грамматика' };
 
@@ -16,40 +17,15 @@ export function viewToggle(active) {
     <a role="tab" href="#path" aria-selected="${active === 'path'}">${icon('star')} Тропа</a></div>`;
 }
 
-// Сундук (оригинальный рисунок). state: locked | ready | open
-function chestSvg(state, size = 70) {
-  const lid = state === 'open'
-    ? `<g class="lid"><path d="M10 26 Q36 2 62 26 L60 14 Q36 -6 12 14Z" fill="#a0612f" stroke="#5b3416" stroke-width="2.5" stroke-linejoin="round"/><path d="M34 2v16M38 2v16" stroke="#f0b52a" stroke-width="4"/></g>
-       <g class="loot"><circle cx="26" cy="30" r="7" fill="#e5483a"/><circle cx="38" cy="27" r="7.5" fill="#ef5a3c"/><circle cx="48" cy="31" r="6.5" fill="#e5483a"/><path d="M38 20v-4" stroke="#6b3f22" stroke-width="2" stroke-linecap="round"/><path d="M39 18c2-2 5-2 6-1-2 2-4 2-6 1z" fill="#3aa055"/><circle cx="35" cy="25" r="1.8" fill="#fff" opacity=".8"/></g>`
-    : `<path class="lid" d="M8 34 Q8 14 36 14 Q64 14 64 34Z" fill="#a0612f" stroke="#5b3416" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 34 Q8 14 36 14 Q64 14 64 34" fill="none" stroke="#c98a4b" stroke-width="2" transform="translate(0 4) scale(1 .85)" opacity=".5"/><path d="M33 14v20M39 14v20" stroke="#f0b52a" stroke-width="4"/>`;
-  return `<svg class="chest-svg ${state}" width="${size}" height="${size}" viewBox="0 0 72 66" aria-hidden="true">
-    <ellipse cx="36" cy="62" rx="28" ry="4" fill="rgba(0,0,0,.18)"/>
-    <rect x="8" y="32" width="56" height="28" rx="4" fill="#8a4f24" stroke="#5b3416" stroke-width="2.5"/>
-    <path d="M8 42h56" stroke="#5b3416" stroke-width="2" opacity=".5"/>
-    <path d="M33 32v28M39 32v28" stroke="#f0b52a" stroke-width="4"/>
-    ${lid}
-    <rect x="30" y="${state === 'open' ? 34 : 30}" width="12" height="12" rx="2.5" fill="#ffd76a" stroke="#8a5d00" stroke-width="2"/>
-    ${state === 'locked' ? '<circle cx="36" cy="' + 36 + '" r="2" fill="#5b3416"/>' : ''}
-  </svg>`;
-}
-
 function ring(p) {
   const R = 44, C = 2 * Math.PI * R;
   return `<svg class="node-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="${R}" class="nr-bg"/><circle cx="50" cy="50" r="${R}" class="nr-fg" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - p)}"/></svg>`;
 }
 
-// мелкие украшения вдоль тропы: листья, цветы, грибы, камни
-const DECOR = [
-  '<svg viewBox="0 0 40 40" width="40" height="40"><path d="M20 38C8 30 6 14 20 2c14 12 12 28 0 36z" fill="#3aa055"/><path d="M20 36V8" stroke="#1f7a3a" stroke-width="2"/></svg>',
-  '<svg viewBox="0 0 40 40" width="34" height="34"><g fill="#ffd76a"><circle cx="20" cy="11" r="6"/><circle cx="29" cy="20" r="6"/><circle cx="20" cy="29" r="6"/><circle cx="11" cy="20" r="6"/></g><circle cx="20" cy="20" r="5" fill="#e5483a"/></svg>',
-  '<svg viewBox="0 0 40 40" width="34" height="34"><path d="M6 22q14-20 28 0z" fill="#e5483a"/><circle cx="14" cy="17" r="2.5" fill="#fff"/><circle cx="24" cy="14" r="2" fill="#fff"/><rect x="16" y="22" width="8" height="12" rx="3" fill="#fbe4c0"/></svg>',
-  '<svg viewBox="0 0 44 30" width="40" height="28"><ellipse cx="22" cy="20" rx="18" ry="9" fill="#9aa08a"/><ellipse cx="18" cy="16" rx="8" ry="4" fill="#b7bda6"/></svg>',
-  '<svg viewBox="0 0 48 40" width="44" height="36"><path d="M4 38C10 20 20 10 24 2c4 8 14 18 20 36" fill="none" stroke="#2f9a4c" stroke-width="3"/><g fill="#3aa055"><path d="M10 28l-8-4 9-1z"/><path d="M14 20l-8-5 9 0z"/><path d="M34 20l8-5-9 0z"/><path d="M38 28l8-4-9-1z"/></g></svg>'
-];
-
 export function renderPath(main) {
   const s = store.state;
   s.chests ||= {};
+  ensureDefs();
   const draw = () => {
     const lang = L();
     const tr = buildTrail(lang, { words: s.words, readTexts: s.readTexts, grammar: s.grammar }, s.chests);
@@ -69,17 +45,21 @@ export function renderPath(main) {
 
     const box = $('#trail');
     const layout = () => {
-      const W = box.clientWidth, amp = Math.min(130, W / 2 - 70);
-      let y = PAD, i = 0, html = '', pts = [], curPt = null, deco = 0;
+      const W = box.clientWidth, amp = Math.min(130, W / 2 - 70), narrow = W < 520;
+      let y = PAD, i = 0, html = '', pts = [], curPt = null;
+      const back = [], scene = [], streams = [];
       for (const ch of tr.chapters) {
-        html += `<div class="sign" style="top:${y}px"><span>Глава ${ch.n}</span><b>${esc(ch.title)}</b></div>`;
+        // голова главы: ручей (кроме первой), горы и табличка
+        if (ch.n > 1) streams.push(y + 34);
+        back.push(`<use href="#ta-mountains" x="-10" y="${y + 62}" width="${W + 20}" height="${narrow ? 90 : 110}"/>`);
+        html += `<div class="sign" style="top:${y + 92}px"><span>Глава ${ch.n}</span><b>${esc(ch.title)}</b></div>`;
         y += HEAD;
         for (const it of ch.items) {
-          const x = Math.round(W / 2 + Math.sin(i * 0.9) * amp), cy = y + ROW / 2;
+          const o = Math.sin(i * 0.9) * amp, x = Math.round(W / 2 + o), cy = y + ROW / 2;
           pts.push([x, cy, it.type === 'chest' ? (it.opened || it.ready) : it.done]);
           if (it.type === 'chest') {
             const st = it.opened ? 'open' : it.ready ? 'ready' : 'locked';
-            html += `<button class="chest ${st}" style="left:${x}px;top:${cy}px" data-chest="${it.id}" aria-label="Сундук: ${st === 'open' ? 'открыт' : st === 'ready' ? 'можно открыть' : 'закрыт'}">${chestSvg(st, 88)}</button>`;
+            html += `<button class="chest ${st}" style="left:${x}px;top:${cy}px" data-chest="${it.id}" aria-label="Сундук: ${st === 'open' ? 'открыт' : st === 'ready' ? 'можно открыть' : 'закрыт'}">${chestSvg(st, 96)}</button>`;
           } else {
             const st = it.done ? 'done' : it.current ? 'current' : it.progress > 0 ? 'started' : 'todo';
             if (it.current) curPt = [x, cy];
@@ -87,11 +67,16 @@ export function renderPath(main) {
               ${st === 'current' || st === 'started' ? ring(it.progress) : ''}<span class="disc">${icon(it.done ? 'check' : TYPE_IC[it.type])}</span>
               <span class="lbl">${esc(it.title)}</span>${it.current ? '<span class="start">Начать</span>' : ''}</button>`;
           }
-          // украшение с противоположной от тропы стороны
-          if (i % 2 === 0) {
-            const side = Math.sin(i * 0.9) > 0 ? -1 : 1;
-            html += `<span class="deco" style="left:${Math.round(W / 2 + side * (amp + 40) - 20)}px;top:${cy - 18}px">${DECOR[deco++ % DECOR.length]}</span>`;
+          // пейзаж: большое дерево на свободной стороне, цветы и грибы — на другой
+          const far = o > 0 ? [0, x - 85] : [x + 85, W], near = o > 0 ? [x + 85, W] : [0, x - 85];
+          const fw = far[1] - far[0], nw = near[1] - near[0];
+          if (fw >= 60 && !it.current) {
+            const w = Math.min(narrow ? 78 : 118, fw * 0.8);
+            if (i % 2) scene.push(smallItem(i + 7, (far[0] + far[1]) / 2 + (rnd(i + 9) - 0.5) * Math.max(0, fw - 60) * 0.6, cy + 30, Math.min(narrow ? 46 : 60, fw * 0.7)));
+            else scene.push(bigItem(i, (far[0] + far[1]) / 2 + (rnd(i + 3) - 0.5) * Math.max(0, fw - w) * 0.6, cy + 34, w));
           }
+          if (nw >= 50 && !it.current) scene.push(smallItem(i, (near[0] + near[1]) / 2 + (rnd(i + 5) - 0.5) * Math.max(0, nw - 60) * 0.5, cy + 30, Math.min(narrow ? 44 : 58, nw * 0.7)));
+          if (rnd(i + 11) > 0.45) scene.push(use('ta-grass', 40, 24, x + (rnd(i + 13) > 0.5 ? 46 : -46), cy + 44, 28));
           y += ROW; i++;
         }
       }
@@ -101,9 +86,21 @@ export function renderPath(main) {
       let d = pts.length ? `M${pts[0][0]} ${pts[0][1]}` : '', dDone = d;
       let doneUntil = pts.findIndex(p => !p[2]); if (doneUntil < 0) doneUntil = pts.length - 1;
       for (let k = 1; k < pts.length; k++) { d += seg(pts[k - 1], pts[k]); if (k <= doneUntil) dDone += seg(pts[k - 1], pts[k]); }
+      // мостики там, где ручей пересекает тропу
+      const xAtY = sy => {
+        const k = pts.findIndex(p => p[1] > sy); if (k < 1) return W / 2;
+        const [a, b] = [pts[k - 1], pts[k]], m = (a[1] + b[1]) / 2;
+        let lo = 0, hi = 1;
+        for (let n = 0; n < 24; n++) { const t = (lo + hi) / 2, u = 1 - t, yy = u * u * u * a[1] + 3 * u * t * (u + t) * m + t * t * t * b[1]; yy < sy ? (lo = t) : (hi = t); }
+        const t = lo, u = 1 - t; return u * u * u * a[0] + 3 * u * u * t * a[0] + 3 * u * t * t * b[0] + t * t * t * b[0];
+      };
+      const bridges = streams.map(sy => use('ta-bridge', 60, 56, xAtY(sy), sy + 30, 60)).join('');
+      // бабочки
+      const flies = narrow ? [] : streams.map((sy, k) => `<g class="fly f${k % 3}" style="transform-origin:${Math.round(W * (0.15 + rnd(k) * 0.7))}px ${sy + 70}px">${use(k % 2 ? 'ta-fly2' : 'ta-fly', 30, 24, Math.round(W * (0.15 + rnd(k) * 0.7)), sy + 82, 26)}</g>`).join('');
       const pimHtml = curPt ? `<div class="trail-pim" style="left:${curPt[0] + (curPt[0] > W / 2 ? -150 : 70)}px;top:${curPt[1] - 60}px">${mascot(pim.state === 'full' || pim.state === 'feast' ? 'happy' : 'calm', 76)}<span class="tp-bubble">${tr.chestsReady ? 'Там сундук! Открой его!' : 'Нам сюда!'}</span></div>` : '';
       box.style.height = y + 'px';
-      box.innerHTML = `<svg class="trail-svg" width="${W}" height="${y}" aria-hidden="true"><path d="${d}" class="tr-edge"/><path d="${d}" class="tr-base"/><path d="${dDone}" class="tr-done"/></svg>${html}${pimHtml}`;
+      box.innerHTML = `<svg class="trail-svg" width="${W}" height="${y}" aria-hidden="true">${back.join('')}${streams.map((sy, k) => stream(W, sy, k)).join('')}
+        <path d="${d}" class="tr-edge"/><path d="${d}" class="tr-base"/><path d="${dDone}" class="tr-done"/>${bridges}${scene.join('')}${flies}</svg>${html}${pimHtml}`;
     };
     layout();
     let lastW = box.clientWidth;
@@ -136,11 +133,11 @@ export function renderPath(main) {
     if (!it.ready) return toast(`Сундук заперт: пройдите ещё ${it.need} ${plural(it.need, 'шаг', 'шага', 'шагов')} до него`);
     s.chests[id] = Date.now();
     el.classList.remove('ready'); el.classList.add('opening');
-    el.innerHTML = chestSvg('open');
+    el.innerHTML = chestSvg('open', 96);
     store.save();
     setTimeout(() => {
       G.addXp(CHEST_XP, 'сундук открыт');
-      modal(`<div class="chest-modal">${chestSvg('open', 120)}<h2>Сундук открыт!</h2><p>Внутри корзина яблок: <b>+${CHEST_XP} XP</b>. Пим уже уплетает их за обе щеки.</p><button class="btn" data-close>Дальше по тропе</button></div>`);
+      modal(`<div class="chest-modal">${chestSvg('open', 150)}<h2>Сундук открыт!</h2><p>Внутри корзина яблок: <b>+${CHEST_XP} XP</b>. Пим уже уплетает их за обе щеки.</p><button class="btn" data-close>Дальше по тропе</button></div>`);
     }, 650);
   }
 
