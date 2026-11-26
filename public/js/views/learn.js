@@ -6,10 +6,9 @@ import { speak } from '../speech.js';
 import { translateWord, translateSentence } from '../translate.js';
 import { examRow } from './exam.js';
 import { L, lower, splitRe, keysBar, fold } from '../lang.js';
-import { myLevel } from './placement.js';
-import { levelRank } from '../placement.js';
-import { KINDS, wordTotal, newWordCount, youtubeId } from '../materials.js';
+import { KINDS, SHELVES, youtubeId } from '../materials.js';
 import { openMaterialEditor, deleteMaterial } from './materials.js';
+import { allTexts } from './library.js';
 import * as D from '../grammar-drill.js';
 import { grammarCards, grammarState } from './grammar-train.js';
 
@@ -18,70 +17,9 @@ const ruleCache = {};
 const rules = () => (ruleCache[L().id] ||= D.ruleIndex(L().ALL_LESSONS, L().letters, L().lower));
 const lessonById = id => L().ALL_LESSONS.find(l => l.id === id);
 
-const F = { tab: 'all', level: 'all', kind: 'all', status: 'all', topic: 'all', sort: 'level' };
 let lessonKey = null;
 
-// Все тексты текущего языка: встроенная библиотека + свои материалы ученика
-export const allTexts = () => [...L().TEXTS.map(t => ({ ...t, kind: t.kind || 'text' })), ...Object.values(store.state.materials || {}).map(m => ({ ...m, own: true }))];
-const textStatus = id => store.state.readTexts[id] ? 'done' : store.state.openedTexts?.[id] ? 'reading' : 'new';
-
-// Полезные внешние ресурсы по языку (если они заданы в данных языка)
-const resourcesHtml = lang => `
-    <section class="band resources" id="resources">
-      <h2>Полезные ресурсы</h2>
-      <p class="muted">Внешние сайты для изучающих ${esc(lang.acc)}: уроки, словари, книги, новости.</p>
-      ${lang.RESOURCES.map(g => `<h3>${esc(g.group)}</h3><ul class="res-list">${g.items.map(r => `<li><a href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>${esc(r.desc)}</span></li>`).join('')}</ul>`).join('')}
-    </section>`;
-
-export function renderTexts(main) {
-  const s = store.state, { lemma, tokenRe } = L();
-  const has = k => !!s.words[k];
-  const draw = () => {
-    const all = allTexts();
-    const levels = [...new Set(all.map(t => t.level))].sort((a, b) => levelRank(a) - levelRank(b));
-    const topics = [...new Set(all.map(t => t.topic).filter(Boolean))].sort();
-    const kinds = [...new Set(all.map(t => t.kind))];
-    if (F.level !== 'all' && !levels.includes(F.level)) F.level = 'all';
-    if (F.topic !== 'all' && !topics.includes(F.topic)) F.topic = 'all';
-    const stats = new Map(all.map(t => [t.id, { n: wordTotal(t.body, tokenRe), fresh: newWordCount(t.body, tokenRe, lemma, has) }]));
-    let list = all.filter(t => (F.tab === 'all' || (F.tab === 'own') === !!t.own)
-      && (F.level === 'all' || t.level === F.level) && (F.kind === 'all' || t.kind === F.kind)
-      && (F.topic === 'all' || t.topic === F.topic) && (F.status === 'all' || textStatus(t.id) === F.status));
-    const share = t => stats.get(t.id).fresh / Math.max(1, stats.get(t.id).n);
-    const sorters = {
-      level: (a, b) => levelRank(a.level) - levelRank(b.level),
-      fresh: (a, b) => share(a) - share(b),
-      recent: (a, b) => (b.added || 0) - (a.added || 0),
-      short: (a, b) => stats.get(a.id).n - stats.get(b.id).n
-    };
-    list = [...list].sort(sorters[F.sort] || sorters.level);
-    const own = Object.keys(s.materials || {}).length;
-    const sel = (key, opts) => `<select data-f="${key}" aria-label="Фильтр">${opts.map(([v, t]) => `<option value="${esc(v)}" ${F[key] === v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>`;
-    main.innerHTML = `
-    <section class="band">
-      <div class="toolbar"><h1>Тексты и материалы</h1><button class="btn" id="add-mat">${icon('plus')} Свой материал</button></div>
-      <p class="lead">${L().name}: читайте и нажимайте на незнакомые слова: появится перевод, а слово можно сразу отправить в словарь вместе с предложением. Добавляйте свои тексты, песни и субтитры к видео — они станут такими же интерактивными. А на других сайтах слова поможет собирать <a href="#extension">расширение для браузера</a>.</p>
-      <div class="chips">${[['all', 'Все'], ['lib', 'Библиотека'], ['own', `Мои материалы · ${own}`]].map(([k, t]) => `<button class="chip ${F.tab === k ? 'on' : ''}" data-tab="${k}">${t}</button>`).join('')}</div>
-      <div class="filters">
-        ${sel('level', [['all', 'Все уровни'], ...levels.map(l => [l, l + (l === myLevel() ? ' · ваш' : '')])])}
-        ${sel('kind', [['all', 'Любой формат'], ...kinds.map(k => [k, KINDS[k] || k])])}
-        ${sel('topic', [['all', 'Все темы'], ...topics.map(t => [t, t])])}
-        ${sel('status', [['all', 'Любой статус'], ['new', 'Не начаты'], ['reading', 'Читаю'], ['done', 'Прочитаны']])}
-        ${sel('sort', [['level', 'Сначала проще'], ['fresh', 'Меньше новых слов'], ['short', 'Сначала короткие'], ['recent', 'Недавно добавленные']])}
-      </div>
-      <div class="texts">${list.map(t => {
-        const st = stats.get(t.id), words = st.n, status = textStatus(t.id);
-        return `<a class="text-card lv-${t.level}" href="#read-${t.id}"><span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${t.kind !== 'text' ? `${KINDS[t.kind] || ''} · ` : ''}${esc(t.topic || 'Без темы')} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span><span class="fresh">${st.fresh ? `новых для вас слов: ${st.fresh}` : 'все слова уже в словаре'}</span>${status === 'done' ? `<em>${icon('check')} прочитано</em>` : status === 'reading' ? '<em class="reading">читаю</em>' : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}${t.own ? '<i class="own-tag">моё</i>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
-      }).join('') || `<div class="empty"><p>${F.tab === 'own' && !own ? 'Своих материалов пока нет. Вставьте текст статьи, песни или субтитры — и читайте с переводом по клику.' : 'Ничего не найдено — попробуйте другие фильтры.'}</p>${F.tab === 'own' && !own ? '<button class="btn" id="add-mat2">Добавить материал</button>' : ''}</div>`}</div>
-    </section>${L().RESOURCES ? resourcesHtml(L()) : ''}`;
-    $$('[data-tab]').forEach(b => b.onclick = () => { F.tab = b.dataset.tab; draw(); });
-    $$('[data-f]').forEach(x => x.onchange = () => { F[x.dataset.f] = x.value; draw(); });
-    const add = () => openMaterialEditor(null, m => { location.hash = 'read-' + m.id; });
-    $('#add-mat').onclick = add;
-    $('#add-mat2') && ($('#add-mat2').onclick = add);
-  };
-  draw();
-}
+export { renderTexts } from './library.js';
 
 export function renderReader(main, id) {
   const { lemma } = L();
@@ -99,7 +37,7 @@ export function renderReader(main, id) {
   }).join('');
   main.innerHTML = `
   <section class="band reader-wrap">
-    <a class="back" href="#texts">${icon('back')} Все тексты</a>
+    <a class="back" href="#shelf-${t.shelf}">${icon('back')} ${esc(SHELVES.find(x => x.id === t.shelf)?.title || 'Все материалы')}</a>
     <article class="reader">
       <div class="meta"><span class="lv">${t.level}</span> ${t.kind && t.kind !== 'text' ? `${KINDS[t.kind]} · ` : ''}${esc(t.topic || '')}${t.own ? ` · <button class="link" id="edit-mat">изменить</button> · <button class="link danger" id="del-mat">удалить</button>` : ''}</div>
       <h1>${esc(t.title)}</h1>
