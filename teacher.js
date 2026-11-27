@@ -22,7 +22,7 @@ import { levelOf } from './social.js';
 import { wordCounts, langData, sumDays, lastDays, dayKey } from './public/js/stats.js';
 
 const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-const LANGS = ['en', 'tr', 'el', 'krc'];
+const LANGS = ['en', 'tr', 'el', 'de', 'krc'];
 const MAX_CLASSES = 20, MAX_STUDENTS = 100, MAX_CONTESTS = 30, MAX_DAYS = 92;
 export const METRICS = {
   xp: 'Опыт (XP)',

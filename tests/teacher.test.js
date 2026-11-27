@@ -65,7 +65,7 @@ test('Соревнование: проверка того, что задаёт �
   const ok = { title: ' Марафон ', metric: 'words', lang: 'tr', start: key(0), end: key(6), goal: '30' };
   assert.deepEqual(cleanContest(ok, now), { title: 'Марафон', metric: 'words', lang: 'tr', start: key(0), end: key(6), goal: 30 });
   assert.equal(cleanContest({ ...ok, metric: 'hack' }, now), null);
-  assert.equal(cleanContest({ ...ok, lang: 'de' }, now), null);
+  assert.equal(cleanContest({ ...ok, lang: 'fr' }, now), null);
   assert.equal(cleanContest({ ...ok, end: key(-1), start: key(-3) }, now), null); // уже закончилось
   assert.equal(cleanContest({ ...ok, end: key(200) }, now), null); // слишком долго
   assert.equal(cleanContest({ ...ok, title: '' }, now), null);

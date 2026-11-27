@@ -208,12 +208,78 @@ function santorini() {
   <g transform="translate(56 770)"><path d="M-30 0h60l-10 12h-40z" fill="#fbfaf6"/><path d="M0 -60v60M0 -56l26 50H0z" fill="#fff" stroke="#c9c9c9" stroke-width="1"/><path d="M0 -50l-20 44H0z" fill="#e8eef2"/></g>`;
 }
 
+// ---------- Германия: Берлин ----------
+function berlin() {
+  // ворота с шестью колоннами и квадригой, за ними телебашня
+  const cols = [0, 1, 2, 3, 4, 5].map(i => `<rect x="${44 + i * 44}" y="560" width="14" height="150" fill="#e4d6b4"/><rect x="${40 + i * 44}" y="552" width="22" height="10" fill="#d4c39c"/>`).join('');
+  const win = (x, y, cols, rows) => Array.from({ length: rows * cols }, (_, k) => `<rect x="${x + (k % cols) * 14}" y="${y + Math.floor(k / cols) * 20}" width="8" height="11" fill="#fbe7a8" opacity=".8"/>`).join('');
+  return `<defs>${sky('skB', [[0, '#6f9fd0'], [.55, '#d9e4ee'], [1, '#f2d7a8']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#skB)"/>${sun(250, 300, 26, '#ffe8a0', .35)}${cloud(80, 170, 1)}${cloud(240, 230, .7)}${birds(110, 380, '#334')}
+  <!-- телебашня -->
+  <path d="M86 720L92 330h8l6 390z" fill="#b9c2cc"/>
+  <circle cx="96" cy="300" r="26" fill="#9aa6b2"/><circle cx="96" cy="300" r="26" fill="none" stroke="#7d8996" stroke-width="2"/>
+  <path d="M74 300h44" stroke="#c9d1d9" stroke-width="3"/><rect x="88" y="262" width="16" height="16" fill="#b9c2cc"/>
+  <path d="M96 262V160" stroke="#c9302c" stroke-width="4"/><path d="M96 200v-20M96 230v-14" stroke="#fff" stroke-width="4"/>
+  <!-- дома позади -->
+  <rect x="0" y="600" width="40" height="120" fill="#c9b89a"/>${win(4, 612, 3, 5)}
+  <rect x="274" y="590" width="46" height="130" fill="#bfae90"/>${win(278, 602, 3, 6)}
+  <!-- ворота -->
+  <rect x="34" y="520" width="262" height="34" fill="#e8dbbb"/><rect x="30" y="512" width="270" height="10" fill="#d4c39c"/>
+  <path d="M130 512h70l-8 -26h-54z" fill="#e8dbbb"/>
+  ${cols}
+  <rect x="30" y="706" width="270" height="14" fill="#cdbb93"/>
+  <!-- квадрига -->
+  <g transform="translate(165 486)" fill="#4f7a64">
+    ${[-24, -8, 8, 24].map(x => `<path d="M${x - 9} 0v-12q2-8 9-10l5-6 2 4-3 4q4 2 4 8v12h-3v-9h-11v9z"/>`).join('')}
+    <path d="M-6 -22h12v-10h-12z"/><path d="M0 -32v-18M-6 -46h12" stroke="#4f7a64" stroke-width="2.5"/><circle cx="0" cy="-52" r="4"/>
+  </g>
+  <!-- площадь и деревья -->
+  <rect x="0" y="720" width="${W}" height="${H - 720}" fill="#cfc3aa"/>
+  <path d="M0 760H${W}M0 820H${W}M0 900H${W}" stroke="#bcae92" stroke-width="3"/>
+  ${[18, 302].map(x => `<rect x="${x - 3}" y="690" width="6" height="40" fill="#6b4f33"/><circle cx="${x}" cy="680" r="22" fill="#5f8f4a"/>`).join('')}
+  <!-- жёлтый двухэтажный автобус -->
+  <g transform="translate(150 770)"><rect width="120" height="56" rx="8" fill="#f2c230"/><rect x="0" y="27" width="120" height="4" fill="#c99a12"/>
+  ${[8, 36, 64, 92].map(x => `<rect x="${x}" y="7" width="20" height="14" rx="2" fill="#d8ecf5"/><rect x="${x}" y="35" width="20" height="12" rx="2" fill="#d8ecf5"/>`).join('')}
+  <circle cx="26" cy="56" r="9" fill="#222"/><circle cx="96" cy="56" r="9" fill="#222"/><circle cx="26" cy="56" r="4" fill="#999"/><circle cx="96" cy="56" r="4" fill="#999"/></g>`;
+}
+
+// ---------- Германия: Бавария (замок в Альпах) ----------
+function bavaria() {
+  const tower = (x, y, w, h, roof = '#3f5f8a') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#f4f1ea"/><path d="M${x - 3} ${y}L${x + w / 2} ${y - w * 1.6}L${x + w + 3} ${y}z" fill="${roof}"/>` +
+    `<rect x="${x + w / 2 - 3}" y="${y + 14}" width="6" height="10" rx="3" fill="#6d7e96"/>`;
+  return `<defs>${sky('skA', [[0, '#5d97d6'], [.6, '#cfe6f6'], [1, '#eef6f8']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#skA)"/>${sun(70, 200, 26, '#fff1b0', .4)}${cloud(220, 150, .9)}${cloud(60, 290, .6)}
+  <!-- Альпы -->
+  <path d="M-20 560L60 380L110 450L170 300L240 430L280 360L340 470V620H-20z" fill="#8a9bb0"/>
+  <path d="M60 380L78 420L62 412L48 430zM170 300L194 350L176 338L160 362L150 340zM280 360L296 392L282 386L270 400z" fill="#fff"/>
+  <path d="M-20 620L40 520L120 580L200 500L280 560L340 520V730H-20z" fill="#5d7f5a"/>
+  ${[20, 70, 250, 300].map((x, i) => pine(x, 640 + (i % 2) * 18, 54, '#2f5a36')).join('')}
+  <!-- скала и замок -->
+  <path d="M60 720Q90 620 150 610Q230 600 270 720z" fill="#7a7466"/>
+  <g>
+    <rect x="110" y="520" width="120" height="92" fill="#f4f1ea"/>
+    <path d="M106 520h128l-10 -26h-108z" fill="#3f5f8a"/>
+    ${[0, 1, 2, 3].map(i => `<rect x="${122 + i * 28}" y="540" width="10" height="16" rx="5" fill="#6d7e96"/><rect x="${122 + i * 28}" y="576" width="10" height="16" rx="5" fill="#6d7e96"/>`).join('')}
+    ${tower(92, 500, 24, 112)}${tower(222, 486, 26, 126)}${tower(160, 430, 20, 90)}${tower(196, 470, 16, 50, '#4f6f9a')}
+    <rect x="160" y="590" width="20" height="22" rx="10" fill="#5a4a3a"/>
+  </g>
+  <!-- луг с цветами, озеро -->
+  <rect x="0" y="720" width="${W}" height="${H - 720}" fill="#7fb05a"/>
+  ${water(860, '#4f8fc0', '#bfe0f2')}
+  ${flowers(740, 3, ['#fff', '#f2c230', '#e06a8a'])}
+  <!-- корова -->
+  <g transform="translate(70 800)"><ellipse cx="0" cy="0" rx="26" ry="15" fill="#fff"/><ellipse cx="-6" cy="-4" rx="8" ry="6" fill="#6b4a32"/><ellipse cx="10" cy="4" rx="6" ry="5" fill="#6b4a32"/>
+  <rect x="-20" y="10" width="5" height="14" fill="#fff"/><rect x="14" y="10" width="5" height="14" fill="#fff"/><ellipse cx="30" cy="-8" rx="9" ry="8" fill="#fff"/><circle cx="33" cy="-9" r="1.6" fill="#222"/>
+  <circle cx="26" cy="4" r="3" fill="#d9a521"/></g>`;
+}
+
 const SCENES = {
   // focus — какую полосу по высоте [y, высота] показывать на открытке
   en: { left: london, right: newYork, title: ['Лондон', 'Нью-Йорк'], focus: [[150, 640], [300, 600]] },
   tr: { left: istanbul, right: cappadocia, title: ['Стамбул', 'Каппадокия'], focus: [[260, 560], [360, 520]] },
   krc: { left: elbrus, right: gorge, title: ['Эльбрус', 'Горное ущелье'], focus: [[320, 470], [360, 520]] },
-  el: { left: acropolis, right: santorini, title: ['Акрополь', 'Санторини'], focus: [[360, 480], [420, 380]] }
+  el: { left: acropolis, right: santorini, title: ['Акрополь', 'Санторини'], focus: [[360, 480], [420, 380]] },
+  de: { left: berlin, right: bavaria, title: ['Берлин', 'Бавария'], focus: [[400, 320], [330, 330]] }
 };
 SCENES.gr = SCENES.el;
 

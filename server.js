@@ -158,7 +158,7 @@ function weekXp(state) {
 
 // ---------- перевод неизвестных слов (MyMemory, бесплатный публичный API) ----------
 const translateCache = new Map();
-const ONLINE_LANGS = new Set(['en', 'tr', 'el']);
+const ONLINE_LANGS = new Set(['en', 'tr', 'el', 'de']);
 async function translate(q, lang = 'en', sentence = false) {
   const key = lang + ':' + (sentence ? 's:' : '') + q;
   if (translateCache.has(key)) return translateCache.get(key);
@@ -176,7 +176,7 @@ async function translate(q, lang = 'en', sentence = false) {
 // ---------- онлайн-озвучка (если в браузере нет голоса нужного языка) ----------
 // Без этого Chrome на Windows/macOS без греческого (турецкого) голоса читает слово английским голосом.
 // Берём mp3 у Google Translate (тот же звук, что на translate.google.com) и кэшируем в памяти.
-const TTS_LANGS = new Set(['en', 'tr', 'el', 'kk']); // kk — казахский голос для карачаево-балкарского
+const TTS_LANGS = new Set(['en', 'tr', 'el', 'de', 'kk']); // kk — казахский голос для карачаево-балкарского
 const ttsCache = new Map();
 const ttsHits = new Map();
 function limitedTts(ip) {
@@ -249,7 +249,7 @@ async function api(req, res, url) {
   if (route === 'GET /api/translate') {
     const lang = ONLINE_LANGS.has(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'en';
     const q = (url.searchParams.get('q') || '').trim().toLocaleLowerCase(lang).slice(0, 60);
-    const ok = { tr: /^[a-zçğıöşüâîû' -]+$/, el: /^[α-ωάέήίόύώϊϋΐΰ' -]+$/ }[lang] || /^[a-z' -]+$/;
+    const ok = { tr: /^[a-zçğıöşüâîû' -]+$/, el: /^[α-ωάέήίόύώϊϋΐΰ' -]+$/, de: /^[a-zäöüß' -]+$/ }[lang] || /^[a-z' -]+$/;
     if (!ok.test(q)) return send(res, 400, { error: 'bad word' });
     try { return send(res, 200, { word: q, translation: await translate(q, lang) }); }
     catch { return send(res, 200, { word: q, translation: '' }); }

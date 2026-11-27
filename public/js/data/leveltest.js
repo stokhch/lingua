@@ -191,6 +191,63 @@ etkili|эффективный`)
 ευθύνη|ответственность`)
     }
   },
+  de: {
+    levels: ['A1', 'A2', 'B1', 'B2'],
+    items: {
+      A1: parse(`
+Haus|дом
+Wasser|вода
+Buch|книга
+groß|большой
+gehen|идти
+Mutter|мать
+rot|красный
+Brot|хлеб
+gut|хороший
+Tag|день
+Katze|кошка
+Schule|школа`),
+      A2: parse(`
+billig|дешёвый
+Wetter|погода
+Nachbar|сосед
+Reise|путешествие, поездка
+vergessen|забывать
+Fahrkarte|проездной билет
+gesund|здоровый
+leer|пустой
+einladen|приглашать
+faul|ленивый
+laut|громкий, шумный
+ankommen|прибывать`),
+      B1: parse(`
+erreichen|достигать
+Meinung|мнение
+Rat|совет
+verbessern|улучшать
+Ziel|цель
+sich beschweren|жаловаться
+plötzlich|внезапно
+vertrauen|доверять
+neulich|недавно
+Versuch|попытка
+zuverlässig|надёжный
+notwendig|необходимый`),
+      B2: parse(`
+widerwillig|неохотно
+bewerten|оценивать
+unvermeidlich|неизбежный
+Begriff|понятие
+überwinden|преодолевать
+bewältigen|справляться
+gründlich|тщательный
+ungewiss|неопределённый
+verbreitet|распространённый
+Vorurteil|предубеждение
+Ergebnis|результат
+wirksam|эффективный`)
+    }
+  },
   krc: {
     levels: ['A1', 'A2', 'B1'],
     items: {
@@ -240,9 +297,9 @@ etkili|эффективный`)
 // Цели обучения: подсказывают, с какого набора слов начать
 export const PURPOSES = [
   { id: 'travel', title: 'Путешествия', desc: 'Объясниться в аэропорту, отеле, кафе', set: 'travel' },
-  { id: 'work', title: 'Работа и карьера', desc: 'Письма, встречи, собеседования', set: { en: 'work', tr: 'work', el: 'work', krc: 'people' } },
-  { id: 'exam', title: 'Учёба и экзамены', desc: 'Школа, вуз, международные тесты', set: { en: 'education', tr: 'work', el: 'work', krc: 'school' } },
-  { id: 'media', title: 'Фильмы, книги, песни', desc: 'Понимать оригинал без перевода', set: { en: 'emotions', tr: 'emotions', el: 'emotions', krc: 'feelings' } },
+  { id: 'work', title: 'Работа и карьера', desc: 'Письма, встречи, собеседования', set: { en: 'work', tr: 'work', el: 'work', de: 'work', krc: 'people' } },
+  { id: 'exam', title: 'Учёба и экзамены', desc: 'Школа, вуз, международные тесты', set: { en: 'education', tr: 'work', el: 'work', de: 'work', krc: 'school' } },
+  { id: 'media', title: 'Фильмы, книги, песни', desc: 'Понимать оригинал без перевода', set: { en: 'emotions', tr: 'emotions', el: 'emotions', de: 'emotions', krc: 'feelings' } },
   { id: 'self', title: 'Для себя', desc: 'Развиваться и тренировать память', set: 'verbs' }
 ];
 

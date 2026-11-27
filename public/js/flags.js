@@ -52,5 +52,11 @@ const GR = svg('Греция', '0 0 27 18', `
   <path d="M10,3h17M10,7h17M0,11h27M0,15h27" stroke="#fff" stroke-width="2"/>
   <path d="M5,0v10M0,5h10" stroke="#fff" stroke-width="2"/>`);
 
-export const FLAGS = { en: [UK], tr: [TR], el: [GR], krc: [KARACHAY, BALKARIA] };
+// Германия: три горизонтальные полосы — чёрная, красная, золотая
+const DE = svg('Германия', '0 0 5 3', `
+  <rect width="5" height="1" fill="#000"/>
+  <rect y="1" width="5" height="1" fill="#DD0000"/>
+  <rect y="2" width="5" height="1" fill="#FFCE00"/>`);
+
+export const FLAGS = { en: [UK], tr: [TR], el: [GR], de: [DE], krc: [KARACHAY, BALKARIA] };
 export const flagsFor = id => `<span class="flags">${(FLAGS[id] || []).join('')}</span>`;
