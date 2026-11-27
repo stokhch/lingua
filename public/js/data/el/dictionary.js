@@ -1,7 +1,7 @@
 // Новогреческо-русский словарь Лингвы: наборы слов, поиск начальной формы для перевода по клику.
 import { RAW } from './words.js';
 import { MORE_RAW, MORE_INFO } from './more-sets.js';
-import { LIBRARY_WORDS, LIBRARY_FORMS, SONG_SETS } from './library/index.js';
+import { LIBRARY_WORDS, LIBRARY_FORMS, SONG_SETS, MYTH_SET } from './library/index.js';
 
 export const SET_INFO = {
   start: { title: 'Первые слова', icon: 'core', desc: 'Приветствия и вежливость — с них начинаем' },
@@ -155,6 +155,9 @@ for (const [id, s] of Object.entries(SONG_SETS)) {
   RAW[id] = s.words;
   SET_INFO[id] = { title: s.title, icon: 'education', desc: s.desc };
 }
+// Набор «Слова из мифов» (library/part8.js)
+RAW[MYTH_SET.id] = MYTH_SET.words;
+SET_INFO[MYTH_SET.id] = { title: 'Слова из мифов', icon: 'education', desc: 'Боги, герои и чудовища древнегреческих мифов' };
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]
