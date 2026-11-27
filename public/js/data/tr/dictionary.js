@@ -1,6 +1,8 @@
 // Встроенный турецко-русский словарь проекта (составлен вручную для Лингвы).
 // Формат блоков: "слово|перевод" — по строке на слово. Глаголы даны в инфинитиве (-mak / -mek).
 // Ключ блока = тематический набор.
+import { MORE_RAW, MORE_INFO } from './more-sets.js';
+
 const RAW = {
 start: `merhaba|привет, здравствуйте
 selam|привет (разг.)
@@ -719,6 +721,10 @@ export const SET_INFO = {
   work: { title: 'Работа и учёба', icon: 'work', desc: 'Профессии, офис, школа' },
   nature: { title: 'Природа и погода', icon: 'nature', desc: 'Море, горы, животные' }
 };
+
+// Дополнительные тематические наборы (more-sets.js) — после основных
+Object.assign(RAW, MORE_RAW);
+Object.assign(SET_INFO, MORE_INFO);
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]
