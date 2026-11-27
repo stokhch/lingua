@@ -189,3 +189,23 @@ test('Видеоматериалы: у каждого языка есть кар
     }
   }
 });
+
+test('Мифы Древней Греции: перевод, пояснения, рисунок и набор слов у каждого мифа', async () => {
+  const el = await import('../public/js/data/el/dictionary.js');
+  const myths = EL.filter(t => t.topic === 'Мифы');
+  assert.ok(myths.length >= 21);
+  assert.equal(EL.filter(t => t.id.startsWith('el-myth-')).length, 12);
+  assert.equal(new Set(EL.map(t => t.id)).size, EL.length);
+  assert.ok(new Set(myths.map(t => t.level)).size >= 3, 'разных уровней');
+  for (const t of myths) {
+    assert.equal(shelfOf(t), 'tales', t.id);
+    assert.ok(t.summary?.length > 150 && t.note && t.art, t.id);
+    // перевод: столько же абзацев, сколько в тексте
+    assert.equal(t.translation.split('\n\n').length, t.body.split('\n\n').length, t.id);
+    assert.ok(t.explain?.length >= 5 && t.explain.every(([w, e]) => w && e?.length > 5), t.id);
+    assert.equal(t.set, 'myths_el', t.id);
+  }
+  assert.ok(el.SETS.myths_el.length >= 50 && el.SET_INFO.myths_el.title);
+  const cases = { Ολύμπου: 'Όλυμπος', Δία: 'Δίας', θεάς: 'θεά', ωμό: 'ωμός', νίκες: 'νίκη', φέρεις: 'φέρνω', ύφανε: 'υφαίνω', πολιορκούσαν: 'πολιορκώ', Γοργόνες: 'Γοργόνα' };
+  for (const [f, w] of Object.entries(cases)) assert.equal(el.lookup(f).word, w, f);
+});
