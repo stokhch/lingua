@@ -10,6 +10,9 @@ import { openMaterialEditor } from './materials.js';
 import { textArt } from '../text-art.js';
 
 const ROW = 8; // карточек в ряду полки на главной странице библиотеки
+// Полки, которые на главной странице показываются целиком, без кнопки «Все N»
+const FULL_SHELVES = new Set(['songs']);
+const rowOf = sh => FULL_SHELVES.has(sh.id) ? byRelevance(sh.items) : byRelevance(sh.items).slice(0, ROW);
 const F = { level: 'all', kind: 'all', status: 'all', topic: 'all', sort: 'level' };
 const queries = {}; // поиск запоминается для каждого языка отдельно
 
@@ -58,7 +61,7 @@ export function renderTexts(main) {
     const q = query.trim().toLowerCase();
     const shelves = SHELVES.map(sh => ({ ...sh, items: all.filter(t => t.shelf === sh.id) })).filter(sh => sh.items.length || sh.id === 'own');
     const found = q ? all.filter(t => [t.title, t.topic, t.body].some(x => String(x || '').toLowerCase().includes(q))) : null;
-    const stats = statsFor(found || shelves.flatMap(sh => byRelevance(sh.items).slice(0, ROW)));
+    const stats = statsFor(found || shelves.flatMap(rowOf));
     const done = all.filter(t => textStatus(t.id) === 'done').length;
     main.innerHTML = `
     <section class="band lib-head">
@@ -69,10 +72,10 @@ export function renderTexts(main) {
     </section>
     ${found ? `<section class="band"><h2>Найдено: ${found.length}</h2><div class="texts">${byRelevance(found).map(t => card(t, stats.get(t.id))).join('') || '<div class="empty"><p>Ничего не найдено.</p></div>'}</div></section>`
       : shelves.map(sh => {
-        const items = byRelevance(sh.items).slice(0, ROW);
+        const items = rowOf(sh);
         const read = sh.items.filter(t => textStatus(t.id) === 'done').length;
         return `<section class="band shelf" id="sh-${sh.id}">
-          <div class="shelf-head">${icon(sh.icon)}<div><h2><a href="#shelf-${sh.id}">${esc(sh.title)}</a></h2><p class="muted">${esc(sh.desc)}${sh.items.length ? ` · прочитано ${read} из ${sh.items.length}` : ''}</p></div>${sh.items.length > ROW ? `<a class="btn ghost small" href="#shelf-${sh.id}">Все ${sh.items.length} ${icon('back', 'flip')}</a>` : ''}</div>
+          <div class="shelf-head">${icon(sh.icon)}<div><h2><a href="#shelf-${sh.id}">${esc(sh.title)}</a></h2><p class="muted">${esc(sh.desc)}${sh.items.length ? ` · прочитано ${read} из ${sh.items.length}` : ''}</p></div>${items.length < sh.items.length ? `<a class="btn ghost small" href="#shelf-${sh.id}">Все ${sh.items.length} ${icon('back', 'flip')}</a>` : ''}</div>
           <div class="shelf-row">${items.map(t => card(t, stats.get(t.id))).join('')}${sh.id === 'own' ? `<button class="text-card add-card" id="add-own">${icon('plus')}<b>Добавить свой материал</b><span>Текст статьи, песню, субтитры или видео с YouTube</span></button>` : ''}</div>
         </section>`;
       }).join('')}
