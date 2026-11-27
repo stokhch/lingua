@@ -2,6 +2,7 @@
 // Формат блоков: "слово|перевод" — по строке на слово. Ключ блока = тематический набор.
 import { LIBRARY_WORDS, LIBRARY_FORMS, SONG_SETS } from './en/library/index.js';
 import { MORE_RAW, MORE_INFO } from './en/more-sets.js';
+import { ADV_RAW, ADV_INFO } from './en/advanced-sets.js';
 const RAW = {
 core: `the|определённый артикль
 a|неопределённый артикль
@@ -774,6 +775,9 @@ export const SET_INFO = {
 // Дополнительные тематические наборы (more-sets.js) — после основных
 Object.assign(RAW, MORE_RAW);
 Object.assign(SET_INFO, MORE_INFO);
+// Продвинутые наборы B2–C1 (advanced-sets.js)
+Object.assign(RAW, ADV_RAW);
+Object.assign(SET_INFO, ADV_INFO);
 
 // Наборы слов из песен библиотеки — после тематических
 for (const [id, s] of Object.entries(SONG_SETS)) {
