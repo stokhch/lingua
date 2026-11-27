@@ -25,6 +25,7 @@ import { renderGrammarTraining, grammarState } from './views/grammar-train.js';
 import { grammarPlan } from './grammar-drill.js';
 import { satiety, appleRow, APPLES, plea } from './pim.js';
 import { initPim, onRoute, feedHref } from './pimfx.js';
+import { initSfx, fanfare } from './sfx.js';
 import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
 import { flagsFor } from './flags.js';
 import { dayPlanHtml } from './views/dayplan.js';
@@ -311,6 +312,7 @@ function renderProfile(main, param = '') {
       <label>Дневная цель<select name="goal">${[20, 50, 100, 150, 250].map(g => `<option value="${g}" ${g === s.goal ? 'selected' : ''}>${g} XP — ${g <= 20 ? 'спокойно' : g <= 50 ? 'обычно' : g <= 100 ? 'серьёзно' : 'интенсив'}</option>`).join('')}</select></label>
       <label>Изучаемый язык<select name="lang">${Object.values(LANGS).map(l => `<option value="${l.id}" ${l.id === L().id ? 'selected' : ''}>${l.name}</option>`).join('')}</select></label>
       <label>Скорость озвучки<select name="rate">${[[0.7, 'медленно'], [0.9, 'обычно'], [1.1, 'быстро']].map(([v, t]) => `<option value="${v}" ${v === s.rate ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+      <label class="check"><input type="checkbox" name="sound" ${s.mute ? '' : 'checked'}> Звуки: фанфары за выполненные задания</label>
       ${store.mode === 'server' ? `<label class="check"><input type="checkbox" name="shown" ${s.hideFromAll ? '' : 'checked'}> Показывать мой прогресс в списке «Все ученики» и рейтинге недели (видны только имя и учебные цифры)</label>` : ''}
       <button class="btn" type="submit">Сохранить</button>
     </form>
@@ -331,6 +333,8 @@ function renderProfile(main, param = '') {
   $('#settings').onsubmit = e => {
     e.preventDefault(); const f = new FormData(e.target);
     s.name = String(f.get('name')).trim() || s.name; s.goal = Number(f.get('goal')); s.rate = Number(f.get('rate'));
+    const wasMuted = !!s.mute; if (f.get('sound')) delete s.mute; else s.mute = true;
+    if (wasMuted && !s.mute) fanfare('done');
     if (store.mode === 'server') { if (f.get('shown')) delete s.hideFromAll; else s.hideFromAll = true; }
     switchLang(String(f.get('lang')));
     store.save(); updateHud(); toast('Настройки сохранены'); renderProfile(main);
@@ -408,7 +412,7 @@ function remindRating() {
 function start() {
   shell();
   G.checkBadges();
-  initPim();
+  initPim(); initSfx();
   window.onhashchange = route;
   resumeJoin(); // приглашение в класс, открытое до входа
   route();

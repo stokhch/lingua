@@ -76,7 +76,7 @@ export function renderExam(main, param) {
     const g = gradeOf(pct), passed = g.mark >= 3;
     const prev = exams()[id];
     exams()[id] = { best: Math.max(pct, prev?.best || 0), passed: passed || !!prev?.passed, at: passed && !prev?.passed ? Date.now() : prev?.at || Date.now(), name: store.state.name };
-    G.addXp(right + (passed && !prev?.passed ? 20 : 0), passed && !prev?.passed ? 'итоговый тест сдан' : 'итоговый тест');
+    G.addXp(right + (passed && !prev?.passed ? 20 : 0), passed && !prev?.passed ? 'итоговый тест сдан' : 'итоговый тест', passed ? 'done' : 'none');
     main.innerHTML = `
     <section class="band narrow">
       <a class="back" href="#grammar">${icon('back')} Грамматика</a>

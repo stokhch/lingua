@@ -269,7 +269,7 @@ function cross(main) {
       const good = [...p.w].every((ch, i) => inp(`${p.r + (p.dir === 'down' ? i : 0)}:${p.c + (p.dir === 'across' ? i : 0)}`).value === ch);
       if (good && !solved.has(id)) { solved.add(id); fresh++; G.recordAnswer(true); $(`.clues li[data-id="${p.n}-${p.dir}"]`)?.classList.add('done'); for (let i = 0; i < p.w.length; i++) inp(`${p.r + (p.dir === 'down' ? i : 0)}:${p.c + (p.dir === 'across' ? i : 0)}`).parentElement.classList.add('ok'); }
     }
-    if (fresh && !final) G.addXp(fresh * 2, `${fresh} ${plural(fresh, 'слово', 'слова', 'слов')} в кроссворде`);
+    if (fresh && !final) G.addXp(fresh * 2, `${fresh} ${plural(fresh, 'слово', 'слова', 'слов')} в кроссворде`, 'chime');
     $('#cc').textContent = `${solved.size} / ${cw.words.length}`;
     if (solved.size === cw.words.length || final) finish(final);
   };

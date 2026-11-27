@@ -6,6 +6,7 @@ import { lower, L } from './lang.js';
 import { TRAININGS, wordStatus, dayKey, emptyDay, pruneDays } from './stats.js';
 import { chunkWords } from './trail.js';
 import { bump } from './dayplan.js';
+import { fanfare } from './sfx.js';
 
 export { TRAININGS, wordStatus };
 const S = () => store.state;
@@ -90,7 +91,8 @@ export function currentStreak() {
   return s.lastActive === today() || s.lastActive === yesterday() ? s.streak : 0;
 }
 
-export function addXp(n, why = '') {
+// sound: 'done' (по умолчанию, когда есть why), 'chime' — маленький шаг, 'none' — без фанфар
+export function addXp(n, why = '', sound = why ? 'done' : 'none') {
   if (n <= 0) return;
   const s = S(); const d = today();
   const before = todayXp();
@@ -105,8 +107,10 @@ export function addXp(n, why = '') {
   const x = day().x, lang = s.lang || 'en';
   x[lang] = (x[lang] || 0) + n;
   if (why) toast(`+${n} XP · ${why}`, 'xp');
-  if (before < s.goal && s.xpLog[d] >= s.goal) toast('Дневная цель выполнена — Пим сыт и доволен!', 'goal');
-  if (levelInfo().level > lvl) toast(`Новый уровень: ${levelInfo().level}!`, 'level');
+  if (goal) toast('Дневная цель выполнена — Пим сыт и доволен!', 'goal');
+  const goal = before < s.goal && s.xpLog[d] >= s.goal, up = levelInfo().level > lvl;
+  if (up) toast(`Новый уровень: ${levelInfo().level}!`, 'level');
+  fanfare(goal || up ? 'big' : sound);
   store.save();
   checkBadges();
 }
