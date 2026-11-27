@@ -1,5 +1,6 @@
 // Тексты на турецком для чтения с переводом по клику. Все тексты написаны специально для Лингвы.
 import { TEXTS as SONGS } from './songs.js';
+import { TEXTS as TALES } from './tales.js';
 
 const BASE = [
   {
@@ -108,5 +109,5 @@ Uzmanlar, her gün kısa bir metin okumayı ve yeni kelimeleri tekrarlamayı ön
   }
 ];
 
-// Песни и стихи (полка «Песни и стихи») — после основных текстов
-export const TEXTS = [...BASE, ...SONGS];
+// Песни и стихи (полка «Песни и стихи»), сказки и легенды (полка «Сказки и истории») — после основных текстов
+export const TEXTS = [...BASE, ...SONGS, ...TALES];

@@ -67,7 +67,7 @@ export function estimateLevel(body, re, known, lang = 'en') {
   const toks = all.filter(t => !/^[A-ZÇĞİÖŞÜΑ-ΩΆΈΉΊΌΎΏ][a-zçğıöşüα-ωάέήίόύώϊϋΐΰ]+$/.test(t)); // имена собственные не считаем
   if (toks.length < 5) return lang === 'tr' || lang === 'el' ? 'A0' : 'A1';
   const unknown = toks.filter(t => !known(t)).length / toks.length;
-  const sentences = String(body).split(lang === 'el' ? /[.!?…;]+\s/ : /[.!?…]+\s/).filter(x => x.trim()).length || 1; // «;» — греческий вопрос
+  const sentences = String(body).split(lang === 'el' ? /[.!?…;]+["»”]?\s/ : /[.!?…]+["»”]?\s/).filter(x => x.trim()).length || 1; // «;» — греческий вопрос; кавычка после точки тоже конец предложения
   const sl = all.length / sentences;
   const avg = all.reduce((n, t) => n + t.length, 0) / all.length;
   const long = all.filter(t => t.length >= 8).length / all.length;

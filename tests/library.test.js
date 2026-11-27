@@ -150,3 +150,23 @@ test('Турецкие песни и стихи: карточки с цитат�
   }
   assert.equal(tr.lookup('Yemen\'de').word, 'yemen');
 });
+
+test('Турецкие сказки: десять сказок с переводом, пояснениями, рисунком и набором слов', async () => {
+  const tr = await import('../public/js/data/tr/dictionary.js');
+  const tales = TR.filter(t => t.id.startsWith('tr-tale-'));
+  assert.equal(tales.length, 10);
+  assert.equal(new Set(TR.map(t => t.id)).size, TR.length);
+  assert.ok(new Set(tales.map(t => t.level)).size >= 3, 'разных уровней');
+  for (const t of tales) {
+    assert.equal(shelfOf(t), 'tales', t.id);
+    assert.ok(t.summary?.length > 150 && t.note && t.art, t.id);
+    // перевод: столько же абзацев, сколько в тексте
+    assert.equal(t.translation.split('\n\n').length, t.body.split('\n\n').length, t.id);
+    assert.ok(t.explain?.length >= 5 && t.explain.every(([w, e]) => w && e?.length > 5), t.id);
+    assert.equal(t.set, 'tales_tr', t.id);
+  }
+  assert.ok(tr.SETS.tales_tr.length >= 50 && tr.SET_INFO.tales_tr.title);
+  // трудные формы сводятся к правильным словам
+  const cases = { yere: 'yer', altında: 'alt', içinde: 'iç', veriyor: 'vermek', kızmış: 'kızmak', mutluymuş: 'mutlu', kürküm: 'kürk', göle: 'göl', yoğurdu: 'yoğurt' };
+  for (const [f, w] of Object.entries(cases)) assert.equal(tr.lookup(f).word, w, f);
+});
