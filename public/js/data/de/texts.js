@@ -1,5 +1,7 @@
 // Тексты на немецком для чтения с переводом по клику. Все тексты написаны специально для Лингвы.
-export const TEXTS = [
+import { TEXTS as SONGS } from './songs.js';
+
+const BASE = [
   {
     id: 'de-hallo', level: 'A0', topic: 'Знакомство', title: 'Hallo!',
     body: `— Hallo! Ich heiße Paul. Wie heißt du?
@@ -275,3 +277,6 @@ Die ersten Ausgaben waren eigentlich gar nicht für Kinder gedacht, denn viele M
 Die Brüder Grimm haben aber nicht nur Märchen gesammelt. Sie begannen auch das „Deutsche Wörterbuch“, das größte Wörterbuch der deutschen Sprache. Es wurde erst über hundert Jahre nach ihrem Tod fertig.`
   }
 ];
+
+// Песни и стихи (полка «Песни и стихи») — после основных текстов
+export const TEXTS = [...BASE, ...SONGS];

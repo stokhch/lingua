@@ -5,6 +5,7 @@ import { TEXTS as EN } from '../public/js/data/texts.js';
 import { TEXTS as TR } from '../public/js/data/tr/texts.js';
 import { TEXTS as EL } from '../public/js/data/el/texts.js';
 import { TEXTS as KRC } from '../public/js/data/krc/texts.js';
+import { TEXTS as DE } from '../public/js/data/de/texts.js';
 
 const ids = new Set(SHELVES.map(s => s.id));
 
@@ -58,7 +59,7 @@ test('Английская библиотека: популярные сказк
 
 test('Иллюстрации к материалам: у каждого art есть рисунок, SVG собирается', async () => {
   const { textArt, hasArt, ART_KEYS } = await import('../public/js/text-art.js');
-  const used = [...EL, ...EN, ...KRC].filter(t => t.art);
+  const used = [...EL, ...EN, ...KRC, ...DE].filter(t => t.art);
   assert.ok(used.length >= 18);
   for (const t of used) {
     assert.ok(hasArt(t), `нет рисунка ${t.art} у ${t.id}`);
@@ -106,5 +107,24 @@ test('Греческие песни и стихи: карточки с цита�
     const quote = t.body.split('\n\n')[0].split('\n').length;
     assert.ok(t.kind === 'song' ? quote <= 2 : quote <= 8, t.id);
     assert.ok(el.SETS[t.set]?.length >= 20 && el.SET_INFO[t.set]?.title, t.id);
+  }
+});
+
+test('Немецкие песни и стихи: карточки с цитатой, пересказом, переводом, ссылками, набором и рисунком', async () => {
+  const de = await import('../public/js/data/de/dictionary.js');
+  const items = DE.filter(t => t.set?.startsWith('song_de_'));
+  assert.ok(items.length >= 10);
+  assert.ok(new Set(items.map(t => t.level)).size >= 3, 'разных уровней');
+  // современные песни, защищённые авторским правом: только одна-две строки
+  const modern = new Set(['de-song-luftballons', 'de-song-atemlos', 'de-song-lilimarleen']);
+  for (const t of items) {
+    assert.ok(['song', 'poem'].includes(t.kind), t.id);
+    assert.equal(shelfOf(t), 'songs', t.id);
+    assert.ok(t.summary?.length > 80 && t.translation && t.note, t.id);
+    assert.ok(t.links?.length >= 1 && t.links.every(l => /^https:\/\//.test(l.href)), t.id);
+    assert.ok(t.art, t.id);
+    const quote = t.body.split('\n\n')[0].split('\n').length;
+    assert.ok(modern.has(t.id) ? quote <= 2 : quote <= 8, t.id);
+    assert.ok(de.SETS[t.set]?.length >= 20 && de.SET_INFO[t.set]?.title, t.id);
   }
 });
