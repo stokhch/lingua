@@ -5,7 +5,9 @@
 // и аффиксы -лы/-сыз/-чы сверены с «20 уроками карачаево-балкарского языка» Аскера Хапчаева (karachai.ucoz.ru);
 // объяснения и упражнения написаны заново.
 // Тип упражнения: choice (выбрать вариант) или input (вписать ответ; допустимы варианты через "/").
-export const COURSES = [
+import { MORE_COURSES } from './grammar-more.js';
+
+const BASE_COURSES = [
   {
     id: 'krc-basics', title: 'Основы: алфавит и гармония гласных', level: 'A1',
     lessons: [
@@ -440,5 +442,9 @@ export const COURSES = [
     ]
   }
 ];
+
+// Новые курсы встают после старых своего уровня: A1 → A2 → B1 (sort устойчивый).
+const ORDER = { A1: 1, A2: 2, B1: 3, B2: 4 };
+export const COURSES = [...BASE_COURSES, ...MORE_COURSES].sort((a, b) => ORDER[a.level] - ORDER[b.level]);
 
 export const ALL_LESSONS = COURSES.flatMap(c => c.lessons.map(l => ({ ...l, course: c.id })));

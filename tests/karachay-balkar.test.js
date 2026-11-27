@@ -102,3 +102,17 @@ test('Карачаево-балкарский: сказки с иллюстра�
     assert.ok(t.translation && t.summary, id);
   }
 });
+
+test('Карачаево-балкарский: 50 новых уроков — 10 курсов по 5, у каждого урока теория и не меньше 6 заданий', async () => {
+  const { MORE_COURSES } = await import('../public/js/data/krc/grammar-more.js');
+  assert.equal(MORE_COURSES.length, 10);
+  for (const c of MORE_COURSES) {
+    assert.equal(c.lessons.length, 5, c.id);
+    assert.ok(['A1', 'A2', 'B1'].includes(c.level), c.id);
+    for (const l of c.lessons) {
+      assert.ok(l.theory.length > 200, l.id);
+      assert.ok(l.exercises.length >= 6, l.id);
+    }
+  }
+  assert.ok(ALL_LESSONS.length >= 75);
+});
