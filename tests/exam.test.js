@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import { COURSES as EN } from '../public/js/data/grammar.js';
 import { COURSES as TR } from '../public/js/data/tr/grammar.js';
 import { COURSES as KRC } from '../public/js/data/krc/grammar.js';
+import { COURSES as DE } from '../public/js/data/de/grammar.js';
 
 // exam.js зависит от DOM, поэтому шкалу оценок проверяем копией правила
 const gradeOf = pct => pct >= 90 ? 5 : pct >= 75 ? 4 : pct >= 60 ? 3 : 2;
 
 test('Итоговый тест: в каждом курсе хватает заданий', () => {
-  for (const c of [...EN, ...TR, ...KRC]) {
+  for (const c of [...EN, ...TR, ...KRC, ...DE]) {
     const n = c.lessons.reduce((s, l) => s + l.exercises.length, 0);
     assert.ok(n >= 5, c.id);
     assert.ok(!/-cert$/.test(c.id), c.id);

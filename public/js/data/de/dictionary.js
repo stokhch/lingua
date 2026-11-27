@@ -977,6 +977,12 @@ export function lemma(raw) {
   if (DICT.has(w + 'en') || DICT.has(w + 'n')) return verbOf(w); // повелительное и «ich komm»
   const part = participle(w);
   if (part) return part;
+  // отделяемая приставка в придаточном: (wenn man …) zurückbringt → zurückbringen
+  for (const p of PREFIXES) {
+    if (!w.startsWith(p) || w.length - p.length < 3) continue;
+    const v = lemma(w.slice(p.length));
+    if (DICT.has(p + v)) return p + v;
+  }
   // отрезаем окончания: на первом шаге одно, на втором — ещё одно (größte → größt → groß)
   let level = [w];
   for (let depth = 0; depth < 2; depth++) {
