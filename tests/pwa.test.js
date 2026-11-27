@@ -30,3 +30,22 @@ test('isIOS узнаёт iPhone, iPad (в том числе «под Mac») и �
   assert.equal(isIOS('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 0), false);
   assert.equal(isIOS('Mozilla/5.0 (Linux; Android 14; Pixel 8)', 5), false);
 });
+
+test('офлайн: список для service worker содержит оболочку и данные всех языков, но не sw.js', async () => {
+  const { buildPrecache } = await import('../precache.js');
+  const { version, files } = await buildPrecache(new URL('../public', import.meta.url).pathname);
+  assert.ok(version.length >= 8);
+  for (const f of ['./', 'index.html', 'css/app.css', 'js/app.js', 'js/store.js', 'js/data/texts.js', 'js/data/grammar.js', 'manifest.webmanifest']) assert.ok(files.includes(f), f);
+  for (const l of ['de', 'el', 'tr', 'krc']) assert.ok(files.some(f => f.startsWith(`js/data/${l}/`)), l);
+  assert.ok(!files.includes('sw.js'));
+  for (const f of files.slice(1)) assert.ok(fs.existsSync(new URL(f, pub)), f);
+  // Каждый импорт в JS ведёт на файл из списка — иначе без сети модуль не загрузится
+  const re = /(?:import|from)\s*['"](\.{1,2}\/[^'"]+)['"]/g;
+  for (const f of files.filter(f => f.endsWith('.js'))) {
+    const src = fs.readFileSync(new URL(f, pub), 'utf8');
+    for (const [, rel] of src.matchAll(re)) {
+      const target = new URL(rel, new URL(f, 'http://x/')).pathname.slice(1);
+      assert.ok(files.includes(target), `${f} → ${target}`);
+    }
+  }
+});
