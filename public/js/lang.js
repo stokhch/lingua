@@ -15,7 +15,11 @@ import { TEXTS as krcTexts } from './data/krc/texts.js';
 import { COURSES as krcCourses, ALL_LESSONS as krcLessons } from './data/krc/grammar.js';
 import { PHRASES as krcPhrases } from './data/krc/phrases.js';
 import { RESOURCES as krcResources } from './data/krc/resources.js';
-import { VIDEOS as krcVideos, VIDEO_CATALOGS as krcVideoCatalogs } from './data/krc/videos.js';
+import * as krcVideos from './data/krc/videos.js';
+import * as enVideos from './data/videos.js';
+import * as trVideos from './data/tr/videos.js';
+import * as deVideos from './data/de/videos.js';
+import * as elVideos from './data/el/videos.js';
 import { krcToTurkish, krcToKazakh } from './data/krc/translit.js';
 import * as elDict from './data/el/dictionary.js';
 import { TEXTS as elTexts } from './data/el/texts.js';
@@ -29,47 +33,54 @@ import { PHRASES as dePhrases } from './data/de/phrases.js';
 // Греческие буквы, включая буквы с ударением (тонос) и диерезисом
 const EL_LETTERS = 'Α-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ';
 
+// Видеоматериалы языка: карточки, вступление и каталоги «где найти ещё»
+const videos = m => ({ VIDEOS: m.VIDEOS, VIDEO_INTRO: m.VIDEO_INTRO, VIDEO_CATALOGS: m.VIDEO_CATALOGS });
+
 export const LANGS = {
   en: {
-    id: 'en', code: 'EN', name: 'Английский', acc: 'английский', gen: 'английского', flag: '🇬🇧',
+    id: 'en', code: 'EN', name: 'Английский', acc: 'английский', gen: 'английского', prep: 'английском', flag: '🇬🇧',
     tts: 'en-US', voiceRe: /^en/i, preferVoice: /en[-_]GB/i,
     letters: 'A-Za-z', tokenRe: /[A-Za-z’'-]+/g, extraKeys: [],
     sample: 'journey', sampleTr: 'apple;яблоко', firstSet: 'verbs',
     lower: s => s.toLowerCase(),
     DICT: enDict.DICT, SETS: enDict.SETS, SET_INFO: enDict.SET_INFO, lemma: enDict.lemma, lookup: enDict.lookup,
-    TEXTS: enTexts, COURSES: enCourses, ALL_LESSONS: enLessons, PHRASES: enPhrases
+    TEXTS: enTexts, COURSES: enCourses, ALL_LESSONS: enLessons, PHRASES: enPhrases,
+    ...videos(enVideos)
   },
   tr: {
-    id: 'tr', code: 'TR', name: 'Турецкий', acc: 'турецкий', gen: 'турецкого', flag: '🇹🇷',
+    id: 'tr', code: 'TR', name: 'Турецкий', acc: 'турецкий', gen: 'турецкого', prep: 'турецком', flag: '🇹🇷',
     tts: 'tr-TR', voiceRe: /^tr/i, preferVoice: /tr[-_]TR/i,
     letters: 'A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû', tokenRe: /[A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû’'-]+/g, extraKeys: ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'â'],
     sample: 'yolculuk', sampleTr: 'elma;яблоко', firstSet: 'start',
     lower: trDict.lower,
     DICT: trDict.DICT, SETS: trDict.SETS, SET_INFO: trDict.SET_INFO, lemma: trDict.lemma, lookup: trDict.lookup,
-    TEXTS: trTexts, COURSES: trCourses, ALL_LESSONS: trLessons, PHRASES: trPhrases
+    TEXTS: trTexts, COURSES: trCourses, ALL_LESSONS: trLessons, PHRASES: trPhrases,
+    ...videos(trVideos)
   },
   // Немецкий: латиница с умлаутами и ß. Существительные в словаре хранятся строчными (как все слова Лингвы),
   // а род показан в переводе: «haus — дом (das)». Ответ без умлаутов засчитывается с подсказкой (schon = schön).
   de: {
-    id: 'de', code: 'DE', name: 'Немецкий', acc: 'немецкий', gen: 'немецкого', flag: '🇩🇪',
+    id: 'de', code: 'DE', name: 'Немецкий', acc: 'немецкий', gen: 'немецкого', prep: 'немецком', flag: '🇩🇪',
     tts: 'de-DE', voiceRe: /^de/i, preferVoice: /de[-_]DE/i,
     letters: 'A-Za-zÄÖÜäöüß', tokenRe: /[A-Za-zÄÖÜäöüß’'-]+/g, extraKeys: ['ä', 'ö', 'ü', 'ß'],
     sample: 'Reise', sampleTr: 'Apfel;яблоко', firstSet: 'start',
     lower: deDict.lower,
     DICT: deDict.DICT, SETS: deDict.SETS, SET_INFO: deDict.SET_INFO, lemma: deDict.lemma, lookup: deDict.lookup,
-    TEXTS: deTexts, COURSES: deCourses, ALL_LESSONS: deLessons, PHRASES: dePhrases
+    TEXTS: deTexts, COURSES: deCourses, ALL_LESSONS: deLessons, PHRASES: dePhrases,
+    ...videos(deVideos)
   },
   // Новогреческий: своя азбука. На клавиатуре у ученика её обычно нет, поэтому панель — весь алфавит
   // и кнопка ударения «´» (ставит тонос на предыдущую гласную). Ответ без ударений засчитывается с подсказкой.
   el: {
-    id: 'el', code: 'GR', name: 'Греческий', acc: 'греческий', gen: 'греческого', flag: '🇬🇷',
+    id: 'el', code: 'GR', name: 'Греческий', acc: 'греческий', gen: 'греческого', prep: 'греческом', flag: '🇬🇷',
     tts: 'el-GR', voiceRe: /^el/i, preferVoice: /el[-_]GR/i,
     letters: EL_LETTERS, tokenRe: new RegExp(`[${EL_LETTERS}’'-]+`, 'g'),
     extraKeys: [...'αβγδεζηθικλμνξοπρσςτυφχψω', '´'], fullKeys: true,
     sample: 'ταξίδι', sampleTr: 'μήλο;яблоко', firstSet: 'start',
     lower: elDict.lower, plain: elDict.plain,
     DICT: elDict.DICT, SETS: elDict.SETS, SET_INFO: elDict.SET_INFO, lemma: elDict.lemma, lookup: elDict.lookup,
-    TEXTS: elTexts, COURSES: elCourses, ALL_LESSONS: elLessons, PHRASES: elPhrases
+    TEXTS: elTexts, COURSES: elCourses, ALL_LESSONS: elLessons, PHRASES: elPhrases,
+    ...videos(elVideos)
   },
   // Карачаево-балкарский: кириллица, своего голоса синтеза речи нет — читает казахский голос (близкий тюркский язык)
   // по переводу в казахскую кириллицу (къ → қ, ё → ө…); если казахского нет — турецкий (ttsFallback). Онлайн-переводчик его не знает.
@@ -82,7 +93,7 @@ export const LANGS = {
     lower: krcDict.lower,
     DICT: krcDict.DICT, SETS: krcDict.SETS, SET_INFO: krcDict.SET_INFO, lemma: krcDict.lemma, lookup: krcDict.lookup,
     TEXTS: krcTexts, COURSES: krcCourses, ALL_LESSONS: krcLessons, PHRASES: krcPhrases, RESOURCES: krcResources,
-    VIDEOS: krcVideos, VIDEO_CATALOGS: krcVideoCatalogs
+    ...videos(krcVideos)
   }
 };
 
