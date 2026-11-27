@@ -17,7 +17,7 @@ export const SHELVES = [
   { id: 'own', title: 'Мои материалы', desc: 'Ваши тексты, песни, субтитры и видео', icon: 'plus' }
 ];
 const SHELF_BY_TOPIC = {
-  'Диалоги': 'dialogs', 'Разговорник': 'phrasebook', 'Сказки': 'tales', 'Легенды': 'tales',
+  'Диалоги': 'dialogs', 'Разговорник': 'phrasebook', 'Сказки': 'tales', 'Легенды': 'tales', 'Мифы': 'tales',
   'Народная мудрость': 'wisdom', 'Пословицы': 'wisdom', 'Культура': 'culture', 'История': 'culture', 'География': 'culture',
   'Песни': 'songs', 'Стихи': 'songs'
 };
