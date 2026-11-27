@@ -19,7 +19,11 @@ export const canInstall = () => !isStandalone() && (!!deferred || isIOS());
 
 export function initInstall() {
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+      // Офлайн-режим: при каждом запуске с интернетом service worker докачивает новую версию сайта целиком
+      if (navigator.onLine !== false) navigator.serviceWorker.ready.then(r => r.active?.postMessage('precache')).catch(() => {});
+    });
   }
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; listeners.forEach(f => f()); });
   window.addEventListener('appinstalled', () => { deferred = null; listeners.forEach(f => f()); toast('Лингва на экране телефона — открывайте её одним касанием'); });

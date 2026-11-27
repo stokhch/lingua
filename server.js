@@ -27,6 +27,7 @@ import { createTeacher } from './teacher.js';
 import { createMessages } from './messages.js';
 import { studentsList } from './students.js';
 import { createExtensionApi } from './extension-api.js';
+import { buildPrecache } from './precache.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(ROOT, 'public');
@@ -297,10 +298,14 @@ async function api(req, res, url) {
   return send(res, 404, { error: 'Not found' });
 }
 
+// Список файлов для офлайн-режима считаем один раз за запуск (файлы меняются только с деплоем)
+let precache = null;
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   try {
     if (url.pathname.startsWith('/api/')) return await api(req, res, url);
+    if (url.pathname === '/precache.json') return send(res, 200, await (precache ||= buildPrecache(PUBLIC).catch(e => { precache = null; throw e; })));
     if (url.pathname === '/lingva-extension.zip') return await ext.handlePublic('GET /lingva-extension.zip', req, res, url);
     if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); return res.end(); }
     return await serveStatic(req, res, url.pathname);

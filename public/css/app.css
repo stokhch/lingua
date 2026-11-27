@@ -1025,3 +1025,9 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .ios-share{width:20px;height:20px;vertical-align:-4px;fill:none;stroke:#0a84ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* Иконка с экрана «Домой» открывает Лингву без панели Safari: шапка уходит под строку состояния, отодвигаем её */
 .top{padding-top:max(8px,env(safe-area-inset-top))}
+/* Офлайн-режим: значок в шапке, когда нет интернета */
+.pill.offline[hidden]{display:none}
+.pill.offline{background:#5b4a2e;color:#ffe6a8;font-size:13px;gap:5px}
+.top .pill.offline{background:rgba(255,196,92,.22);color:#ffe6a8}
+.pill.offline .ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:520px){.pill.offline span{display:none}}

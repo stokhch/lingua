@@ -55,6 +55,7 @@ function shell() {
       <a class="pill msg" href="#messages" title="Сообщения" id="hud-msg" aria-label="Сообщения" hidden>${icon('mail')}<b hidden>0</b></a>
       <a class="avatar" href="#profile" title="Профиль" id="hud-avatar"></a>
       <span class="who" id="hud-who"></span>
+      <span class="pill offline" id="hud-offline" role="status" title="Нет интернета. Словарь, тренировки, тексты и уроки работают, прогресс сохранится на устройстве." hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.3 9.1 4.5 4.5 0 0 0 7 18z"/><path d="M3 3l18 18"/></svg><span>Офлайн</span></span>
       <button class="pill auth-btn" id="hud-auth" hidden></button>
     </div>
   </header>
@@ -127,12 +128,26 @@ function updateHud() {
   btn.innerHTML = authed ? `${icon('logout')}<span>Выйти</span>` : `${icon('login')}<span>Войти</span>`;
   btn.title = authed ? `Вы вошли как ${store.user?.email || store.state.name} — выйти` : 'Войти или создать аккаунт: прогресс сохранится на сервере';
   btn.setAttribute('aria-label', authed ? 'Выйти из аккаунта' : 'Войти или зарегистрироваться');
+  const off = isOffline();
+  $('#hud-offline').hidden = !off;
+  $('#hud-offline').title = off && store.unsynced ? 'Нет интернета. Прогресс сохранён на устройстве и отправится, когда появится связь.' : 'Нет интернета. Словарь, тренировки, тексты и уроки работают, рейтинг и сообщения — нет.';
   $('#hud-who').textContent = authed ? store.state.name || store.user?.email || '' : 'Гость';
   const sync = $('#sync');
   sync.textContent = store.mode === 'server'
-    ? ({ saved: 'Прогресс сохранён в аккаунте.', saving: 'Сохраняем…', error: 'Нет связи с сервером — изменения не сохранены.' })[store.syncState]
+    ? ({ saved: 'Прогресс сохранён в аккаунте.', saving: 'Сохраняем…', offline: 'Нет интернета — прогресс сохранён на этом устройстве и отправится, когда появится связь.', error: 'Не удалось сохранить прогресс в аккаунте — попробуйте войти заново.' })[store.syncState]
     : 'Режим без регистрации: прогресс хранится в этом браузере.';
 }
+
+// Без интернета: аккаунт ждёт связи с сервером, или браузер сам говорит, что сети нет
+const isOffline = () => store.offline || navigator.onLine === false;
+// Разделы, которым нужен сервер: друзья, рейтинг, сообщения, классы
+const ONLINE_ONLY = new Set(['friends', 'classes', 'class', 'join', 'students', 'messages', 'reports', 'extension']);
+function renderOffline(main) {
+  main.innerHTML = `<section class="band narrow"><div class="empty">${mascot('calm', 110)}<h1>Нужен интернет</h1><p>Рейтинг, друзья, сообщения и классы работают только онлайн. Без сети можно учить слова, тренироваться, читать тексты и проходить уроки грамматики — прогресс сохранится на устройстве и отправится, когда появится связь.</p><div class="row gap"><a class="btn" href="#train">Тренировки</a><a class="btn ghost" href="#texts">Тексты</a></div></div></section>`;
+}
+let offlineShown = false;
+window.addEventListener('lingva:connection', () => { if (offlineShown && !isOffline() && $('#view')) route(); });
+window.addEventListener('online', () => { if (offlineShown && $('#view')) setTimeout(() => !isOffline() && route(), 300); });
 
 function route() {
   const raw = location.hash.slice(1) || 'home';
@@ -141,6 +156,8 @@ function route() {
   cleanup?.(); cleanup = null;
   const main = $('#view');
   $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === view || (['set', 'myset', 'verbs'].includes(view) && a.dataset.nav === 'sets') || (['read', 'shelf'].includes(view) && a.dataset.nav === 'texts') || (['lesson', 'exam', 'gtrain'].includes(view) && a.dataset.nav === 'grammar') || (view === 'path' && a.dataset.nav === 'progress')));
+  offlineShown = isOffline() && (ONLINE_ONLY.has(view) || raw === 'profile-leaders');
+  if (offlineShown) { renderOffline(main); main.focus({ preventScroll: true }); return; }
   const views = {
     home: () => renderHome(main),
     dictionary: () => renderDictionary(main),
