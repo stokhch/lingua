@@ -828,6 +828,151 @@ function deLilimarleen() {
   <ellipse cx="212" cy="262" rx="50" ry="5" fill="#000" opacity=".3"/>`;
 }
 
+// ---------- турецкие песни и стихи ----------
+// Мечеть: купол, полукупола и минареты
+const mosque = (x, y, s = 1, c = '#d8d2c4', d = '#8a96a6') => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-60" y="-40" width="120" height="40" fill="${c}"/><path d="M-40 -40a40 34 0 0 1 80 0z" fill="${d}"/><path d="M-62 -40a18 16 0 0 1 36 0zM26 -40a18 16 0 0 1 36 0z" fill="${d}"/><path d="M0 -74v-10" stroke="#d9a521" stroke-width="2"/>${[-82, 82].map(k => `<rect x="${k - 4}" y="-120" width="8" height="120" fill="${c}"/><path d="M${k - 6} -100h12v4h-12z" fill="${d}"/><path d="M${k - 4} -120l4 -22l4 22z" fill="${d}"/>`).join('')}${[-30, -10, 10, 30].map(k => `<rect x="${k - 4}" y="-26" width="8" height="14" rx="4" fill="#3a4a5a" opacity=".6"/>`).join('')}</g>`;
+// Саз: грушевидный корпус и длинный гриф
+const saz = (x, y, s = 1, rot = -30) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M0 0q-22 -2 -22 -26q0 -22 22 -34q22 12 22 34q0 24 -22 26z" fill="#a0602a"/><path d="M0 -6q-14 -2 -14 -20" stroke="#6a3a1a" stroke-width="2" fill="none"/><rect x="-3" y="-150" width="6" height="92" fill="#6a3a1a"/>${[0, 1, 2, 3, 4, 5].map(i => `<path d="M-3 ${-140 + i * 14}h6" stroke="#e8d0a0" stroke-width="1"/>`).join('')}<path d="M-1 -150v140M1 -150v140" stroke="#f4efe2" stroke-width=".6"/></g>`;
+// Бородатый ашык с сазом; dark — тёмные очки (Вейсель)
+const asik = (x, y, s = 1, coat = '#5a4a3a', dark = false) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-14 0l3 -48h22l3 48z" fill="${coat}"/><circle cx="0" cy="-57" r="10" fill="#d9b494"/><path d="M-11 -60q0 -13 11 -13q11 0 11 13z" fill="#3a2a22"/><path d="M-8 -52q8 16 16 0z" fill="#8a8a8a"/>${dark ? '<rect x="-8" y="-61" width="7" height="4" fill="#1a1a1a"/><rect x="1" y="-61" width="7" height="4" fill="#1a1a1a"/>' : '<circle cx="3" cy="-58" r="1.4" fill="#333"/>'}</g>${saz(x + 14 * s, y - 24 * s, s * .55, -40)}`;
+
+// Колыбельная: луна над огородом, колыбель у дома, телята среди капусты
+function trDandini() {
+  const calf = (cx, cy, k = 1) => `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse cx="0" cy="-18" rx="20" ry="11" fill="#c08a5a"/><ellipse cx="-6" cy="-20" rx="6" ry="4" fill="#f4efe2"/><path d="M14 -24l12 -10l8 6l-6 10z" fill="#c08a5a"/><path d="M24 -32l-4 -5M30 -30l4 -5" stroke="#8a5a3a" stroke-width="2"/><circle cx="28" cy="-26" r="1.4" fill="#222"/>${[-12, -4, 6, 13].map(i => `<rect x="${i}" y="-9" width="4" height="10" fill="#a0704a"/>`).join('')}</g>`;
+  return `<defs>${sky('tDa', [[0, '#1c2350'], [1, '#55608e']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tDa)"/>${stars(36, 3)}${moon(540, 58, 24, '#232a58')}
+  ${hills(196, '#3a5a3a', 14)}<rect x="0" y="214" width="${W}" height="66" fill="#4a6a34"/>
+  ${Array.from({ length: 4 }, (_, r) => `<path d="M300 ${226 + r * 14}h340" stroke="#5a4028" stroke-width="5" opacity=".6"/>`).join('')}
+  ${Array.from({ length: 14 }, (_, i) => { const x = 318 + (i % 7) * 46, y = 226 + Math.floor(i / 7) * 28; return `<circle cx="${x}" cy="${y}" r="11" fill="#7ab85a"/><circle cx="${x}" cy="${y}" r="6" fill="#a8d888"/>`; }).join('')}
+  ${calf(420, 262, 1.1)}${calf(560, 250, .9)}
+  <path d="M296 214v60M296 222h-30M296 246h-30" stroke="#8a6a4a" stroke-width="4"/>
+  <g transform="translate(150 214)"><rect x="-80" y="-70" width="120" height="70" fill="#e8dcc0"/><path d="M-90 -70l50 -36l50 36z" fill="#8a3a2a"/><rect x="-60" y="-52" width="26" height="24" fill="#ffd87a"/><rect x="-14" y="-40" width="20" height="40" fill="#6a4a2a"/></g>
+  <g transform="translate(190 250)"><path d="M-36 -14q36 30 72 0" stroke="#8a5a2a" stroke-width="6" fill="#c89a5a"/><path d="M-30 -16h60" stroke="#8a5a2a" stroke-width="4"/><circle cx="-12" cy="-18" r="7" fill="#f1c7a0"/><path d="M-6 -20h26v8h-26z" fill="#f0e0f0"/><path d="M-40 -30l4 16M40 -30l-4 16" stroke="#8a5a2a" stroke-width="4"/></g>
+  <g transform="translate(232 250)"><path d="M-12 0q2 -40 12 -50h6q10 10 12 50z" fill="#8a2a4a"/><circle cx="3" cy="-58" r="9" fill="#f3c9a8"/><path d="M-8 -58q0 -14 11 -14q11 0 11 14q-4 4 -11 4q-7 0 -11 -4z" fill="#e8e0d0"/><path d="M-8 -36l-26 6" stroke="#8a2a4a" stroke-width="5" stroke-linecap="round"/></g>
+  ${note2(250, 150, '#f4e8b0')}${note2(290, 120, '#f4e8b0')}`;
+}
+
+// Yağ satarım: дети сидят в кругу на лужайке, водящий с платком, горшок мёда
+function trYag() {
+  const cols = ['#e74c3c', '#2f6fb5', '#f39c12', '#2ecc71', '#9b59b6', '#e84393', '#00a8a8', '#c0392b'];
+  return `<defs>${sky('tYa', [[0, '#8ccff0'], [1, '#e8f6fb']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tYa)"/>${sun(80, 56, 22)}${cloud(300, 46, .8)}${cloud(520, 64, .7)}
+  ${hills(170, '#a8d878', 18)}<rect x="0" y="190" width="${W}" height="90" fill="#8cc860"/>
+  ${[60, 600].map(x => `<path d="M${x} 196v-60" stroke="#6a4a2a" stroke-width="8"/><circle cx="${x}" cy="130" r="30" fill="#4a8a3a"/><circle cx="${x - 16}" cy="146" r="20" fill="#5a9a44"/>`).join('')}
+  <ellipse cx="320" cy="238" rx="170" ry="34" fill="#7ab850"/>
+  ${Array.from({ length: 8 }, (_, i) => { const a = Math.PI * 2 * i / 8; const x = 320 + Math.cos(a) * 130, y = 236 + Math.sin(a) * 26; return { x, y, i }; }).sort((p, q) => p.y - q.y).map(({ x, y, i }) => kid(x, y + 8, .9, cols[i], ['#3a2a1a', '#6a3a1a', '#e0b040'][i % 3])).join('')}
+  <g transform="translate(500 254)"><path d="M-6 0l-4 -26M6 0l6 -26" stroke="#2a2a3a" stroke-width="5" stroke-linecap="round"/><path d="M-10 -26l2 -30h16l4 30z" fill="#f1c40f"/><circle cx="2" cy="-64" r="9" fill="#f1c7a0"/><path d="M-7 -68q9 -10 18 0z" fill="#3a2a1a"/><path d="M10 -50l20 -12" stroke="#f1c40f" stroke-width="5" stroke-linecap="round"/><path d="M28 -66l14 -4l-4 14z" fill="#fff"/></g>
+  <g transform="translate(120 250)"><path d="M-16 0q-6 -24 4 -32h24q10 8 4 32z" fill="#d08a2a"/><rect x="-14" y="-38" width="28" height="8" rx="3" fill="#a0602a"/><path d="M-6 -16h12" stroke="#ffe08a" stroke-width="4"/></g>
+  <g transform="translate(166 254)"><rect x="-14" y="-28" width="28" height="28" rx="4" fill="#f8e8a8"/><rect x="-14" y="-32" width="28" height="6" fill="#c0392b"/></g>`;
+}
+
+// Ускюдар: Босфор под дождём, мечеть на берегу, Девичья башня, девушка с писарем под зонтом
+function trUskudar() {
+  return `<defs>${sky('tUs', [[0, '#7a8a9c'], [1, '#c8d0d8']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tUs)"/>${cloud(120, 40, 1.2, '#9aa4b0', .9)}${cloud(400, 30, 1.4, '#a4aeb8', .9)}${cloud(580, 56, 1, '#9aa4b0', .9)}
+  <path d="M0 150q160 -20 320 -10t320 -6v40H0z" fill="#8a96a2"/>${mosque(140, 150, .8, '#c8c2b4', '#7a8696')}${mosque(470, 146, .55, '#c8c2b4', '#7a8696')}
+  ${sea(156, '#4a6a84', '#a8c0d4')}
+  <g transform="translate(330 196)"><rect x="-26" y="-6" width="52" height="10" fill="#9a9286"/><rect x="-14" y="-40" width="28" height="36" fill="#e8e2d6"/><rect x="-6" y="-74" width="12" height="36" fill="#e8e2d6"/><path d="M-9 -74l9 -16l9 16z" fill="#7a8696"/><rect x="-4" y="-30" width="8" height="10" fill="#4a5a6a"/></g>
+  <path d="M0 240q200 -14 640 -6V${H}H0z" fill="#8a7a6a"/><path d="M0 252h${W}" stroke="#6a5a4a" stroke-width="2" opacity=".5"/>
+  ${Array.from({ length: 60 }, (_, i) => { const x = (i * 53) % W, y = (i * 37) % 230; return `<path d="M${x} ${y}l-4 12" stroke="#e8f0f8" stroke-width="1.4" opacity=".6"/>`; }).join('')}
+  <g transform="translate(470 260)"><path d="M-14 0l3 -50h22l3 50z" fill="#2a3a5a"/><path d="M-14 0q0 6 6 8h16q6 -2 6 -8z" fill="#6a5040"/><circle cx="0" cy="-58" r="9" fill="#e3b48e"/><rect x="-9" y="-72" width="18" height="10" fill="#b0302a"/><path d="M12 -40l26 -46" stroke="#3a2a2a" stroke-width="2.5"/></g>
+  ${lady(530, 262, .8, '#7a3a5a', '#3a2214')}
+  <path d="M462 182q46 -52 92 0q-11 -8 -23 0q-11 -8 -23 0q-11 -8 -23 0q-11 -8 -23 0z" fill="#2a2a3a"/><path d="M508 140v-6" stroke="#2a2a3a" stroke-width="3"/>`;
+}
+
+// Чанаккале: пролив, корабли вдали, юный солдат прощается с матерью, маки
+function trCanakkale() {
+  return `<defs>${sky('tCa', [[0, '#e8a070'], [.6, '#f4cfa0'], [1, '#fbe6c4']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tCa)"/>${sun(470, 120, 30, '#ffd890', .45)}
+  <path d="M0 140q120 -30 260 -10t380 -14v30H0z" fill="#9a8a78"/>
+  ${sea(146, '#5a7a94', '#f4d0a0')}
+  ${[[380, 166, .35], [520, 172, .3], [600, 160, .25]].map(([x, y, s]) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-70 0h140l-16 18h-108z" fill="#4a5058"/><rect x="-30" y="-24" width="40" height="24" fill="#4a5058"/><rect x="-6" y="-44" width="10" height="20" fill="#4a5058"/><path d="M1 -48q10 -16 30 -20" stroke="#8a8a8a" stroke-width="6" fill="none" opacity=".6"/></g>`).join('')}
+  <path d="M0 200q120 -20 300 -4t340 -10V${H}H0z" fill="#b0a070"/><path d="M0 236q200 -16 640 0V${H}H0z" fill="#8a8a4a"/>
+  ${Array.from({ length: 30 }, (_, i) => { const x = (i * 83) % W, y = 236 + (i * 29) % 40; return `<path d="M${x} ${y + 10}v-10" stroke="#4a6a2a" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="4.5" fill="#d0302a"/><circle cx="${x}" cy="${y}" r="1.4" fill="#2a1a1a"/>`; }).join('')}
+  <g transform="translate(200 250)"><path d="M-12 0l3 -46h18l3 46z" fill="#6a6a3a"/><circle cx="0" cy="-54" r="9" fill="#e3b48e"/><path d="M-11 -56q0 -12 11 -12q11 0 11 12z" fill="#5a5a2a"/><path d="M10 -40l6 -50" stroke="#3a2a1a" stroke-width="3"/><path d="M-10 -36l-20 6" stroke="#6a6a3a" stroke-width="6" stroke-linecap="round"/></g>
+  <g transform="translate(150 252)"><path d="M-16 0q2 -44 12 -54h8q10 10 12 54z" fill="#3a3a4a"/><circle cx="0" cy="-60" r="9" fill="#e3b48e"/><path d="M-12 -58q0 -16 12 -16q12 0 12 16v16q-12 -6 -24 0z" fill="#f4efe2"/><path d="M10 -38l18 4" stroke="#3a3a4a" stroke-width="6" stroke-linecap="round"/></g>`;
+}
+
+// Hey Onbeşli: каменистая горная дорога, юноши уходят цепочкой, девушки машут вслед
+function trOnbesli() {
+  return `<defs>${sky('tOn', [[0, '#a8b8c8'], [1, '#e8e4dc']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tOn)"/>${cloud(160, 50, .9, '#fff', .7)}${cloud(470, 40, 1.1, '#fff', .7)}
+  ${range(190, '#7a8a7a', '#eef0f0')}${hills(200, '#8a9a6a', 20)}
+  <path d="M240 280q60 -50 140 -70q80 -20 120 -30q20 -4 40 -12h20q-20 14 -50 22q-50 14 -110 34q-70 24 -90 56z" fill="#c8b898"/>
+  ${Array.from({ length: 24 }, (_, i) => { const t = i / 24; const x = 260 + t * 300 + (i % 3) * 8, y = 270 - t * 96 + (i % 2) * 4; return `<ellipse cx="${x}" cy="${y}" rx="${4 - t * 2}" ry="${2.5 - t}" fill="#8a7a6a"/>`; }).join('')}
+  ${[[520, 182, .4], [490, 190, .45], [458, 198, .5], [420, 210, .58], [380, 224, .66]].map(([x, y, s]) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-10 0l2 -42h16l2 42z" fill="#5a5a3a"/><circle cx="0" cy="-50" r="8" fill="#e3b48e"/><path d="M-9 -52q0 -10 9 -10q9 0 9 10z" fill="#4a4a2a"/><path d="M8 -34l4 -30" stroke="#3a2a1a" stroke-width="3"/></g>`).join('')}
+  ${lady(110, 262, .8, '#b03a3a', '#3a2214')}${lady(170, 266, .74, '#2f6a8a', '#5a3a1a')}
+  <path d="M184 206l24 -16" stroke="#f3c9a8" stroke-width="4" stroke-linecap="round"/><path d="M206 188l12 -2l-4 10z" fill="#fff"/>
+  ${[[106, 186], [166, 194]].map(([x, y]) => `<path d="M${x} ${y}q-2 6 0 8" stroke="#6ab4e8" stroke-width="2" fill="none"/>`).join('')}`;
+}
+
+// Сары гелин: базар Эрзурума у заснеженных гор, светловолосая девушка, юноша смотрит издали
+function trSarigelin() {
+  return `<defs>${sky('tSa', [[0, '#7ab0de'], [1, '#e4f0f8']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tSa)"/>${sun(560, 50, 18)}
+  ${range(170, '#8a9ab0', '#fbfdff')}
+  <path d="M0 170h${W}v110H0z" fill="#c8b8a0"/>
+  ${[[0, 150], [120, 130], [250, 150], [380, 140], [510, 150]].map(([x, w]) => `<rect x="${x}" y="150" width="${w - 6}" height="50" fill="#b89a78"/><path d="M${x - 4} 150h${w + 2}l-10 -16h${-w + 20}z" fill="${['#c0392b', '#2f6fb5', '#e0a030', '#2e8a5a', '#8a3a8a'][x / 10 % 5 | 0]}"/>${[0, 1, 2].map(k => `<rect x="${x + 10 + k * (w / 3 - 4)}" y="166" width="${w / 3 - 16}" height="22" fill="#6a4a2a" opacity=".55"/>`).join('')}`).join('')}
+  ${Array.from({ length: 12 }, (_, i) => `<circle cx="${30 + i * 52}" cy="${206 + (i % 2) * 4}" r="7" fill="${['#e8a030', '#c0392b', '#f1c40f', '#6aa84a'][i % 4]}"/>`).join('')}
+  <rect x="0" y="212" width="${W}" height="68" fill="#d8ccb4"/>
+  ${lady(300, 268, 1.05, '#c0392b', '#f0c838')}<path d="M286 192q-10 30 -6 56M314 192q10 30 6 56" stroke="#f0c838" stroke-width="6" fill="none"/>
+  <g transform="translate(500 270)"><path d="M-12 0l3 -48h18l3 48z" fill="#2a3a5a"/><circle cx="0" cy="-56" r="9" fill="#e3b48e"/><path d="M-10 -60q10 -12 20 0z" fill="#2a1a14"/><path d="M-10 -40l-16 -10" stroke="#2a3a5a" stroke-width="6" stroke-linecap="round"/></g>
+  ${person(140, 268, .9, '#6a5040', '#e8e2d6', true)}${person(80, 262, .8, '#3a4a5a', '#3a2a2a')}`;
+}
+
+// Йемен: пустыня и пальмы, далёкая колонна солдат, пыльное облако, анатолийская деревня ждёт
+function trYemen() {
+  const palm = (x, y, h) => `<path d="M${x} ${y}q4 ${-h / 2} -6 ${-h}" stroke="#7a5a3a" stroke-width="6" fill="none"/>${[-60, -20, 20, 60, 100, 140].map(a => `<path d="M${x - 6} ${y - h}q${Math.cos(a * Math.PI / 180) * 20} ${-12 + Math.sin(a * Math.PI / 180) * 6} ${Math.cos(a * Math.PI / 180) * 38} ${10}" stroke="#4a7a3a" stroke-width="5" fill="none"/>`).join('')}`;
+  return `<defs>${sky('tYe', [[0, '#e8b070'], [.5, '#f4d0a0'], [1, '#f8e4c0']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tYe)"/>${sun(520, 70, 30, '#fff0c0', .5)}
+  <ellipse cx="240" cy="70" rx="200" ry="26" fill="#a89890" opacity=".35"/><ellipse cx="300" cy="90" rx="160" ry="18" fill="#8a7a70" opacity=".25"/>
+  <path d="M0 170q120 -40 240 -14t240 -10t160 4V${H}H0z" fill="#d8a868"/><path d="M0 214q160 -30 320 -6t320 -10V${H}H0z" fill="#c89050"/>
+  ${palm(80, 200, 70)}${palm(120, 210, 56)}${palm(590, 190, 64)}
+  ${Array.from({ length: 9 }, (_, i) => `<g transform="translate(${250 + i * 22} ${168 - i * 2}) scale(.38)"><path d="M-10 0l2 -42h16l2 42z" fill="#5a4a3a"/><circle cx="0" cy="-50" r="8" fill="#8a6a4a"/><path d="M8 -34l4 -30" stroke="#3a2a1a" stroke-width="3"/></g>`).join('')}
+  <ellipse cx="350" cy="166" rx="120" ry="12" fill="#e8c890" opacity=".7"/>
+  <g transform="translate(470 262)"><path d="M-16 0q2 -44 12 -54h8q10 10 12 54z" fill="#2a2a3a"/><circle cx="0" cy="-60" r="9" fill="#d9b494"/><path d="M-12 -58q0 -16 12 -16q12 0 12 16v20q-12 -6 -24 0z" fill="#f4efe2"/></g>
+  ${lady(420, 266, .72, '#6a2a3a', '#2a1a10')}
+  ${[[300, 250], [360, 256]].map(([x, y]) => `<path d="M${x} ${y}q8 -8 16 0" stroke="#a07040" stroke-width="2" fill="none"/>`).join('')}`;
+}
+
+// Длинная узкая дорога: степь, дорога уходит к горизонту, половина неба — день, половина — ночь, ашык с сазом
+function trVeysel() {
+  return `<defs>${sky('tVd', [[0, '#7ac0ea'], [1, '#e8f4fb']])}${sky('tVn', [[0, '#141c40'], [1, '#3a4a7a']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tVd)"/><rect x="320" width="320" height="${H}" fill="url(#tVn)"/>
+  ${sun(120, 60, 22)}${moon(540, 60, 20, '#1a2248')}${stars(24, 7).replace(/cx="(\d+)/g, (m, x) => `cx="${320 + (+x % 320)}`)}
+  <path d="M0 180q160 -16 320 -4t320 -6V${H}H0z" fill="#b8a868"/><path d="M320 180q160 -12 320 -10V${H}H320z" fill="#4a4a3a" opacity=".55"/>
+  <path d="M300 180h40l140 100h-320z" fill="#d8c8a0"/><path d="M318 180h4l40 100h-48z" fill="#f4ead0" opacity=".5"/>
+  ${[[60, 230], [200, 196], [460, 200], [580, 240]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="10" fill="#8a9a5a"/>`).join('')}
+  ${asik(300, 262, 1.1, '#4a3a2e', true)}
+  <path d="M280 262q-8 0 -10 -24" stroke="#6a4a2a" stroke-width="3" fill="none"/>`;
+}
+
+// Юнус Эмре: анатолийская деревня, люди сидят в кругу под деревом, розы и голуби
+function trYunus() {
+  return `<defs>${sky('tYu', [[0, '#f0c890'], [1, '#fbecd4']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tYu)"/>${sun(320, 70, 26, '#ffe3a0', .5)}
+  ${hills(170, '#c8b078', 20)}<rect x="0" y="196" width="${W}" height="84" fill="#a8a060"/>
+  ${[[40, 184, 60, 40], [100, 190, 50, 34], [520, 186, 70, 40], [590, 192, 50, 30]].map(([x, y, w, h]) => cube(x, y, w, h, '#6a4a2a')).join('')}
+  <path d="M320 230v-90" stroke="#6a4a2a" stroke-width="12"/><circle cx="320" cy="120" r="56" fill="#5a8a3a"/><circle cx="280" cy="140" r="34" fill="#6a9a44"/><circle cx="362" cy="138" r="36" fill="#6a9a44"/>
+  ${[[230, 258, '#4a6a8a'], [270, 266, '#8a4a3a'], [370, 266, '#5a7a4a'], [410, 258, '#6a5a8a']].map(([x, y, c]) => person(x, y, .8, c, '#f4efe2', x === 270)).join('')}
+  <g transform="translate(320 268)"><path d="M-16 0q0 -34 16 -44q16 10 16 44z" fill="#e8e0d0"/><circle cx="0" cy="-52" r="9" fill="#d9b494"/><path d="M-9 -56q0 -24 9 -26q9 2 9 26z" fill="#c8b898"/><path d="M-6 -48q6 14 12 0z" fill="#e8e8e8"/></g>
+  ${[[150, 250], [480, 252], [520, 262], [120, 264]].map(([x, y]) => `<path d="M${x} ${y + 14}v-14" stroke="#3a6a2a" stroke-width="2"/><circle cx="${x}" cy="${y}" r="6" fill="#d03a5a"/><circle cx="${x}" cy="${y}" r="2.5" fill="#a02a4a"/>`).join('')}
+  ${dove(180, 70, .9)}${dove(460, 56, .8)}`;
+}
+
+// Караджаоглан: снег в горах, кочевые шатры, ашык с сазом, в снегу — буква Элиф
+function trKaracaoglan() {
+  return `<defs>${sky('tKa', [[0, '#5a6a8a'], [1, '#c8d0dc']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#tKa)"/>
+  ${range(200, '#6a7a90', '#fbfdff')}<path d="M0 200q160 -20 320 0t320 -6V${H}H0z" fill="#eef2f8"/>
+  ${[[460, 214], [540, 208], [600, 220]].map(([x, y]) => `<path d="M${x - 30} ${y}q30 -40 60 0z" fill="#3a2a2a"/><path d="M${x - 6} ${y}v-14h12v14z" fill="#ffd87a"/>`).join('')}
+  ${snowflakes(70, 4)}
+  <path d="M120 236c6 -40 8 -90 14 -140" stroke="#2a3a5a" stroke-width="10" stroke-linecap="round" fill="none" opacity=".75"/><path d="M128 100q6 -8 14 -4" stroke="#2a3a5a" stroke-width="6" fill="none" opacity=".75" stroke-linecap="round"/>
+  ${Array.from({ length: 16 }, (_, i) => `<circle cx="${124 + Math.sin(i) * 14}" cy="${100 + i * 9}" r="${1.5 + (i % 3)}" fill="#fff" opacity=".9"/>`).join('')}
+  ${asik(300, 262, 1.15, '#7a3a2a')}
+  ${fir(40, 250, 70, '#2a4a3a')}${fir(210, 256, 56, '#2a4a3a')}`;
+}
+
 const ART = {
   'athos-peninsula': { draw: athosPeninsula, label: 'Полуостров Афон: вершина и монастырь у моря' },
   'athos-morning': { draw: athosMorning, label: 'Ночная служба: храм и монах с билом' },
@@ -877,7 +1022,17 @@ const ART = {
   'de-erlkoenig': { draw: deErlkoenig, label: 'Ночной лес: отец с сыном скачет на коне, в тумане фигура Лесного царя' },
   'de-freude': { draw: deFreude, label: 'Концертный зал: хор, оркестр и дирижёр в лучах света' },
   'de-hymne': { draw: deHymne, label: 'Чёрно-красно-золотой флаг на холме над Рейном и замком' },
-  'de-lilimarleen': { draw: deLilimarleen, label: 'Фонарь у ворот казармы ночью, солдат и девушка' }
+  'de-lilimarleen': { draw: deLilimarleen, label: 'Фонарь у ворот казармы ночью, солдат и девушка' },
+  'tr-dandini': { draw: trDandini, label: 'Ночь, мама поёт у колыбели, телята забрались в огород с капустой' },
+  'tr-yag': { draw: trYag, label: 'Дети сидят в кругу на лужайке, водящий бежит с платком; горшок мёда' },
+  'tr-uskudar': { draw: trUskudar, label: 'Дождь над Босфором, мечети и Девичья башня, девушка и писарь под зонтом' },
+  'tr-canakkale': { draw: trCanakkale, label: 'Пролив Дарданеллы на закате, корабли вдали, юный солдат прощается с матерью среди маков' },
+  'tr-onbesli': { draw: trOnbesli, label: 'Юноши уходят по каменистой горной дороге, девушки машут им платком' },
+  'tr-sarigelin': { draw: trSarigelin, label: 'Базар Эрзурума у заснеженных гор, светловолосая девушка, юноша смотрит издали' },
+  'tr-yemen': { draw: trYemen, label: 'Пустыня и пальмы, далёкая колонна солдат в пыли, мать и невеста ждут' },
+  'tr-veysel': { draw: trVeysel, label: 'Длинная дорога через степь, полнеба — день, полнеба — ночь, слепой ашык с сазом' },
+  'tr-yunus': { draw: trYunus, label: 'Анатолийская деревня: люди сидят в кругу под деревом, розы и голуби' },
+  'tr-karacaoglan': { draw: trKaracaoglan, label: 'Снег в горах, шатры кочевников, ашык с сазом, в снегу — буква Элиф' }
 };
 
 // Рисунки к турецким сказкам — в отдельном модуле

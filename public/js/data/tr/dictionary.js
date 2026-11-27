@@ -2,6 +2,7 @@
 // Формат блоков: "слово|перевод" — по строке на слово. Глаголы даны в инфинитиве (-mak / -mek).
 // Ключ блока = тематический набор.
 import { MORE_RAW, MORE_INFO } from './more-sets.js';
+import { SONG_SETS, WORDS as SONG_WORDS } from './songs.js';
 import { SET as TALE_SET, WORDS as TALE_WORDS, FORMS as TALE_FORMS } from './tales.js';
 
 const RAW = {
@@ -726,6 +727,11 @@ export const SET_INFO = {
 // Дополнительные тематические наборы (more-sets.js) — после основных
 Object.assign(RAW, MORE_RAW);
 Object.assign(SET_INFO, MORE_INFO);
+// Наборы слов из песен и стихов (songs.js) — после тематических
+for (const [id, s] of Object.entries(SONG_SETS)) {
+  RAW[id] = s.words;
+  SET_INFO[id] = { title: s.title, icon: 'education', desc: s.desc };
+}
 // Набор слов из турецких сказок (tales.js) — после тематических
 RAW.tales_tr = TALE_SET;
 SET_INFO.tales_tr = { title: 'Слова из сказок', icon: 'education', desc: 'Насреддин Ходжа, Кельоглан, Деде Коркут, легенды' };
@@ -741,8 +747,8 @@ for (const [set, block] of Object.entries(RAW)) {
     if (!SETS[set].includes(w)) SETS[set].push(w);
   }
 }
-// Остальные слова сказок — только в словарь
-for (const line of TALE_WORDS.split('\n')) {
+// Слова из песен и сказок — только в словарь
+for (const line of (SONG_WORDS + '\n' + TALE_WORDS).split('\n')) {
   const [w, t] = line.split('|');
   if (w && t && !DICT.has(w)) DICT.set(w, t);
 }
