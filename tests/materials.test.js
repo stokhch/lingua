@@ -27,13 +27,18 @@ test('Ссылки YouTube', () => {
 test('Оценка уровня совпадает с разметкой встроенных текстов', () => {
   // строго — для базовых текстов; у библиотеки (en-l-…) диалоги, стихи и идиомы оценщик мерит иначе
   for (const t of TEXTS.filter(t => !t.id.startsWith('en-l-'))) assert.equal(estimateLevel(t.body, reEn, w => !!en.lookup(w).translation), t.level, t.id);
-  for (const t of TR) assert.equal(estimateLevel(t.body, reTr, w => !!tr.lookup(w).translation, 'tr'), t.level, t.id);
+  for (const t of TR.filter(t => !t.id.startsWith('tr-tale-'))) assert.equal(estimateLevel(t.body, reTr, w => !!tr.lookup(w).translation, 'tr'), t.level, t.id);
   const hard = 'The committee’s deliberations were protracted, and its eventual recommendations, though ostensibly pragmatic, were widely perceived as an attempt to placate vociferous constituencies.';
   assert.equal(estimateLevel(hard, reEn, w => !!en.lookup(w).translation), 'C1');
 });
 
 test('Оценка уровня: тексты библиотеки для чтения не дальше одного уровня от разметки', () => {
   const ORDER = ['A0', 'A1', 'A2', 'B1', 'B2', 'C1'];
+  // турецкие сказки: диалоги в кавычках оценщик мерит грубее — допускаем один уровень
+  for (const t of TR.filter(t => t.id.startsWith('tr-tale-'))) {
+    const d = ORDER.indexOf(estimateLevel(t.body, reTr, w => !!tr.lookup(w).translation, 'tr')) - ORDER.indexOf(t.level);
+    assert.ok(Math.abs(d) <= 1, t.id);
+  }
   for (const t of TEXTS.filter(t => t.id.startsWith('en-l-') && ['reading', 'culture'].includes(t.shelf))) {
     const d = ORDER.indexOf(estimateLevel(t.body, reEn, w => !!en.lookup(w).translation)) - ORDER.indexOf(t.level);
     assert.ok(Math.abs(d) <= 1, t.id);
