@@ -1,5 +1,6 @@
 // Новогреческо-русский словарь Лингвы: наборы слов, поиск начальной формы для перевода по клику.
 import { RAW } from './words.js';
+import { MORE_RAW, MORE_INFO } from './more-sets.js';
 import { LIBRARY_WORDS, LIBRARY_FORMS } from './library/index.js';
 
 export const SET_INFO = {
@@ -145,6 +146,10 @@ const EXTRA = `τον|артикль м. р. (вин. п.); его
 όρεξη|аппетит
 καλώς|хорошо (в «καλώς ήρθες» — добро пожаловать)
 υγειά|здоровье (в тосте «στην υγειά μας»)`;
+
+// Дополнительные тематические наборы (more-sets.js) — после основных
+Object.assign(RAW, MORE_RAW);
+Object.assign(SET_INFO, MORE_INFO);
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]

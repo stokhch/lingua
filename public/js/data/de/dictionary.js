@@ -4,6 +4,8 @@
 // Глаголы даны в инфинитиве; у сильных и неправильных глаголов в третьем поле — особые формы
 // (3-е лицо, прошедшее, причастие), чтобы перевод по клику находил «fährt», «ging», «gegessen».
 // Ключ блока = тематический набор.
+import { MORE_RAW, MORE_INFO } from './more-sets.js';
+
 const RAW = {
 start: `hallo|привет, здравствуйте
 guten Morgen|доброе утро
@@ -879,6 +881,10 @@ export const SET_INFO = {
 };
 
 export const lower = s => String(s).toLowerCase();
+
+// Дополнительные тематические наборы (more-sets.js) — после основных
+Object.assign(RAW, MORE_RAW);
+Object.assign(SET_INFO, MORE_INFO);
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]
