@@ -12,7 +12,13 @@ import { textArt } from '../text-art.js';
 const ROW = 8; // карточек в ряду полки на главной странице библиотеки
 // Полки, которые на главной странице показываются целиком, без кнопки «Все N»
 const FULL_SHELVES = new Set(['songs']);
-const rowOf = sh => FULL_SHELVES.has(sh.id) ? byRelevance(sh.items) : byRelevance(sh.items).slice(0, ROW);
+// В ряду полки: до ROW непрочитанных, а прочитанные не прячутся — идут следом серыми карточками
+const rowOf = sh => {
+  const all = byRelevance(sh.items);
+  if (FULL_SHELVES.has(sh.id)) return all;
+  const done = t => textStatus(t.id) === 'done';
+  return [...all.filter(t => !done(t)).slice(0, ROW), ...all.filter(done)];
+};
 const F = { level: 'all', kind: 'all', status: 'all', topic: 'all', sort: 'level' };
 const queries = {}; // поиск запоминается для каждого языка отдельно
 
@@ -39,7 +45,7 @@ function statsFor(list) {
 
 function card(t, st) {
   const status = textStatus(t.id), words = st.n;
-  return `<a class="text-card lv-${t.level}" href="#read-${t.id}">${textArt(t, 'thumb')}<span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${t.kind !== 'text' ? `${KINDS[t.kind] || ''} · ` : ''}${esc(t.topic || 'Без темы')} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span><span class="fresh">${st.fresh ? `новых для вас слов: ${st.fresh}` : 'все слова уже в словаре'}</span>${status === 'done' ? `<em>${icon('check')} прочитано</em>` : status === 'reading' ? '<em class="reading">читаю</em>' : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}${t.own ? '<i class="own-tag">моё</i>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
+  return `<a class="text-card lv-${t.level}${status === 'done' ? ' done' : ''}" href="#read-${t.id}"${status === 'done' ? ' title="Прочитано — можно перечитать"' : ''}>${textArt(t, 'thumb')}<span class="lv">${t.level}</span><b>${esc(t.title)}</b><span>${t.kind !== 'text' ? `${KINDS[t.kind] || ''} · ` : ''}${esc(t.topic || 'Без темы')} · ${words} слов · ~${Math.max(1, Math.round(words / 120))} мин</span><span class="fresh">${st.fresh ? `новых для вас слов: ${st.fresh}` : 'все слова уже в словаре'}</span>${status === 'done' ? `<em>${icon('check')} прочитано</em>` : status === 'reading' ? '<em class="reading">читаю</em>' : t.level === myLevel() ? '<em class="for-you">ваш уровень</em>' : ''}${t.own ? '<i class="own-tag">моё</i>' : ''}<p>${esc(t.body.slice(0, 110))}…</p></a>`;
 }
 
 // Порядок на полке по умолчанию: сначала не прочитанные, ближе к уровню ученика, затем проще
