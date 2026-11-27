@@ -10,7 +10,7 @@
 
   // Язык слова: кириллица — карачаево-балкарский, греческие буквы — греческий, турецкие — турецкий,
   // иначе — выбранный в настройках
-  const langOf = w => /[а-яё]/i.test(w) ? 'krc' : /[\u0370-\u03ff]/.test(w) ? 'el' : /[çğıöşüİ]/i.test(w) ? 'tr' : (['krc', 'el'].includes(settings.lang) ? 'en' : settings.lang);
+  const langOf = w => /[а-яё]/i.test(w) ? 'krc' : /[\u0370-\u03ff]/.test(w) ? 'el' : /[äß]/i.test(w) || (settings.lang === 'de' && /[öü]/i.test(w)) ? 'de' : /[çğıöşüİ]/i.test(w) ? 'tr' : (['krc', 'el'].includes(settings.lang) ? 'en' : settings.lang);
   const WORD = /^[A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛûА-Яа-яЁёЎўΑ-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ'’-]{1,40}$/;
 
   let host, root;
@@ -56,7 +56,7 @@
     host.style.top = (window.scrollY + rect.bottom + 8) + 'px';
     b.innerHTML = `<div class="h"><button class="s" title="Произнести" aria-label="Произнести">🔊</button><b>${esc(word)}</b><span class="tag">${lang.toUpperCase()}</span><button class="x" aria-label="Закрыть">×</button></div><p class="m">Ищем перевод…</p>`;
     b.querySelector('.x').onclick = close;
-    b.querySelector('.s').onclick = () => { try { const u = new SpeechSynthesisUtterance(word); u.lang = { en: 'en-US', tr: 'tr-TR', el: 'el-GR' }[lang] || ''; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch {} };
+    b.querySelector('.s').onclick = () => { try { const u = new SpeechSynthesisUtterance(word); u.lang = { en: 'en-US', tr: 'tr-TR', el: 'el-GR', de: 'de-DE' }[lang] || ''; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch {} };
     if (multi || !WORD.test(word)) {
       const res = await send({ type: 'sentence', q: word, lang });
       b.querySelector('.m').outerHTML = res.ok && res.data.translation ? `<p class="t">${esc(res.data.translation)}</p><p class="m">Машинный перевод фразы</p>` : `<p class="m err">${esc(res.error || 'Перевод не найден')}</p>`;

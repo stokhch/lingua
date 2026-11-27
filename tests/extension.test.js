@@ -16,6 +16,7 @@ test('Расширение: перевод по словарю с формами
   assert.ok(lookupWord('en', 'Travelled').translation);
   assert.equal(lookupWord('tr', 'evlerimizde').word, 'ev');
   assert.equal(lookupWord('el', 'σπιτιού').word, 'σπίτι');
+  assert.equal(lookupWord('de', 'Häuser').word, 'haus');
 });
 
 test('Расширение: манифест ссылается на существующие файлы', () => {

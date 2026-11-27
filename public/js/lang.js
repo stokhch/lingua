@@ -20,6 +20,10 @@ import * as elDict from './data/el/dictionary.js';
 import { TEXTS as elTexts } from './data/el/texts.js';
 import { COURSES as elCourses, ALL_LESSONS as elLessons } from './data/el/grammar.js';
 import { PHRASES as elPhrases } from './data/el/phrases.js';
+import * as deDict from './data/de/dictionary.js';
+import { TEXTS as deTexts } from './data/de/texts.js';
+import { COURSES as deCourses, ALL_LESSONS as deLessons } from './data/de/grammar.js';
+import { PHRASES as dePhrases } from './data/de/phrases.js';
 
 // Греческие буквы, включая буквы с ударением (тонос) и диерезисом
 const EL_LETTERS = 'Α-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ';
@@ -42,6 +46,17 @@ export const LANGS = {
     lower: trDict.lower,
     DICT: trDict.DICT, SETS: trDict.SETS, SET_INFO: trDict.SET_INFO, lemma: trDict.lemma, lookup: trDict.lookup,
     TEXTS: trTexts, COURSES: trCourses, ALL_LESSONS: trLessons, PHRASES: trPhrases
+  },
+  // Немецкий: латиница с умлаутами и ß. Существительные в словаре хранятся строчными (как все слова Лингвы),
+  // а род показан в переводе: «haus — дом (das)». Ответ без умлаутов засчитывается с подсказкой (schon = schön).
+  de: {
+    id: 'de', code: 'DE', name: 'Немецкий', acc: 'немецкий', gen: 'немецкого', flag: '🇩🇪',
+    tts: 'de-DE', voiceRe: /^de/i, preferVoice: /de[-_]DE/i,
+    letters: 'A-Za-zÄÖÜäöüß', tokenRe: /[A-Za-zÄÖÜäöüß’'-]+/g, extraKeys: ['ä', 'ö', 'ü', 'ß'],
+    sample: 'Reise', sampleTr: 'Apfel;яблоко', firstSet: 'start',
+    lower: deDict.lower,
+    DICT: deDict.DICT, SETS: deDict.SETS, SET_INFO: deDict.SET_INFO, lemma: deDict.lemma, lookup: deDict.lookup,
+    TEXTS: deTexts, COURSES: deCourses, ALL_LESSONS: deLessons, PHRASES: dePhrases
   },
   // Новогреческий: своя азбука. На клавиатуре у ученика её обычно нет, поэтому панель — весь алфавит
   // и кнопка ударения «´» (ставит тонос на предыдущую гласную). Ответ без ударений засчитывается с подсказкой.
@@ -80,7 +95,8 @@ export const lettersOnly = s => String(s).replace(new RegExp(`[^${L().letters}]`
 // Сравнение без диакритики: если у ученика нет турецкой раскладки, «gunes» засчитаем как «güneş» с подсказкой.
 // Для кириллицы: ё → е, ў → у, дж → ж (балкарское написание: жол = джол) — ответ засчитывается с подсказкой.
 // Для греческого: без ударений и диерезиса, конечная ς = σ (καλημερα = καλημέρα).
-export const fold = s => lower(s).replace(/[çğıöşüâîûёў]/g, c => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', â: 'a', î: 'i', û: 'u', ё: 'е', ў: 'у' })[c]).replace(/дж/g, 'ж')
+// Для немецкого: ä → a, ö → o, ü → u, ß → ss (strasse = Straße).
+export const fold = s => lower(s).replace(/[çğıöşüâîûäßёў]/g, c => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', â: 'a', î: 'i', û: 'u', ä: 'a', ß: 'ss', ё: 'е', ў: 'у' })[c]).replace(/дж/g, 'ж')
   .normalize('NFD').replace(/[\u0301\u0308]/g, '').normalize('NFC').replace(/ς/g, 'σ');
 // Форма слова для клеток кроссворда: греческие кроссворды пишут без ударений
 export const cellForm = s => (L().plain || (x => x))(s);

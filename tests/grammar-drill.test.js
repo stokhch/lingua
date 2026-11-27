@@ -5,15 +5,18 @@ import { ALL_LESSONS as EN } from '../public/js/data/grammar.js';
 import { ALL_LESSONS as TR } from '../public/js/data/tr/grammar.js';
 import { ALL_LESSONS as EL } from '../public/js/data/el/grammar.js';
 import { ALL_LESSONS as KRC } from '../public/js/data/krc/grammar.js';
+import { ALL_LESSONS as DE } from '../public/js/data/de/grammar.js';
 import { lower as trLower } from '../public/js/data/tr/dictionary.js';
 import { lower as elLower } from '../public/js/data/el/dictionary.js';
 import { lower as krcLower } from '../public/js/data/krc/dictionary.js';
+import { lower as deLower } from '../public/js/data/de/dictionary.js';
 
 const DAY = 86400000;
 const LANGS = {
   en: { lessons: EN, letters: 'A-Za-z', tokenRe: /[A-Za-z’'-]+/g, lower: s => s.toLowerCase() },
   tr: { lessons: TR, letters: 'A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû', tokenRe: /[A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû’'-]+/g, lower: trLower },
   el: { lessons: EL, letters: 'Α-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ', tokenRe: /[Α-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ’'-]+/g, lower: elLower },
+  de: { lessons: DE, letters: 'A-Za-zÄÖÜäöüß', tokenRe: /[A-Za-zÄÖÜäöüß’'-]+/g, lower: deLower },
   krc: { lessons: KRC, letters: 'А-Яа-яЁёЎў', tokenRe: /[А-Яа-яЁёЎў’'-]+/g, lower: krcLower }
 };
 const seq = (...v) => { let i = 0; return () => v[i++ % v.length]; };

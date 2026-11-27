@@ -1,5 +1,5 @@
 // Озвучка через встроенный в браузер синтез речи (Web Speech API) — без аудиофайлов.
-// Голос выбирается под изучаемый язык: английский (en-GB / en-US), турецкий (tr-TR) или греческий (el-GR).
+// Голос выбирается под изучаемый язык: английский (en-GB / en-US), турецкий (tr-TR), греческий (el-GR) или немецкий (de-DE).
 // У карачаево-балкарского своего голоса нет: текст переводится в казахскую кириллицу (lang.ttsText)
 // и читается казахским голосом (lang.voice = 'kk'); если казахского нет ни в системе, ни онлайн —
 // турецким (lang.ttsFallback).
@@ -18,6 +18,8 @@ function pickVoices() {
     || list.find(v => /^tr/i.test(v.lang)) || null;
   voices.el = list.find(v => /el[-_]GR/i.test(v.lang) && /google|natural|melina|nikos|athina/i.test(v.name))
     || list.find(v => /^el/i.test(v.lang)) || null;
+  voices.de = list.find(v => /de[-_]DE/i.test(v.lang) && /google|natural|anna|katja|conrad|hedda|markus/i.test(v.name))
+    || list.find(v => /de[-_]DE/i.test(v.lang)) || list.find(v => /^de/i.test(v.lang)) || null;
   voices.kk = list.find(v => /^kk/i.test(v.lang)) || null;
 }
 if ('speechSynthesis' in window) { pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
