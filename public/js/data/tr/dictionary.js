@@ -2,6 +2,7 @@
 // Формат блоков: "слово|перевод" — по строке на слово. Глаголы даны в инфинитиве (-mak / -mek).
 // Ключ блока = тематический набор.
 import { MORE_RAW, MORE_INFO } from './more-sets.js';
+import { SET as TALE_SET, WORDS as TALE_WORDS, FORMS as TALE_FORMS } from './tales.js';
 
 const RAW = {
 start: `merhaba|привет, здравствуйте
@@ -725,6 +726,9 @@ export const SET_INFO = {
 // Дополнительные тематические наборы (more-sets.js) — после основных
 Object.assign(RAW, MORE_RAW);
 Object.assign(SET_INFO, MORE_INFO);
+// Набор слов из турецких сказок (tales.js) — после тематических
+RAW.tales_tr = TALE_SET;
+SET_INFO.tales_tr = { title: 'Слова из сказок', icon: 'education', desc: 'Насреддин Ходжа, Кельоглан, Деде Коркут, легенды' };
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]
@@ -736,6 +740,11 @@ for (const [set, block] of Object.entries(RAW)) {
     if (!DICT.has(w)) DICT.set(w, t);
     if (!SETS[set].includes(w)) SETS[set].push(w);
   }
+}
+// Остальные слова сказок — только в словарь
+for (const line of TALE_WORDS.split('\n')) {
+  const [w, t] = line.split('|');
+  if (w && t && !DICT.has(w)) DICT.set(w, t);
 }
 
 // ---------- поиск начальной формы ----------
@@ -779,6 +788,8 @@ const FORMS = {
   'şehrin': 'şehir', 'resmi': 'resim', 'rusyalıyım': 'rusya', 'rusyalı': 'rusya', 'türkçede': 'türkçe', 'başlangıçta': 'başlangıç',
   'hikâyeler': 'hikâye', 'hikayeler': 'hikâye', 'hikaye': 'hikâye'
 };
+// Трудные формы из сказок (tales.js); общие формы выше важнее
+for (const [f, w] of Object.entries(TALE_FORMS)) FORMS[f] ||= w;
 
 // Слова, которые узнаём только целиком (как основа для аффиксов они дали бы ложные совпадения: kal-dık)
 const EXACT = { kal: 'hoşça kal', 'hoşça': 'hoşça kal', güle: 'güle güle' };
@@ -793,7 +804,7 @@ const SUFFIXES = [
   'ydı', 'ydi', 'ydu', 'ydü', 'ydım', 'ydim', 'ydum', 'ydüm', 'ydık', 'ydik', 'yduk', 'ydük',
   'sa', 'se', 'sam', 'sem', 'san', 'sen', 'sak', 'sek', 'sanız', 'seniz',
   'acağım', 'eceğim', 'acağız', 'eceğiz', 'acaksın', 'eceksin', 'acak', 'ecek', 'yacak', 'yecek',
-  'mışım', 'mişim', 'muşum', 'müşüm', 'mış', 'miş', 'muş', 'müş',
+  'mışım', 'mişim', 'muşum', 'müşüm', 'mış', 'miş', 'muş', 'müş', 'ymış', 'ymiş', 'ymuş', 'ymüş',
   'dım', 'dim', 'dum', 'düm', 'tım', 'tim', 'tum', 'tüm', 'dık', 'dik', 'duk', 'dük', 'tık', 'tik', 'tuk', 'tük',
   'dın', 'din', 'dun', 'dün', 'dılar', 'diler', 'dular', 'düler', 'tılar', 'tiler', 'tular', 'tüler',
   'dı', 'di', 'du', 'dü', 'tı', 'ti', 'tu', 'tü',
