@@ -5,6 +5,7 @@
 // (3-е лицо, прошедшее, причастие), чтобы перевод по клику находил «fährt», «ging», «gegessen».
 // Ключ блока = тематический набор.
 import { MORE_RAW, MORE_INFO } from './more-sets.js';
+import { SONG_SETS, WORDS as SONG_WORDS } from './songs.js';
 
 const RAW = {
 start: `hallo|привет, здравствуйте
@@ -885,23 +886,34 @@ export const lower = s => String(s).toLowerCase();
 // Дополнительные тематические наборы (more-sets.js) — после основных
 Object.assign(RAW, MORE_RAW);
 Object.assign(SET_INFO, MORE_INFO);
+// Наборы слов из песен и стихов (songs.js) — после тематических
+for (const [id, s] of Object.entries(SONG_SETS)) {
+  RAW[id] = s.words;
+  SET_INFO[id] = { title: s.title, icon: 'education', desc: s.desc };
+}
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]
 const FORMS = {};                   // форма -> словарное слово
 const ARTICLE = /^(der|die|das) (\p{Lu}\S*)$/u;
+function addLine(line) {
+  const [raw, t, forms] = line.split('|');
+  if (!raw || !t) return '';
+  const m = raw.match(ARTICLE);
+  const w = lower(m ? m[2] : raw), tr = m && !/мн\. ч\./.test(t) ? `${t} (${m[1]})` : t;
+  if (!DICT.has(w)) DICT.set(w, tr);
+  for (const f of (forms || '').split(',')) if (f) FORMS[lower(f)] ||= w;
+  return w;
+}
 for (const [set, block] of Object.entries(RAW)) {
   SETS[set] = [];
   for (const line of block.split('\n')) {
-    const [raw, t, forms] = line.split('|');
-    if (!raw || !t) continue;
-    const m = raw.match(ARTICLE);
-    const w = lower(m ? m[2] : raw), tr = m && !/мн\. ч\./.test(t) ? `${t} (${m[1]})` : t;
-    if (!DICT.has(w)) DICT.set(w, tr);
-    if (!SETS[set].includes(w)) SETS[set].push(w);
-    for (const f of (forms || '').split(',')) if (f) FORMS[lower(f)] ||= w;
+    const w = addLine(line);
+    if (w && !SETS[set].includes(w)) SETS[set].push(w);
   }
 }
+// Слова из рассказов о песнях — только в словарь
+for (const line of SONG_WORDS.split('\n')) addLine(line);
 
 // ---------- поиск начальной формы ----------
 // Немецкие слова меняют окончания: Kinder → Kind, großen → groß, arbeitet → arbeiten,

@@ -692,6 +692,141 @@ function elOlympiakos() {
   <g transform="translate(560 240)"><path d="M-30 0a30 30 0 0 1 60 0" fill="none" stroke="#4a7a3a" stroke-width="3"/>${Array.from({ length: 9 }, (_, i) => { const a = Math.PI + Math.PI * i / 8; const x = Math.cos(a) * 30, y = Math.sin(a) * 30; return `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="7" ry="3" fill="#4a7a3a" transform="rotate(${(a * 180 / Math.PI + 90).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`; }).join('')}</g>`;
 }
 
+// ---------- немецкие песни и стихи ----------
+// Ель ярусами, с огоньками и звездой на макушке
+const fir = (x, y, h, c = '#2f6a3a', lights = false) => `<g transform="translate(${x} ${y})">${[0, 1, 2, 3].map(i => { const w = h * (.42 - i * .08), yy = -h * (.18 + i * .2); return `<path d="M${-w} ${yy + h * .2}L0 ${yy - h * .12}L${w} ${yy + h * .2}z" fill="${c}"/>`; }).join('')}<rect x="${-h * .05}" y="0" width="${h * .1}" height="${h * .1}" fill="#6a4a2a"/>${lights ? Array.from({ length: 12 }, (_, i) => `<circle cx="${((i * 37) % 9 - 4) * h * .06}" cy="${-h * (.08 + (i % 6) * .13)}" r="${h * .018 + 1}" fill="${['#ffd76a', '#ff6a5a', '#7ad0ff'][i % 3]}"/>`).join('') + star5(0, -h * .8, h * .07) : ''}</g>`;
+const bird = (x, y, s = 1, c = '#3a3a3a', belly = '#e8a040') => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="12" ry="9" fill="${c}"/><ellipse cx="2" cy="3" rx="7" ry="5" fill="${belly}"/><circle cx="9" cy="-6" r="6" fill="${c}"/><path d="M14 -6l6 1.5l-6 1.5z" fill="#e0a02a"/><circle cx="10" cy="-7" r="1.2" fill="#fff"/><path d="M-11 -2l-10 -4l2 8z" fill="${c}"/></g>`;
+const note2 = (x, y, c = '#5a3a6a') => `<path d="M${x} ${y}v-16l10 -3v16" stroke="${c}" stroke-width="2.2" fill="none"/><ellipse cx="${x - 3}" cy="${y}" rx="3.6" ry="2.6" fill="${c}"/><ellipse cx="${x + 7}" cy="${y - 3}" rx="3.6" ry="2.6" fill="${c}"/>`;
+const balloon = (x, y, r, c) => `<path d="M${x} ${y + r}q-4 20 4 40" stroke="#555" stroke-width="1" fill="none"/><ellipse cx="${x}" cy="${y}" rx="${r * .85}" ry="${r}" fill="${c}"/><ellipse cx="${x - r * .3}" cy="${y - r * .35}" rx="${r * .18}" ry="${r * .28}" fill="#fff" opacity=".45"/><path d="M${x - 3} ${y + r}h6l-3 4z" fill="${c}"/>`;
+
+// O Tannenbaum: заснеженный лес, большая ёлка с огоньками, домик с окнами
+function deTannenbaum() {
+  return `<defs>${sky('dTa', [[0, '#16244e'], [1, '#3d5590']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dTa)"/>${stars(30, 5)}${moon(560, 54, 20, '#1c2c5a')}${snowflakes(40, 3)}
+  ${hills(206, '#dfe8f4', 18)}<rect x="0" y="236" width="${W}" height="44" fill="#eef3fa"/>
+  ${[40, 90, 520, 600].map((x, i) => fir(x, 232 - i % 2 * 6, 80 + (i % 2) * 20, '#2a5a3a')).join('')}
+  ${[40, 90, 520, 600].map((x, i) => `<path d="M${x - 24} ${200 - i % 2 * 10}q24 -8 48 0" stroke="#fff" stroke-width="5" opacity=".8"/>`).join('')}
+  <g transform="translate(180 236)"><rect x="-50" y="-60" width="100" height="60" fill="#8a4a2a"/><path d="M-60 -58L0 -100L60 -58z" fill="#f4f6fa"/><rect x="-36" y="-44" width="24" height="22" fill="#ffd87a"/><rect x="12" y="-44" width="24" height="22" fill="#ffd87a"/><rect x="-8" y="-30" width="16" height="30" fill="#5a2e1a"/><rect x="26" y="-96" width="12" height="24" fill="#6a3a22"/></g>
+  ${fir(380, 250, 200, '#2f6a3a', true)}
+  ${[0, 1, 2].map(i => `<rect x="${330 + i * 44}" y="${238 - (i % 2) * 6}" width="28" height="${18 + (i % 2) * 6}" fill="${['#c0392b', '#2f6fb5', '#e0b040'][i]}"/><path d="M${344 + i * 44} ${238 - (i % 2) * 6}v${18 + (i % 2) * 6}" stroke="#fff" stroke-width="3"/>`).join('')}`;
+}
+
+// Alle Vögel sind schon da: весенняя ветка, птицы поют, ноты
+function deVoegel() {
+  return `<defs>${sky('dVo', [[0, '#9fd6f4'], [1, '#effaf0']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dVo)"/>${sun(560, 56, 22)}${cloud(140, 50, .8)}${cloud(380, 36, .6)}
+  ${hills(200, '#a8d878', 20)}<rect x="0" y="228" width="${W}" height="52" fill="#86c25a"/>
+  ${Array.from({ length: 26 }, (_, i) => `<circle cx="${(i * 71) % W}" cy="${236 + (i * 17) % 36}" r="3.5" fill="${['#fff', '#ffd94a', '#f59ac0'][i % 3]}"/>`).join('')}
+  <path d="M0 110q120 -6 220 20q100 24 200 8q90 -14 160 10" stroke="#6a4a2a" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M160 122q20 -30 50 -40M330 140q10 30 40 40M470 126q20 -26 50 -30" stroke="#6a4a2a" stroke-width="5" fill="none"/>
+  ${[[70, 104], [130, 112], [210, 86], [260, 134], [370, 184], [420, 132], [520, 94], [560, 124]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="8" fill="#fbd4e4"/><circle cx="${x}" cy="${y}" r="3" fill="#f2a43a"/>${i % 2 ? `<ellipse cx="${x + 12}" cy="${y + 6}" rx="8" ry="4" fill="#5aa84a"/>` : ''}`).join('')}
+  ${bird(110, 96, 1.2, '#2a2a2a', '#3a3a3a')}${bird(240, 120, 1.1, '#8a6a4a', '#e8a070')}${bird(350, 128, 1.2, '#3a3a4a', '#c8c8d0')}${bird(470, 114, 1.1, '#6a5a4a', '#f0c080')}
+  ${note2(150, 70)}${note2(280, 80, '#2f6fb5')}${note2(400, 90, '#c0392b')}${note2(500, 70)}`;
+}
+
+// Stille Nacht: маленькая церковь в снегу под Зальцбургом, звёздная ночь
+function deStillenacht() {
+  return `<defs>${sky('dSn', [[0, '#0f1a3e'], [.7, '#2a3a74'], [1, '#4a5a94']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dSn)"/>${stars(50, 11)}${star5(470, 50, 14)}${sparkle(470, 50, 28, '#fff8d8')}
+  ${range(210, '#3a4a78', '#dfe6f2')}
+  <path d="M0 236q200 -30 640 -10V${H}H0z" fill="#e8eef8"/>${snowflakes(26, 8)}
+  <g transform="translate(300 236)"><rect x="-50" y="-60" width="100" height="60" fill="#f2ebdc"/><path d="M-58 -58L0 -94L58 -58z" fill="#7a3a2a"/><path d="M-58 -58L0 -94L58 -58" stroke="#fff" stroke-width="4" fill="none" opacity=".8"/>
+  <rect x="-90" y="-120" width="34" height="120" fill="#f2ebdc"/><path d="M-96 -120L-73 -160L-50 -120z" fill="#7a3a2a"/><path d="M-73 -160v-14M-79 -168h12" stroke="#d9a521" stroke-width="2.5"/><rect x="-80" y="-108" width="14" height="18" rx="7" fill="#ffd87a"/>
+  ${[-34, 18].map(k => `<rect x="${k}" y="-46" width="16" height="26" rx="8" fill="#ffd87a"/>`).join('')}<rect x="-8" y="-28" width="16" height="28" fill="#5a3a22"/><circle cx="0" cy="-74" r="7" fill="#ffd87a"/></g>
+  ${[110, 160, 470, 520, 580].map((x, i) => fir(x, 240 - (i % 2) * 4, 60 + (i % 3) * 10, '#22405a')).join('')}
+  <path d="M260 240q40 10 80 0" stroke="#ffd87a" stroke-width="10" opacity=".18"/>`;
+}
+
+// 99 Luftballons: разноцветные шары над городом, в небе следы самолётов
+function deLuftballons() {
+  const cols = ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#e84393', '#00b894'];
+  return `<defs>${sky('dLu', [[0, '#6ab4e8'], [1, '#e8f4fb']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dLu)"/>${cloud(500, 50, .9)}${cloud(120, 80, .7)}
+  <path d="M420 30l200 50" stroke="#fff" stroke-width="3" opacity=".7" stroke-dasharray="10 6"/><path d="M620 80l-6 -6l2 8z" fill="#7a8a9a"/>
+  ${Array.from({ length: 24 }, (_, i) => balloon(60 + (i * 97) % 520 + (i % 3) * 14, 50 + (i * 53) % 130, 9 + (i % 4) * 3, cols[i % cols.length])).join('')}
+  ${[[0, 60], [50, 90], [110, 70], [170, 110], [240, 80], [300, 100], [370, 70], [430, 120], [500, 84], [560, 100]].map(([x, h], i) => `<rect x="${x}" y="${280 - h}" width="${60 - (i % 3) * 6}" height="${h}" fill="${['#5a6a80', '#4a5a70', '#6a7a90'][i % 3]}"/>${Array.from({ length: 3 }, (_, k) => `<rect x="${x + 8 + k * 14}" y="${290 - h}" width="8" height="10" fill="#cfe0f0" opacity=".7"/>`).join('')}`).join('')}
+  <path d="M0 270h${W}" stroke="#3a4a5a" stroke-width="20"/>`;
+}
+
+// Atemlos: ночной город, сцена с огнями, пара танцует
+function deAtemlos() {
+  return `<defs>${sky('dAt', [[0, '#1a0f3a'], [.6, '#4a1f6a'], [1, '#8a3a8a']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dAt)"/>${stars(30, 13)}
+  ${[[0, 90], [60, 130], [120, 100], [470, 120], [530, 150], [590, 100]].map(([x, h]) => `<rect x="${x}" y="${230 - h}" width="54" height="${h}" fill="#2a1a4a"/>${Array.from({ length: 8 }, (_, k) => `<rect x="${x + 8 + (k % 3) * 14}" y="${240 - h + Math.floor(k / 3) * 20}" width="8" height="10" fill="#ffd98a" opacity="${.4 + (k % 3) * .2}"/>`).join('')}`).join('')}
+  ${[[200, '#ff4fa0'], [320, '#4fd0ff'], [440, '#ffd94a']].map(([x, c]) => `<path d="M${x} 0L${x - 70} 240h140z" fill="${c}" opacity=".16"/>`).join('')}
+  <rect x="160" y="230" width="320" height="50" fill="#2a1840"/><path d="M160 230h320" stroke="#ff4fa0" stroke-width="3"/>
+  ${Array.from({ length: 14 }, (_, i) => `<circle cx="${170 + i * 23}" cy="236" r="3" fill="${['#ff4fa0', '#4fd0ff', '#ffd94a'][i % 3]}"/>`).join('')}
+  ${lady(300, 228, 1, '#e8eaf2', '#f0d060')}<g transform="translate(346 228)"><path d="M-10 0l3 -50h14l3 50z" fill="#1a1a2a"/><circle cx="0" cy="-60" r="10" fill="#e3b48e"/><path d="M-10 -64q10 -12 20 0z" fill="#3a2a1a"/><path d="M-8 -44l-26 -10" stroke="#1a1a2a" stroke-width="6" stroke-linecap="round"/></g>
+  ${sparkle(240, 120, 10, '#fff')}${sparkle(420, 90, 8, '#fff')}${sparkle(560, 40, 7, '#fff')}${note2(390, 150, '#ffd94a')}${note2(230, 170, '#4fd0ff')}`;
+}
+
+// Лорелея: скала над Рейном, девушка с золотыми волосами, лодка внизу
+function deLorelei() {
+  return `<defs>${sky('dLo', [[0, '#e8865a'], [.5, '#f6c48a'], [1, '#fde3b8']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dLo)"/>${sun(150, 120, 26, '#ffe08a', .5)}
+  <path d="M0 150q120 -30 260 -6V200H0z" fill="#9a8a7a" opacity=".6"/>
+  ${sea(180, '#3d6a8a', '#f6c890')}
+  <path d="M640 280V40q-40 0 -80 30q-40 30 -60 60q-30 30 -40 70q-10 40 -40 80z" fill="#6a5040"/><path d="M640 60q-40 10 -70 40q-30 30 -50 70" stroke="#4a3a2e" stroke-width="5" fill="none"/>
+  <path d="M520 102q30 -16 60 -10v10h-60z" fill="#4a7a3a"/>
+  <g transform="translate(560 96)"><path d="M-20 0q4 -36 14 -46h12q10 10 14 46z" fill="#e8eef6"/><circle cx="0" cy="-54" r="9" fill="#f3c9a8"/><path d="M-10 -56q-6 30 -24 54q20 -6 26 -30zM10 -56q4 20 10 30" fill="#f0c030"/><path d="M-10 -60q10 -14 20 0" fill="#f0c030"/><path d="M8 -42l14 -10" stroke="#f0c030" stroke-width="3"/></g>
+  ${note2(500, 60, '#6a3a5a')}${note2(470, 90, '#6a3a5a')}
+  <g transform="translate(330 222)"><path d="M-40 0h80l-10 12h-60z" fill="#6a4a2a"/><path d="M-6 0v-30" stroke="#3a2414" stroke-width="2.5"/><path d="M-4 -28l18 22h-18z" fill="#f4efe2"/><g transform="translate(-22 0)"><path d="M-5 0l2 -20h8l2 20z" fill="#3a4a6a"/><circle cx="0" cy="-25" r="5" fill="#e3b48e"/></g></g>
+  ${[[300, 248], [360, 252], [420, 244]].map(([x, y]) => `<path d="M${x} ${y}q10 -8 20 0t20 0" stroke="#e8f2fa" stroke-width="2.5" fill="none" opacity=".7"/>`).join('')}`;
+}
+
+// Лесной царь: ночной лес, всадник с ребёнком, туманная фигура царя
+function deErlkoenig() {
+  return `<defs>${sky('dEr', [[0, '#0e1420'], [1, '#2a3a4a']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dEr)"/>${moon(540, 50, 22, '#141c2a')}
+  ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<path d="M${i * 86 + 10} 280V${120 + (i % 3) * 20}" stroke="#1a2430" stroke-width="${10 + (i % 2) * 6}"/>${[0, 1, 2].map(k => `<path d="M${i * 86 + 10} ${150 + k * 30 + (i % 3) * 10}l${k % 2 ? 30 : -30} -24" stroke="#1a2430" stroke-width="4"/>`).join('')}`).join('')}
+  <path d="M0 230q160 -20 320 0t320 -6V${H}H0z" fill="#16202a"/>
+  <path d="M60 170q120 -20 220 10q120 30 300 -10" stroke="#c8d4e0" stroke-width="22" fill="none" opacity=".12"/>
+  <g opacity=".45"><path d="M120 250q-10 -80 20 -130q20 -20 40 0q30 50 20 130z" fill="#c8d4e0"/><path d="M140 108l6 -14l8 10l8 -12l6 14z" fill="#e0c060"/><circle cx="160" cy="124" r="12" fill="#dfe8f0"/><path d="M180 160q40 -10 70 10" stroke="#c8d4e0" stroke-width="8" fill="none"/></g>
+  <g transform="translate(400 244)">${horse(0, 0, 1.4, '#2a1c14')}<g transform="translate(6 -78)"><path d="M-12 0l3 -40h18l3 40z" fill="#3a2a2a"/><circle cx="0" cy="-48" r="9" fill="#d9b494"/><path d="M-10 -52q10 -14 20 0z" fill="#1a1414"/><path d="M-26 -32q30 -6 34 10" stroke="#5a4a3a" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="-22" cy="-36" r="6" fill="#e8c8a8"/></g></g>
+  ${[[260, 260], [520, 266]].map(([x, y]) => `<path d="M${x} ${y}q12 -14 24 0" stroke="#3a4a5a" stroke-width="2" fill="none"/>`).join('')}`;
+}
+
+// Ода к радости: концертный зал, хор, дирижёр и лучи над сценой
+function deFreude() {
+  return `<defs>${sky('dFr', [[0, '#2a1a10'], [1, '#5a3a20']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dFr)"/>
+  ${Array.from({ length: 12 }, (_, i) => `<path d="M320 -10L${-60 + i * 66} 200" stroke="#ffe7a0" stroke-width="20" opacity=".05"/>`).join('')}
+  <path d="M60 40h520v8h-520z" fill="#c8a060"/>${[80, 200, 320, 440, 560].map(x => `<rect x="${x - 6}" y="48" width="12" height="160" fill="#c8a060" opacity=".7"/>`).join('')}
+  ${[0, 1, 2].map(r => Array.from({ length: 12 - r }, (_, i) => { const x = 110 + r * 18 + i * 38, y = 110 + r * 26; return `<path d="M${x - 9} ${y + 22}l2 -18h14l2 18z" fill="${r % 2 ? '#1a1a1a' : '#e8e2d6'}"/><circle cx="${x}" cy="${y - 2}" r="7" fill="#e3b48e"/><ellipse cx="${x}" cy="${y + 4}" rx="4" ry="3" fill="#3a2a1a" opacity=".6"/>`; }).join('')).join('')}
+  <rect x="40" y="196" width="560" height="84" fill="#7a4a24"/><path d="M40 196h560" stroke="#a06a34" stroke-width="4"/>
+  ${[100, 150, 200, 440, 490, 540].map(x => `<g transform="translate(${x} 240)"><path d="M-8 0l2 -24h12l2 24z" fill="#1a1a1a"/><circle cx="0" cy="-30" r="7" fill="#e3b48e"/><path d="M8 -20l20 -10" stroke="#a06a34" stroke-width="3"/><path d="M26 -34q6 6 0 14" stroke="#a06a34" stroke-width="2" fill="none"/></g>`).join('')}
+  <g transform="translate(320 262)"><path d="M-12 0l3 -46h18l3 46z" fill="#1a1a1a"/><circle cx="0" cy="-54" r="9" fill="#e3b48e"/><path d="M-12 -56q4 -14 12 -12q10 -4 12 10q-6 -6 -12 -4q-8 -2 -12 6z" fill="#cfcfcf"/><path d="M10 -36l26 -24" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/><path d="M36 -60l14 -14" stroke="#f4f1ea" stroke-width="2"/></g>
+  ${note2(80, 30, '#ffe7a0')}${note2(560, 30, '#ffe7a0')}${sparkle(320, 20, 10, '#ffe7a0')}`;
+}
+
+// Гимн Германии: чёрно-красно-золотой флаг над Рейном и холмами
+function deHymne() {
+  const flag = ['#1a1a1a', '#dd2a2a', '#f2c200'].map((c, i) => `<path d="M0 ${i * 26}q40 ${i % 2 ? 8 : -8} 80 0t80 0v26q-40 ${i % 2 ? 8 : -8} -80 0t-80 0z" fill="${c}"/>`).join('');
+  return `<defs>${sky('dHy', [[0, '#5aa0de'], [1, '#e8f4fb']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dHy)"/>${sun(90, 56, 20)}${cloud(480, 50, .8)}
+  ${hills(180, '#8ab86a', 30)}<path d="M0 236q160 -30 320 -10t320 0V${H}H0z" fill="#6a9a4a"/>
+  <path d="M0 220q200 20 360 0t280 10v14q-140 -10 -280 0t-360 -6z" fill="#4a8ac0"/>
+  <g transform="translate(470 200)"><rect x="-40" y="-60" width="80" height="60" fill="#b8a888"/><rect x="-50" y="-90" width="26" height="90" fill="#a89878"/><path d="M-54 -90l17 -24l17 24z" fill="#5a3a2a"/>${[-30, -10, 10, 30].map(k => `<rect x="${k - 4}" y="-70" width="8" height="10" fill="#a89878"/>`).join('')}<rect x="-6" y="-24" width="12" height="24" fill="#4a3a2a"/></g>
+  <g transform="translate(240 210)"><path d="M0 0v-150" stroke="#5a4a3a" stroke-width="5"/><g transform="translate(2 -148)">${flag}</g></g>
+  ${[120, 150, 600].map(x => cypress(x, 240, 40, '#3a6a3a')).join('')}`;
+}
+
+// Лили Марлен: казарма, ворота, фонарь в ночи, солдат и девушка
+function deLilimarleen() {
+  return `<defs>${sky('dLi', [[0, '#141a2a'], [1, '#34405a']])}</defs>
+  <rect width="${W}" height="${H}" fill="url(#dLi)"/>${stars(26, 17)}${moon(90, 50, 18, '#161c2e')}
+  <rect x="300" y="80" width="340" height="170" fill="#4a4a50"/>${Array.from({ length: 10 }, (_, i) => `<rect x="${320 + (i % 5) * 62}" y="${100 + Math.floor(i / 5) * 50}" width="26" height="30" fill="${i === 3 ? '#ffd98a' : '#2a2a34'}"/>`).join('')}
+  <rect x="300" y="72" width="340" height="10" fill="#3a3a40"/>
+  <rect x="380" y="170" width="120" height="80" fill="#2a2a30"/><path d="M380 170h120" stroke="#5a5a62" stroke-width="6"/>${Array.from({ length: 8 }, (_, i) => `<path d="M${388 + i * 15} 176v74" stroke="#5a5a62" stroke-width="3"/>`).join('')}
+  <rect x="0" y="250" width="${W}" height="30" fill="#2a2a32"/>
+  <circle cx="210" cy="96" r="80" fill="#ffd98a" opacity=".08"/><circle cx="210" cy="96" r="40" fill="#ffd98a" opacity=".14"/>
+  <path d="M210 250v-140" stroke="#1a1a20" stroke-width="6"/><path d="M196 110h28l-6 -22h-16z" fill="#2a2a30"/><rect x="200" y="92" width="20" height="16" fill="#ffd98a"/>
+  <path d="M150 250l60 -140l60 140z" fill="#ffd98a" opacity=".1"/>
+  <g transform="translate(192 250)"><path d="M-10 0l2 -40h16l2 40z" fill="#4a5a3a"/><circle cx="0" cy="-48" r="8" fill="#e3b48e"/><path d="M-10 -50q10 -12 20 0h4v3h-28z" fill="#3a4a2a"/></g>
+  ${lady(232, 250, .7, '#8a2a3a', '#6a3a1a')}
+  <ellipse cx="212" cy="262" rx="50" ry="5" fill="#000" opacity=".3"/>`;
+}
+
 const ART = {
   'athos-peninsula': { draw: athosPeninsula, label: 'Полуостров Афон: вершина и монастырь у моря' },
   'athos-morning': { draw: athosMorning, label: 'Ночная служба: храм и монах с билом' },
@@ -731,7 +866,17 @@ const ART = {
   'el-ymnos': { draw: elYmnos, label: 'Сине-белый флаг Греции на холме над морем, лавровые ветви' },
   'el-axion': { draw: elAxion, label: 'Сияющее солнце над островами Эгейского моря, ветвь мирта' },
   'el-ithaki': { draw: elIthaki, label: 'Парусник плывёт к острову Итака на рассвете' },
-  'el-olympiakos': { draw: elOlympiakos, label: 'Колонны древнего храма и олимпийский огонь, лавровый венок' }
+  'el-olympiakos': { draw: elOlympiakos, label: 'Колонны древнего храма и олимпийский огонь, лавровый венок' },
+  'de-tannenbaum': { draw: deTannenbaum, label: 'Ёлка с огоньками и звездой у домика в заснеженном лесу' },
+  'de-voegel': { draw: deVoegel, label: 'Весенняя ветка в цвету, на ней поют птицы, вокруг ноты' },
+  'de-stillenacht': { draw: deStillenacht, label: 'Маленькая церковь в снегу под звёздным небом у Альп' },
+  'de-luftballons': { draw: deLuftballons, label: 'Разноцветные воздушные шарики над городом, след самолёта' },
+  'de-atemlos': { draw: deAtemlos, label: 'Ночная сцена с огнями, пара танцует под лучами прожекторов' },
+  'de-lorelei': { draw: deLorelei, label: 'Девушка с золотыми волосами на скале над Рейном, лодка внизу' },
+  'de-erlkoenig': { draw: deErlkoenig, label: 'Ночной лес: отец с сыном скачет на коне, в тумане фигура Лесного царя' },
+  'de-freude': { draw: deFreude, label: 'Концертный зал: хор, оркестр и дирижёр в лучах света' },
+  'de-hymne': { draw: deHymne, label: 'Чёрно-красно-золотой флаг на холме над Рейном и замком' },
+  'de-lilimarleen': { draw: deLilimarleen, label: 'Фонарь у ворот казармы ночью, солдат и девушка' }
 };
 
 export const hasArt = t => !!(t && ART[t.art]);
