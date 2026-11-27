@@ -1,5 +1,7 @@
 // Тексты на турецком для чтения с переводом по клику. Все тексты написаны специально для Лингвы.
-export const TEXTS = [
+import { TEXTS as SONGS } from './songs.js';
+
+const BASE = [
   {
     id: 'tr-merhaba', level: 'A0', topic: 'Знакомство', title: 'Merhaba!',
     body: `— Merhaba! Benim adım Ali. Senin adın ne?
@@ -105,3 +107,6 @@ Türkçede kelimeler ekler ile değişir. Örneğin "ev" kelimesi "evler", "evim
 Uzmanlar, her gün kısa bir metin okumayı ve yeni kelimeleri tekrarlamayı öneriyor. Ayrıca Türkçe müzik dinlemek ve dizi izlemek de çok yardımcı olur. En önemlisi, hata yapmaktan korkmamak. Hatalar öğrenmenin doğal bir parçasıdır.`
   }
 ];
+
+// Песни и стихи (полка «Песни и стихи») — после основных текстов
+export const TEXTS = [...BASE, ...SONGS];

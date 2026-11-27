@@ -59,7 +59,7 @@ test('Английская библиотека: популярные сказк
 
 test('Иллюстрации к материалам: у каждого art есть рисунок, SVG собирается', async () => {
   const { textArt, hasArt, ART_KEYS } = await import('../public/js/text-art.js');
-  const used = [...EL, ...EN, ...KRC, ...DE].filter(t => t.art);
+  const used = [...EL, ...EN, ...KRC, ...DE, ...TR].filter(t => t.art);
   assert.ok(used.length >= 18);
   for (const t of used) {
     assert.ok(hasArt(t), `нет рисунка ${t.art} у ${t.id}`);
@@ -127,4 +127,26 @@ test('Немецкие песни и стихи: карточки с цитат�
     assert.ok(modern.has(t.id) ? quote <= 2 : quote <= 8, t.id);
     assert.ok(de.SETS[t.set]?.length >= 20 && de.SET_INFO[t.set]?.title, t.id);
   }
+});
+
+test('Турецкие песни и стихи: карточки с цитатой, пересказом, переводом, ссылками, набором и рисунком', async () => {
+  const tr = await import('../public/js/data/tr/dictionary.js');
+  const items = TR.filter(t => t.set?.startsWith('song_tr_'));
+  assert.ok(items.length >= 10);
+  assert.ok(new Set(items.map(t => t.level)).size >= 3, 'разных уровней');
+  // песня Ашыка Вейселя защищена авторским правом: только одна-две строки
+  const modern = new Set(['tr-song-veysel']);
+  for (const t of items) {
+    assert.ok(['song', 'poem'].includes(t.kind), t.id);
+    assert.equal(shelfOf(t), 'songs', t.id);
+    assert.ok(t.summary?.length > 80 && t.translation && t.note, t.id);
+    assert.ok(t.links?.length >= 1 && t.links.every(l => /^https:\/\//.test(l.href)), t.id);
+    assert.ok(t.art, t.id);
+    const quote = t.body.split('\n\n')[0].split('\n').length;
+    assert.ok(modern.has(t.id) ? quote <= 2 : quote <= 8, t.id);
+    assert.ok(tr.SETS[t.set]?.length >= 20 && tr.SET_INFO[t.set]?.title, t.id);
+    // каждое слово цитаты находится в словаре (с учётом аффиксов)
+    for (const w of t.body.split('\n\n')[0].split(/[^\p{L}'’]+/u).filter(Boolean)) assert.ok(tr.lookup(w).translation, `${t.id}: ${w}`);
+  }
+  assert.equal(tr.lookup('Yemen\'de').word, 'yemen');
 });

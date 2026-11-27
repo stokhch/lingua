@@ -2,6 +2,7 @@
 // Формат блоков: "слово|перевод" — по строке на слово. Глаголы даны в инфинитиве (-mak / -mek).
 // Ключ блока = тематический набор.
 import { MORE_RAW, MORE_INFO } from './more-sets.js';
+import { SONG_SETS, WORDS as SONG_WORDS } from './songs.js';
 
 const RAW = {
 start: `merhaba|привет, здравствуйте
@@ -725,6 +726,11 @@ export const SET_INFO = {
 // Дополнительные тематические наборы (more-sets.js) — после основных
 Object.assign(RAW, MORE_RAW);
 Object.assign(SET_INFO, MORE_INFO);
+// Наборы слов из песен и стихов (songs.js) — после тематических
+for (const [id, s] of Object.entries(SONG_SETS)) {
+  RAW[id] = s.words;
+  SET_INFO[id] = { title: s.title, icon: 'education', desc: s.desc };
+}
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]
@@ -736,6 +742,11 @@ for (const [set, block] of Object.entries(RAW)) {
     if (!DICT.has(w)) DICT.set(w, t);
     if (!SETS[set].includes(w)) SETS[set].push(w);
   }
+}
+// Слова из песен и рассказов о них — только в словарь
+for (const line of SONG_WORDS.split('\n')) {
+  const [w, t] = line.split('|');
+  if (w && t && !DICT.has(w)) DICT.set(w, t);
 }
 
 // ---------- поиск начальной формы ----------
