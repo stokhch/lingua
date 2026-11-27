@@ -8,7 +8,7 @@ import { levelRank } from '../placement.js';
 import { KINDS, SHELVES, shelfOf, formatOf, wordTotal, newWordCount } from '../materials.js';
 import { openMaterialEditor } from './materials.js';
 import { textArt } from '../text-art.js';
-import { VIDEO_KINDS, VIDEO_GROUPS } from '../data/krc/videos.js';
+import { VIDEO_KINDS, VIDEO_GROUPS } from '../data/video-kinds.js';
 
 const ROW = 8; // карточек в ряду полки на главной странице библиотеки
 // Полки, которые на главной странице показываются целиком, без кнопки «Все N»
@@ -45,7 +45,7 @@ const videoCard = v => `<a class="video-card vk-${v.kind} lv-${v.level}" href="$
       <span class="video-meta"><span class="lv">${esc(v.level)}</span><span class="video-kind">${esc(VIDEO_KINDS[v.kind] || v.kind)}</span></span>
       <b>${esc(v.title)}</b>${v.ru ? `<span class="video-ru">${esc(v.ru)}</span>` : ''}
       <p>${esc(v.desc)}</p>
-      <span class="video-foot">${v.studio ? `Озвучка: ${esc(v.studio)}` : 'Karachay-TV'} · смотреть ↗</span>
+      <span class="video-foot">${v.studio ? `Озвучка: ${esc(v.studio)}` : esc(v.where || 'Смотреть')} ↗</span>
     </a>`;
 const videosHtml = lang => {
   const sel = videoKind[lang.id] || 'all';
@@ -55,7 +55,7 @@ const videosHtml = lang => {
   return `
     <section class="band videos" id="videos">
       <h2>Видеоматериалы</h2>
-      <p class="muted">Фильмы и мультфильмы с озвучкой на ${esc(lang.prep || lang.acc)}. Начните с мультфильмов уровня A1–A2: знакомый сюжет помогает понимать речь без перевода. Ссылки открываются на внешних сайтах.</p>
+      <p class="muted">${esc(lang.VIDEO_INTRO || `Фильмы, сериалы и мультфильмы на ${lang.prep}.`)} Ссылки открываются на внешних сайтах.</p>
       <div class="video-filter" role="group" aria-label="Тип видео">
         <button class="chip${sel === 'all' ? ' on' : ''}" data-vk="all" aria-pressed="${sel === 'all'}">Все <i>${lang.VIDEOS.length}</i></button>
         ${kinds.map(k => `<button class="chip${sel === k ? ' on' : ''}" data-vk="${k}" aria-pressed="${sel === k}">${esc(VIDEO_GROUPS[k])} <i>${count(k)}</i></button>`).join('')}

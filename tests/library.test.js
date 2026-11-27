@@ -171,6 +171,25 @@ test('Турецкие сказки: десять сказок с перевод
   for (const [f, w] of Object.entries(cases)) assert.equal(tr.lookup(f).word, w, f);
 });
 
+test('Видеоматериалы: у каждого языка есть карточки с рабочими ссылками и известным типом', async () => {
+  const { VIDEO_KINDS } = await import('../public/js/data/video-kinds.js');
+  for (const path of ['videos.js', 'tr/videos.js', 'de/videos.js', 'el/videos.js', 'krc/videos.js']) {
+    const { VIDEOS, VIDEO_CATALOGS = [], VIDEO_INTRO } = await import('../public/js/data/' + path);
+    assert.ok(VIDEOS.length >= 4, path);
+    assert.ok(VIDEO_INTRO, path);
+    assert.equal(new Set(VIDEOS.map(v => v.id)).size, VIDEOS.length, path);
+    for (const v of [...VIDEOS, ...VIDEO_CATALOGS]) {
+      assert.match(v.href, /^https:\/\/\S+$/, v.title);
+      assert.ok(v.title && v.desc, v.href);
+    }
+    for (const v of VIDEOS) {
+      assert.ok(VIDEO_KINDS[v.kind], v.id);
+      assert.match(v.level, /^(A1|A2|B1|B2|C1)$/, v.id);
+      assert.ok(v.studio || v.where, v.id);
+    }
+  }
+});
+
 test('Мифы Древней Греции: перевод, пояснения, рисунок и набор слов у каждого мифа', async () => {
   const el = await import('../public/js/data/el/dictionary.js');
   const myths = EL.filter(t => t.topic === 'Мифы');

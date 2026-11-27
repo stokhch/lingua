@@ -1049,3 +1049,5 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .video-card p{margin:4px 16px 0;font-size:15px;opacity:.85}
 .video-foot{margin-top:6px;font-size:13px;font-weight:800;color:var(--brand-ink)}
 .videos h3{margin:22px 0 8px;font-size:17px}
+.vk-learn .video-poster{background:linear-gradient(135deg,#6fd0c4,#1f7a8c)}
+.vk-series .video-poster{background:linear-gradient(135deg,#d58ad8,#6b2a7a)}
