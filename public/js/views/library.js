@@ -8,6 +8,7 @@ import { levelRank } from '../placement.js';
 import { KINDS, SHELVES, shelfOf, formatOf, wordTotal, newWordCount } from '../materials.js';
 import { openMaterialEditor } from './materials.js';
 import { textArt } from '../text-art.js';
+import { VIDEO_KINDS, VIDEO_GROUPS } from '../data/krc/videos.js';
 
 const ROW = 8; // карточек в ряду полки на главной странице библиотеки
 // Полки, которые на главной странице показываются целиком, без кнопки «Все N»
@@ -36,6 +37,33 @@ const resourcesHtml = lang => `
       <p class="muted">Внешние сайты для изучающих ${esc(lang.acc)}: уроки, словари, книги, новости.</p>
       ${lang.RESOURCES.map(g => `<h3>${esc(g.group)}</h3><ul class="res-list">${g.items.map(r => `<li><a href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>${esc(r.desc)}</span></li>`).join('')}</ul>`).join('')}
     </section>`;
+
+// Видеоматериалы: фильмы и мультфильмы с озвучкой на изучаемом языке (если они заданы в данных языка)
+const videoKind = {}; // выбранный фильтр по типу, для каждого языка отдельно
+const videoCard = v => `<a class="video-card vk-${v.kind} lv-${v.level}" href="${esc(v.href)}" target="_blank" rel="noopener">
+      <span class="video-poster" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="video-meta"><span class="lv">${esc(v.level)}</span><span class="video-kind">${esc(VIDEO_KINDS[v.kind] || v.kind)}</span></span>
+      <b>${esc(v.title)}</b>${v.ru ? `<span class="video-ru">${esc(v.ru)}</span>` : ''}
+      <p>${esc(v.desc)}</p>
+      <span class="video-foot">${v.studio ? `Озвучка: ${esc(v.studio)}` : 'Karachay-TV'} · смотреть ↗</span>
+    </a>`;
+const videosHtml = lang => {
+  const sel = videoKind[lang.id] || 'all';
+  const kinds = Object.keys(VIDEO_KINDS).filter(k => lang.VIDEOS.some(v => v.kind === k));
+  const list = lang.VIDEOS.filter(v => sel === 'all' || v.kind === sel);
+  const count = k => lang.VIDEOS.filter(v => v.kind === k).length;
+  return `
+    <section class="band videos" id="videos">
+      <h2>Видеоматериалы</h2>
+      <p class="muted">Фильмы и мультфильмы с озвучкой на ${esc(lang.prep || lang.acc)}. Начните с мультфильмов уровня A1–A2: знакомый сюжет помогает понимать речь без перевода. Ссылки открываются на внешних сайтах.</p>
+      <div class="video-filter" role="group" aria-label="Тип видео">
+        <button class="chip${sel === 'all' ? ' on' : ''}" data-vk="all" aria-pressed="${sel === 'all'}">Все <i>${lang.VIDEOS.length}</i></button>
+        ${kinds.map(k => `<button class="chip${sel === k ? ' on' : ''}" data-vk="${k}" aria-pressed="${sel === k}">${esc(VIDEO_GROUPS[k])} <i>${count(k)}</i></button>`).join('')}
+      </div>
+      <div class="video-grid">${list.map(videoCard).join('')}</div>
+      ${lang.VIDEO_CATALOGS?.length ? `<h3>Где найти ещё</h3><ul class="res-list">${lang.VIDEO_CATALOGS.map(r => `<li><a href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>${esc(r.desc)}</span></li>`).join('')}</ul>` : ''}
+    </section>`;
+};
 
 function statsFor(list) {
   const s = store.state, { lemma, tokenRe } = L();
@@ -74,7 +102,7 @@ export function renderTexts(main) {
       <div class="toolbar"><h1>Тексты и материалы</h1><button class="btn" id="add-mat">${icon('plus')} Свой материал</button></div>
       <p class="lead">${L().name}: ${all.length} ${plural(all.length, 'материал', 'материала', 'материалов')} на ${shelves.filter(s => s.items.length).length} ${plural(shelves.filter(s => s.items.length).length, 'полке', 'полках', 'полках')}, прочитано ${done}. Нажимайте на незнакомые слова — появится перевод, а слово можно сразу отправить в словарь вместе с предложением. На других сайтах слова поможет собирать <a href="#extension">расширение для браузера</a>.</p>
       <label class="search lib-search">${icon('search')}<input id="lib-q" placeholder="Поиск по названию, теме и тексту" value="${esc(query)}" aria-label="Поиск по материалам"></label>
-      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a></nav>
+      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a>${L().VIDEOS ? `<button class="chip" id="to-videos">Видеоматериалы <i>${L().VIDEOS.length}</i></button>` : ''}</nav>
     </section>
     ${found ? `<section class="band"><h2>Найдено: ${found.length}</h2><div class="texts">${byRelevance(found).map(t => card(t, stats.get(t.id))).join('') || '<div class="empty"><p>Ничего не найдено.</p></div>'}</div></section>`
       : shelves.map(sh => {
@@ -85,8 +113,11 @@ export function renderTexts(main) {
           <div class="shelf-row">${items.map(t => card(t, stats.get(t.id))).join('')}${sh.id === 'own' ? `<button class="text-card add-card" id="add-own">${icon('plus')}<b>Добавить свой материал</b><span>Текст статьи, песню, субтитры или видео с YouTube</span></button>` : ''}</div>
         </section>`;
       }).join('')}
+    ${!found && L().VIDEOS ? videosHtml(L()) : ''}
     ${L().RESOURCES ? resourcesHtml(L()) : ''}`;
     $('#add-mat').onclick = addMaterial;
+    $('#to-videos') && ($('#to-videos').onclick = () => $('#videos')?.scrollIntoView({ behavior: 'smooth' }));
+    $$('[data-vk]').forEach(b => b.onclick = () => { videoKind[L().id] = b.dataset.vk; const y = scrollY; draw(); scrollTo(0, y); });
     $('#add-own') && ($('#add-own').onclick = addMaterial);
     const inp = $('#lib-q');
     inp.oninput = () => { queries[L().id] = inp.value; const pos = inp.selectionStart; draw(); const n = $('#lib-q'); n.focus(); n.setSelectionRange(pos, pos); };
