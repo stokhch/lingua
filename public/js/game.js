@@ -107,8 +107,8 @@ export function addXp(n, why = '', sound = why ? 'done' : 'none') {
   const x = day().x, lang = s.lang || 'en';
   x[lang] = (x[lang] || 0) + n;
   if (why) toast(`+${n} XP · ${why}`, 'xp');
-  if (goal) toast('Дневная цель выполнена — Пим сыт и доволен!', 'goal');
   const goal = before < s.goal && s.xpLog[d] >= s.goal, up = levelInfo().level > lvl;
+  if (goal) toast('Дневная цель выполнена — Пим сыт и доволен!', 'goal');
   if (up) toast(`Новый уровень: ${levelInfo().level}!`, 'level');
   fanfare(goal || up ? 'big' : sound);
   store.save();
