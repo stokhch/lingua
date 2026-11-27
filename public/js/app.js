@@ -31,6 +31,7 @@ import { flagsFor } from './flags.js';
 import { dayPlanHtml } from './views/dayplan.js';
 import { renderPlacement, placementBanner, myLevel, hasPlacement } from './views/placement.js';
 import { BOARDS, standing, nudgeText, reminderFor } from './rating.js';
+import { reqButton, bindReqButtons } from './friendreq.js';
 import { initInstall, installCard, fillInstallCard, installSettings, bindInstallSettings } from './install.js';
 
 const NAV = [
@@ -52,6 +53,7 @@ function shell() {
       <button class="pill lang" id="hud-lang" title="Изучаемый язык — сменить" aria-label="Сменить изучаемый язык">${icon('globe')}<b></b></button>
       <a class="pill streak" href="#progress" title="Дней подряд — открыть прогресс">${icon('fire')}<b id="hud-streak">0</b></a>
       <a class="pill xp" href="#progress" title="Опыт за сегодня / цель — открыть прогресс">${icon('star')}<b id="hud-xp">0</b></a>
+      <a class="pill msg" href="#friends" title="Запросы в друзья" id="hud-fr" aria-label="Запросы в друзья" hidden>${icon('heart')}<b>0</b></a>
       <a class="pill msg" href="#messages" title="Сообщения" id="hud-msg" aria-label="Сообщения" hidden>${icon('mail')}<b hidden>0</b></a>
       <a class="avatar" href="#profile" title="Профиль" id="hud-avatar"></a>
       <span class="who" id="hud-who"></span>
@@ -321,7 +323,7 @@ function renderProfile(main, param = '') {
     <div class="badges">${G.BADGES.map(b => `<div class="badge ${s.badges[b.id] ? 'got' : ''}">${icon('trophy')}<b>${b.title}</b><span>${b.desc}</span></div>`).join('')}</div>
   </section>
   ${installSettings()}
-  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#messages">${icon('mail')}<div><b>Сообщения</b><span>Переписка с друзьями и одноклассниками, поздравления с достижениями и подарки-картинки</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
+  <section class="band"><a class="action friends-link" href="#friends">${icon('heart')}<div><b>Друзья и дуэли</b><span>Добавляйте друзей по коду или запросом, сравнивайте опыт за неделю и вызывайте на дуэль по словам</span></div></a><a class="action friends-link" href="#messages">${icon('mail')}<div><b>Сообщения</b><span>Переписка с друзьями и одноклассниками, поздравления с достижениями и подарки-картинки</span></div></a><a class="action friends-link" href="#students">${icon('chart')}<div><b>Все ученики</b><span>Уровни, опыт, стрики и языки всех учеников Лингвы${s.hideFromAll ? ' · вы сейчас скрыты' : ''}</span></div></a><a class="action friends-link" href="#classes">${icon('user')}<div><b>Классы</b><span>Вступайте в класс по коду учителя и соревнуйтесь с одноклассниками. Учителю — панель с прогрессом учеников</span></div></a><a class="action friends-link" href="#extension">${icon('globe')}<div><b>Расширение для браузера</b><span>Перевод по двойному клику на любом сайте и сохранение слов в словарь</span></div></a></section>
   <section class="band">
     <h2>Настройки</h2>
     <form class="settings" id="settings">
@@ -381,7 +383,8 @@ function renderProfile(main, param = '') {
       const b = BOARDS[tab], rows = data[tab] || [];
       lb.innerHTML = `<div class="sec-head"><h2>${b.title}</h2><div class="seg" role="tablist" aria-label="Рейтинг">${Object.entries(BOARDS).map(([k, x]) => `<button role="tab" data-board="${k}" aria-selected="${k === tab}">${x.short}</button>`).join('')}</div></div>
         <p class="rating-me">${icon('trophy')}<span>${esc(nudgeText(standing(rows, b.key), b.key))}</span></p>
-        ${rows.length ? `<ol class="leaders">${rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span><b>${esc(r.name)}</b><span>${icon('fire')}${r.streak}</span><span class="num">${r[b.key]} XP</span></li>`).join('')}</ol>` : ''}`;
+        ${rows.length ? `<ol class="leaders">${rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span class="pos">${i + 1}</span><span class="lb-name"><b>${esc(r.name)}</b>${r.pid && r.rel !== 'friend' ? reqButton(r.rel, r.pid, r.name) : ''}</span><span>${icon('fire')}${r.streak}</span><span class="num">${r[b.key]} XP</span></li>`).join('')}</ol>` : ''}`;
+      bindReqButtons(lb, (pid, rel) => { for (const k of Object.keys(BOARDS)) (data[k] || []).forEach(r => { if (r.pid === pid) r.rel = rel; }); draw(); });
       $$('[data-board]', lb).forEach(x => x.onclick = () => { tab = x.dataset.board; lsSet(LS_BOARD, tab); draw(); });
     };
     lb.innerHTML = '<h2>Рейтинг дня и недели</h2><p class="muted">Загрузка…</p>';

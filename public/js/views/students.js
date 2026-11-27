@@ -5,6 +5,7 @@ import { esc, $, $$, icon, plural } from '../ui.js';
 import * as G from '../game.js';
 import { LANGS } from '../lang.js';
 import { rankFor } from '../ranks.js';
+import { reqButton, bindReqButtons } from '../friendreq.js';
 
 const V = { sort: 'week', lang: 'all', q: '' };
 const SORTS = [['week', 'Опыт за неделю'], ['xp', 'Опыт всего'], ['streak', 'Дней подряд'], ['words', 'Слов в словарях']];
@@ -34,6 +35,7 @@ export function renderStudents(main) {
     <section class="band">
       ${head}
       <p class="lead">${data.total} ${plural(data.total, 'ученик', 'ученика', 'учеников')} в Лингве, на этой неделе ${plural(active, 'занимался', 'занимались', 'занимались')} ${active}. Видны только имена и учебные успехи — без e-mail.</p>
+      ${store.mode === 'server' ? '<p class="muted small">Нажмите «В друзья», чтобы отправить запрос: дружба начнётся, когда ученик его примет.</p>' : ''}
       ${me?.hidden ? `<p class="note">Вы скрыты от других учеников: этот список видят без вас. <a href="#profile">Изменить в профиле</a></p>` : store.mode === 'server' ? `<p class="muted small">Не хотите быть в списке? Скройте себя в <a href="#profile">профиле</a>.</p>` : ''}
       <div class="filters">
         <label class="search">${icon('search')}<input id="st-q" placeholder="Поиск по имени" value="${esc(V.q)}" aria-label="Поиск по имени"></label>
@@ -42,13 +44,15 @@ export function renderStudents(main) {
       </div>
       ${list.length ? `<ol class="leaders students">${list.map((s, i) => `<li class="${s.me ? 'me' : ''}"><span class="pos">${i + 1}</span>
         <div class="fr-name"><b>${esc(s.name)}${s.me ? ' (вы)' : ''}</b><span>${esc(rankFor(s.level).title)} · ур. ${s.level} · ${ago(s.active)}</span>
-          <span class="st-langs">${s.langs.map(l => `<i title="${esc(LANGS[l.id]?.name || l.id)}: ${l.words} ${plural(l.words, 'слово', 'слова', 'слов')}, изучено ${l.known}, текстов ${l.texts}">${esc(LANGS[l.id]?.code || l.id)}${l.level ? ' ' + esc(l.level) : ''} · ${l.words} ${plural(l.words, 'слово', 'слова', 'слов')}</i>`).join('')}</span></div>
+          <span class="st-langs">${s.langs.map(l => `<i title="${esc(LANGS[l.id]?.name || l.id)}: ${l.words} ${plural(l.words, 'слово', 'слова', 'слов')}, изучено ${l.known}, текстов ${l.texts}">${esc(LANGS[l.id]?.code || l.id)}${l.level ? ' ' + esc(l.level) : ''} · ${l.words} ${plural(l.words, 'слово', 'слова', 'слов')}</i>`).join('')}</span>
+          ${s.pid ? `<span class="st-act">${reqButton(s.rel, s.pid, s.name)}</span>` : ''}</div>
         <span title="Дней подряд (рекорд ${s.best})">${icon('fire')}${s.streak}</span>
         <span class="num" title="Опыт за неделю">${s.week} XP</span>
         <span class="num total" title="Опыт всего">${s.xp}</span></li>`).join('')}</ol>`
         : '<div class="empty"><p>Никого не найдено.</p></div>'}
       ${data.total > all.length ? `<p class="muted small">Показаны первые ${all.length} по опыту за неделю.</p>` : ''}
     </section>`;
+    bindReqButtons(main, (pid, rel) => { const s = all.find(x => x.pid === pid); if (s) { s.rel = rel; draw(); } });
     $$('[data-v]').forEach(x => x.onchange = () => { V[x.dataset.v] = x.value; draw(); });
     const inp = $('#st-q');
     inp.oninput = () => { V.q = inp.value; const pos = inp.selectionStart; draw(); const n = $('#st-q'); n.focus(); n.setSelectionRange(pos, pos); };

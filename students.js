@@ -36,10 +36,11 @@ export function studentRow(u, weekXp, now = Date.now()) {
   };
 }
 
-export function studentsList(users, meId, weekXp, now = Date.now()) {
+// extra(u) — дополнительные поля для чужих строк (pid и состояние дружбы, если смотрит ученик с аккаунтом)
+export function studentsList(users, meId, weekXp, now = Date.now(), extra = null) {
   const rows = Object.values(users || {})
     .filter(u => u.id === meId || !u.state?.hideFromAll)
-    .map(u => studentRow(u, weekXp, now))
+    .map(u => ({ ...studentRow(u, weekXp, now), ...(extra && u.id !== meId ? extra(u) : {}) }))
     .sort((a, b) => b.week - a.week || b.xp - a.xp);
   // id наружу не отдаём: вместо него — пометка «это вы»
   return { total: rows.length, students: rows.slice(0, LIMIT).map(({ id, ...r }) => ({ ...r, me: id === meId })) };

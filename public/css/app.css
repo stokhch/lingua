@@ -1051,3 +1051,14 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .videos h3{margin:22px 0 8px;font-size:17px}
 .vk-learn .video-poster{background:linear-gradient(135deg,#6fd0c4,#1f7a8c)}
 .vk-series .video-poster{background:linear-gradient(135deg,#d58ad8,#6b2a7a)}
+
+/* запросы в друзья */
+.fr-reqs{list-style:none;padding:0;margin:0 0 8px;display:grid;gap:8px;max-width:820px}
+.fr-reqs li{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px;border-radius:12px;background:var(--card);border:2px solid var(--gold)}
+.fr-reqs .ava{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand-ink);font-weight:900}
+.fr-pref{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:12px;font-weight:700}
+.st-act{margin-top:4px}.st-act .btn,.lb-name .btn{min-height:32px;padding:0 10px;font-size:13px}
+.lb-name{display:flex!important;flex-wrap:wrap;align-items:center;gap:4px 10px!important;min-width:0}
+.fr-state{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:800;color:var(--brand-ink)}.fr-state .ic{width:14px;height:14px;color:var(--coral)}
+@media (max-width:640px){.fr-reqs li{grid-template-columns:40px minmax(0,1fr)}.fr-reqs .fr-act{grid-column:1/-1;justify-content:flex-end}}
+.pill.msg[hidden]{display:none}

@@ -11,7 +11,7 @@
 //   GET  /api/translate-sentence?q=…&lang=en|tr   -> машинный перевод предложения (для чтения)
 //   GET  /api/tts?q=…&lang=en|tr|el|kk            -> mp3 с озвучкой, когда в браузере нет голоса для языка
 //   GET  /api/lookup, /api/inbox, POST /api/inbox(/clear), GET /lingva-extension.zip -> расширение браузера (extension-api.js)
-//   GET  /api/invite (без входа), GET /api/social, POST /api/friends, /api/friends/remove, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
+//   GET  /api/invite (без входа), GET /api/social, POST /api/friends, /api/friends/remove|request|respond|cancel|settings, /api/duels, /api/duels/answer -> друзья и дуэли (social.js)
 //   GET /api/messages…, POST /api/messages/send|block|report|settings, /api/reports… -> личные сообщения, поздравления и подарки (messages.js)
 //   GET/POST /api/classes…, /api/join, /api/teacher/enable -> учитель, классы и соревнования (teacher.js)
 // Данные хранятся в PostgreSQL, если задан DATABASE_URL, иначе в ./data/db.json (см. storage.js).
@@ -203,7 +203,8 @@ async function ttsAudio(q, lang) {
 const social = createSocial({ getDb: () => db, persist, send, readJson, weekXp });
 // Модераторы жалоб на сообщения: e-mail через запятую в LINGVA_ADMINS
 const ADMINS = String(process.env.LINGVA_ADMINS || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-const messages = createMessages({ getDb: () => db, persist, send, readJson, codeOf: social.codeOf, byCode: social.byCode, admins: ADMINS });
+const messages = createMessages({ getDb: () => db, persist, send, readJson, codeOf: social.codeOf, byCode: social.byCode, admins: ADMINS,
+  friendReqs: social.incomingCount, relOf: social.relOf, pidOf: social.pidOf });
 const teacher = createTeacher({ getDb: () => db, persist, send, readJson });
 const ext = createExtensionApi({ root: ROOT, send, readJson, translate, persist });
 
@@ -236,16 +237,22 @@ async function api(req, res, url) {
   }
 
   if (route === 'GET /api/leaderboard') {
-    const me = auth(req)?.user?.id;
+    const meUser = auth(req)?.user, me = meUser?.id;
+    // pid и состояние дружбы — чтобы прямо из рейтинга отправить запрос в друзья (только с аккаунтом)
+    const rel = u => (meUser && u.id !== me ? { pid: social.pidOf(u), rel: social.relOf(meUser, u) } : {});
     // День берём по календарю того, кто смотрит (?day=YYYY-MM-DD), но не дальше суток от UTC
     const utc = Date.now(), asked = url.searchParams.get('day') || '';
     const okDay = /^\d{4}-\d{2}-\d{2}$/.test(asked) && Math.abs(Date.parse(asked + 'T12:00:00Z') - utc) < 2 * 86400000;
     const day = okDay ? asked : new Date(utc).toISOString().slice(0, 10);
-    const rows = Object.values(db.users).filter(u => u.id === me || !u.state?.hideFromAll).map(u => ({ me: u.id === me, name: u.name, xp: u.state?.xp || 0, week: weekXp(u.state), today: u.state?.xpLog?.[day] || 0, streak: u.state?.streak || 0 }));
-    return send(res, 200, { day: [...rows].sort((a, b) => b.today - a.today).slice(0, 20), week: [...rows].sort((a, b) => b.week - a.week).slice(0, 20), total: [...rows].sort((a, b) => b.xp - a.xp).slice(0, 20) });
+    const rows = Object.values(db.users).filter(u => u.id === me || !u.state?.hideFromAll).map(u => ({ me: u.id === me, name: u.name, xp: u.state?.xp || 0, week: weekXp(u.state), today: u.state?.xpLog?.[day] || 0, streak: u.state?.streak || 0, u }));
+    const top = list => list.slice(0, 20).map(({ u, ...r }) => ({ ...r, ...rel(u) }));
+    return send(res, 200, { day: top([...rows].sort((a, b) => b.today - a.today)), week: top([...rows].sort((a, b) => b.week - a.week)), total: top([...rows].sort((a, b) => b.xp - a.xp)) });
   }
 
-  if (route === 'GET /api/students') return send(res, 200, studentsList(db.users, auth(req)?.user?.id, weekXp));
+  if (route === 'GET /api/students') {
+    const meUser = auth(req)?.user;
+    return send(res, 200, studentsList(db.users, meUser?.id, weekXp, Date.now(), meUser ? u => ({ pid: social.pidOf(u), rel: social.relOf(meUser, u) }) : null));
+  }
 
   if (route === 'GET /api/translate') {
     const lang = ONLINE_LANGS.has(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'en';

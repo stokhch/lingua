@@ -6,6 +6,7 @@
 import { store } from '../store.js';
 import { esc, $, $$, icon, toast, modal, plural } from '../ui.js';
 import { GIFTS, giftById, BADGE_TITLES, CHEERS } from '../kudos.js';
+import { reqButton, bindReqButtons } from '../friendreq.js';
 
 const POLL_MS = 6000;
 const DM_FROM = [['contacts', 'Друзья и одноклассники'], ['friends', 'Только друзья'], ['nobody', 'Никто']];
@@ -29,16 +30,26 @@ function needAccount(main) {
 
 // ---------- Счётчик непрочитанных в шапке ----------
 let unreadTimer = null, unreadTick = null, listening = false;
+let seenReqs = -1; // -1: первый опрос — о старых запросах тостом не напоминаем, их видно по сердечку
 export function watchUnread() {
   const tick = async () => {
     const el = $('#hud-msg');
     if (!el) return;
     el.hidden = store.mode !== 'server';
+    if (el.hidden && $('#hud-fr')) $('#hud-fr').hidden = true;
     if (store.mode !== 'server' || document.hidden) return;
     try {
-      const { n } = await store.api('GET', 'api/messages/unread');
+      const { n, reqs = 0 } = await store.api('GET', 'api/messages/unread');
       const b = $('b', el); b.textContent = n > 99 ? '99+' : n; b.hidden = !n;
       el.title = n ? `Сообщения: ${n} ${plural(n, 'непрочитанное', 'непрочитанных', 'непрочитанных')}` : 'Сообщения';
+      // входящие запросы в друзья: сердечко со счётчиком и тост, когда пришёл новый
+      const fr = $('#hud-fr');
+      if (fr) {
+        fr.hidden = !reqs; $('b', fr).textContent = reqs > 99 ? '99+' : reqs;
+        fr.title = `Запросы в друзья: ${reqs}`; fr.setAttribute('aria-label', fr.title);
+        if (seenReqs >= 0 && reqs > seenReqs && location.hash !== '#friends') toast(reqs - seenReqs === 1 ? 'Новый запрос в друзья — откройте «Друзья»' : `Новые запросы в друзья: ${reqs - seenReqs}`);
+        seenReqs = reqs;
+      }
     } catch {}
   };
   clearInterval(unreadTimer);
@@ -167,6 +178,7 @@ function renderThread(main, code) {
         <span class="ava">${esc(w.name.slice(0, 1).toUpperCase())}</span>
         <div><h1>${esc(w.name)}</h1><span class="muted small">${KIND[w.kind] || 'больше не в друзьях и не в одном классе'}</span></div>
         <span class="row gap">
+          ${w.pid && w.req !== 'friend' && !d.blocked ? reqButton(w.req, w.pid, w.name) : ''}
           <button class="btn ghost small" id="block">${d.blocked ? 'Разблокировать' : 'Заблокировать'}</button>
           <button class="btn ghost danger small" id="report">Пожаловаться</button>
         </span>
@@ -181,6 +193,7 @@ function renderThread(main, code) {
       <p class="muted small">${SAFETY}</p>
     </section>`;
     const list = $('#msgs'); list.scrollTop = list.scrollHeight;
+    bindReqButtons($('.chat-head'), (pid, rel) => { if (rel === 'friend') load(); else { w.req = rel; draw(); } });
     $('#block').onclick = async () => {
       try { await store.api('POST', 'api/messages/block', { code, block: !d.blocked }); toast(d.blocked ? 'Разблокировано' : 'Заблокировано: писать вам и добавлять вас в друзья этот ученик больше не сможет'); load(); } catch (e) { toast(e.message); }
     };

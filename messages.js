@@ -10,7 +10,7 @@
 //
 //   GET  /api/messages                     -> { convs, contacts, news, gifts, blocked, dmFrom, muted, admin }
 //                                             news — свежие (14 дней) достижения друзей и одноклассников, gifts — полученные подарки
-//   GET  /api/messages/unread              -> { n }
+//   GET  /api/messages/unread              -> { n, reqs } — непрочитанные и входящие запросы в друзья
 //   GET  /api/messages/thread?with=КОД     -> { with, msgs, canSend, reason, blocked } (отмечает прочитанным)
 //   POST /api/messages/send     { to, text, gift?, badge? }  -> gift — id встроенной картинки-подарка (kudos.js),
 //                                badge — поздравление с достижением, которое у получателя действительно есть (один раз за достижение)
@@ -21,6 +21,7 @@
 //   POST /api/reports/resolve   { id, action: 'dismiss' | 'mute' | 'unmute' }
 import crypto from 'node:crypto';
 import { GIFTS, BADGE_TITLES } from './public/js/kudos.js';
+import { dropRequests } from './social.js';
 
 export const MAX_LEN = 1000;
 export const KEEP = 300;            // сообщений в одной переписке (старые удаляются)
@@ -75,7 +76,7 @@ export function denyReason(db, from, to) {
   return null;
 }
 
-export function createMessages({ getDb, persist, send, readJson, codeOf, byCode, admins = [] }) {
+export function createMessages({ getDb, persist, send, readJson, codeOf, byCode, admins = [], friendReqs = () => 0, relOf = () => null, pidOf = null }) {
   const db = () => { const d = getDb(); d.dms ||= {}; d.reports ||= []; return d; };
   const users = () => db().users;
   const isAdmin = u => admins.includes(String(u.email || '').toLowerCase());
@@ -140,7 +141,7 @@ export function createMessages({ getDb, persist, send, readJson, codeOf, byCode,
     if (!route.includes(' /api/messages') && !route.includes(' /api/reports')) return false;
     const me = session.user;
 
-    if (route === 'GET /api/messages/unread') return send(res, 200, { n: totalUnread(me) });
+    if (route === 'GET /api/messages/unread') return send(res, 200, { n: totalUnread(me), reqs: friendReqs(me) });
 
     if (route === 'GET /api/messages') {
       const convs = Object.values(db().dms).filter(c => (c.a === me.id || c.b === me.id) && c.msgs.length)
@@ -165,7 +166,7 @@ export function createMessages({ getDb, persist, send, readJson, codeOf, byCode,
       if (!c && reason) return send(res, 403, { error: reason });
       if (c?.msgs.length && unreadIn(c, me)) { (c.read ||= {})[me.id] = Date.now(); persist(); }
       return send(res, 200, {
-        with: { ...person(o), kind: relation(db(), me, o) },
+        with: { ...person(o), kind: relation(db(), me, o), req: relOf(me, o), ...(pidOf && { pid: pidOf(o) }) },
         msgs: (c?.msgs || []).map(m => view(m, me)),
         badges: Object.keys(o.state?.badges || {}).filter(id => BADGE_TITLES[id]),
         congratulated: [...new Set((c?.msgs || []).filter(m => m.badge && m.from === me.id).map(m => m.badge))],
@@ -226,6 +227,7 @@ export function createMessages({ getDb, persist, send, readJson, codeOf, byCode,
         // блокировка снимает дружбу, иначе заблокированный оставался бы в друзьях и мог вызывать на дуэли
         me.friends = (me.friends || []).filter(id => id !== o.id);
         o.friends = (o.friends || []).filter(id => id !== me.id);
+        dropRequests(db(), me.id, o.id);
       }
       persist();
       return send(res, 200, { blocked: body.block !== false });
@@ -247,6 +249,7 @@ export function createMessages({ getDb, persist, send, readJson, codeOf, byCode,
         (me.blocked ||= []).push(o.id);
         me.friends = (me.friends || []).filter(id => id !== o.id);
         o.friends = (o.friends || []).filter(id => id !== me.id);
+        dropRequests(db(), me.id, o.id);
       }
       persist();
       return send(res, 201, { ok: true });
