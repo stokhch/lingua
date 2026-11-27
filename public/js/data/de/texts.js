@@ -117,5 +117,161 @@ Am Sonntag hat es leider geregnet, deshalb sind wir den ganzen Tag im Museum geb
 Aber mit der Zeit habe ich verstanden, dass Deutsch sehr logisch ist. Lange Wörter bestehen oft aus kurzen Wörtern, die man schon kennt: „Kühlschrank“ ist einfach ein kalter Schrank. Und man liest fast alles so, wie man es schreibt.
 
 Ich lerne jeden Tag zwanzig Minuten. Ich wiederhole neue Wörter, lese kurze Texte und höre deutsche Lieder. Am wichtigsten ist, keine Angst vor Fehlern zu haben. Wer spricht, lernt schneller.`
+  },
+  // ---------- A1 ----------
+  {
+    id: 'de-einkaufen', level: 'A1', topic: 'Покупки', title: 'Im Supermarkt',
+    body: `Heute ist Samstag. Lena geht in den Supermarkt, denn der Kühlschrank ist fast leer. Sie hat eine Einkaufsliste: Milch, Eier, Brot, Käse, Äpfel und Tomaten.
+
+Im Supermarkt nimmt sie einen Einkaufswagen. Zuerst geht sie zum Obst und Gemüse. Die Äpfel sind heute im Angebot, ein Kilo kostet nur zwei Euro. Lena kauft auch ein Kilo Tomaten.
+
+Dann holt sie Milch, Eier und Käse. Das Brot kauft sie nicht im Supermarkt, sondern beim Bäcker nebenan, denn dort ist es frischer.
+
+An der Kasse fragt die Kassiererin: „Haben Sie eine Tüte?“ — „Ja, ich habe eine Tasche dabei“, antwortet Lena. Sie bezahlt mit Karte. Alles zusammen kostet fünfzehn Euro.`
+  },
+  {
+    id: 'de-wetter', level: 'A1', topic: 'Погода', title: 'Das Wetter in Deutschland',
+    body: `In Deutschland gibt es vier Jahreszeiten. Im Frühling wird es langsam wärmer, die Bäume werden grün und überall wachsen Blumen. Aber das Wetter ändert sich oft: Am Morgen scheint die Sonne, und am Nachmittag regnet es.
+
+Im Sommer ist es meistens warm, manchmal sogar heiß. Viele Leute fahren dann an die Ostsee oder in die Berge. Im Herbst werden die Blätter gelb und rot, es ist windig und oft neblig.
+
+Der Winter ist kalt und dunkel. In Süddeutschland und in den Alpen schneit es viel, dann fahren die Leute Ski. In Norddeutschland regnet es im Winter eher. Mein Lieblingswetter? Ein sonniger Herbsttag!`
+  },
+  {
+    id: 'de-hobbys', level: 'A1', topic: 'Хобби', title: 'Meine Hobbys',
+    body: `Ich heiße Jonas und ich bin zweiundzwanzig Jahre alt. Ich studiere Informatik in Köln. In meiner Freizeit mache ich gern Sport. Zweimal pro Woche spiele ich Fußball mit Freunden, und am Wochenende fahre ich oft Fahrrad.
+
+Ich lese auch gern, besonders Krimis. Abends höre ich Musik oder spiele Gitarre. Ich spiele noch nicht so gut, aber ich übe jeden Tag ein bisschen.
+
+Meine Freundin Sara mag keinen Sport. Sie malt und fotografiert gern. Zusammen gehen wir oft ins Kino oder ins Museum. Und was machst du in deiner Freizeit?`
+  },
+  {
+    id: 'de-brief', level: 'A1', topic: 'Письмо', title: 'Eine Nachricht an Oma',
+    body: `Liebe Oma,
+
+wie geht es dir? Mir geht es gut. Ich bin jetzt seit zwei Wochen in Hamburg. Die Stadt ist sehr schön, aber es regnet oft.
+
+Meine Wohnung ist klein, aber hell. Sie hat ein Zimmer, eine Küche und ein Bad. Meine Nachbarn sind sehr nett. Der Deutschkurs beginnt jeden Tag um neun Uhr. Meine Lehrerin heißt Frau Schulz, sie erklärt alles sehr gut.
+
+Am Sonntag mache ich eine Hafenrundfahrt. Ich schicke dir dann Fotos.
+
+Viele Grüße und bis bald,
+deine Mila`
+  },
+  // ---------- A2 ----------
+  {
+    id: 'de-umzug', level: 'A2', topic: 'Дом', title: 'Der Umzug',
+    body: `Letzten Monat sind Tim und Julia in eine neue Wohnung gezogen. Die alte Wohnung war zu klein, denn im Frühling ist ihr Sohn geboren. Die neue Wohnung hat drei Zimmer und einen Balkon, und sie liegt in der Nähe von einem Park.
+
+Der Umzug war anstrengend. Am Samstag sind um acht Uhr morgens vier Freunde gekommen und haben geholfen. Sie haben die Kisten, die Schränke und die Waschmaschine in einen Lieferwagen getragen. Leider gab es in dem alten Haus keinen Aufzug, und Tim und Julia haben im vierten Stock gewohnt!
+
+Am Abend waren alle müde, aber zufrieden. Julia hat Pizza bestellt, und sie haben zusammen auf dem Balkon gegessen. Jetzt müssen sie noch Lampen aufhängen und Bilder an die Wand hängen. Nächsten Monat wollen sie eine Einweihungsparty machen.`
+  },
+  {
+    id: 'de-urlaub', level: 'A2', topic: 'Путешествия', title: 'Urlaub an der Ostsee',
+    body: `Im August haben wir eine Woche Urlaub an der Ostsee gemacht. Wir sind mit dem Auto gefahren, die Fahrt hat sechs Stunden gedauert. Wir haben in einer kleinen Ferienwohnung direkt am Strand gewohnt.
+
+Das Wetter war meistens gut. Jeden Morgen sind wir früh aufgestanden und am Strand spazieren gegangen. Die Kinder haben Sandburgen gebaut und im Meer gebadet. Das Wasser war ziemlich kalt, nur achtzehn Grad, aber das hat ihnen nichts ausgemacht.
+
+An einem Tag hat es geregnet. Da haben wir ein Schiff genommen und eine kleine Insel besucht. Abends haben wir oft Fischbrötchen gegessen, die sind dort besonders lecker. Es war ein wunderbarer Urlaub, und wir möchten nächstes Jahr wiederkommen.`
+  },
+  {
+    id: 'de-vorstellungsgespraech', level: 'A2', topic: 'Работа', title: 'Das Vorstellungsgespräch',
+    body: `— Guten Tag, Herr Novak. Bitte nehmen Sie Platz. Erzählen Sie uns etwas über sich.
+
+— Guten Tag. Ich bin achtundzwanzig Jahre alt und komme aus Tschechien. Ich habe in Prag Informatik studiert. Seit drei Jahren arbeite ich als Programmierer bei einer kleinen Firma.
+
+— Warum möchten Sie bei uns arbeiten?
+
+— Ihre Firma ist international, und ich möchte an großen Projekten arbeiten. Außerdem möchte ich in Deutschland leben, weil meine Frau hier eine Stelle bekommen hat.
+
+— Wie gut sprechen Sie Deutsch?
+
+— Ich lerne seit zwei Jahren Deutsch. Im Moment mache ich einen Deutschkurs am Abend und lerne für die Prüfung auf Niveau B eins. Englisch spreche ich fließend.
+
+— Sehr gut. Haben Sie noch Fragen?
+
+— Ja. Wann kann ich anfangen, und kann man manchmal von zu Hause arbeiten?
+
+— Sie könnten am ersten März anfangen. Und ja, zwei Tage pro Woche ist Homeoffice möglich. Wir melden uns bis Freitag bei Ihnen.`
+  },
+  {
+    id: 'de-geburtstag', level: 'A2', topic: 'Праздники', title: 'Eine Geburtstagsparty',
+    body: `Am Freitag hatte meine Kollegin Anja Geburtstag. Sie ist dreißig geworden und hat eine große Party gemacht. Sie hat ungefähr zwanzig Gäste eingeladen: Freunde, Kollegen und ihre Familie.
+
+Ich wusste nicht, was ich ihr schenken soll. Zum Glück hat mir ihr Mann einen Tipp gegeben: Anja liest gern und möchte Italienisch lernen. Also habe ich ihr ein italienisches Kochbuch und einen Blumenstrauß gekauft.
+
+Die Party hat um acht Uhr begonnen. Es gab ein großes Buffet mit Salaten, Käse und einem Schokoladenkuchen. Später haben wir getanzt und viel gelacht. Um Mitternacht haben alle „Zum Geburtstag viel Glück“ gesungen. Ich bin erst um zwei Uhr nach Hause gekommen.`
+  },
+  {
+    id: 'de-rezept', level: 'A2', topic: 'Еда', title: 'Ein einfaches Rezept: Kartoffelsuppe',
+    body: `Kartoffelsuppe ist ein typisches deutsches Gericht. Sie ist einfach, billig und schmeckt besonders im Winter.
+
+Sie brauchen für vier Personen: ein Kilo Kartoffeln, zwei Karotten, eine Zwiebel, einen Liter Gemüsebrühe, etwas Butter, Salz, Pfeffer und frische Petersilie. Wer möchte, nimmt noch ein paar Würstchen.
+
+Zuerst schälen Sie die Kartoffeln, die Karotten und die Zwiebel und schneiden alles in kleine Stücke. Dann braten Sie die Zwiebel in der Butter an. Danach geben Sie die Kartoffeln, die Karotten und die Brühe in den Topf. Die Suppe muss etwa zwanzig Minuten kochen.
+
+Am Ende pürieren Sie einen Teil der Suppe, damit sie cremig wird. Mit Salz und Pfeffer würzen, die Würstchen in Scheiben schneiden und dazugeben. Zum Schluss streuen Sie Petersilie darüber. Guten Appetit!`
+  },
+  // ---------- B1 ----------
+  {
+    id: 'de-muell', level: 'B1', topic: 'Экология', title: 'Mülltrennung in Deutschland',
+    body: `Wer nach Deutschland zieht, ist oft überrascht: Vor jedem Haus stehen mehrere Mülltonnen in verschiedenen Farben. In Deutschland wird der Müll nämlich getrennt.
+
+In die blaue Tonne kommen Papier und Pappe, in die gelbe Tonne oder den gelben Sack Verpackungen aus Plastik und Metall. Die braune Tonne ist für Biomüll, also für Essensreste und Gartenabfälle. Alles andere, was man nicht recyceln kann, kommt in die schwarze oder graue Restmülltonne. Glasflaschen bringt man zum Glascontainer, und zwar getrennt nach Farben: weiß, grün und braun.
+
+Für viele Flaschen und Dosen bezahlt man im Geschäft außerdem ein Pfand. Wenn man die leeren Flaschen in den Supermarkt zurückbringt, bekommt man das Geld zurück. Deshalb sieht man auf den Straßen kaum Dosen.
+
+Am Anfang finden viele Ausländer dieses System kompliziert. Aber die meisten gewöhnen sich schnell daran, denn sie verstehen, dass Mülltrennung gut für die Umwelt ist.`
+  },
+  {
+    id: 'de-homeoffice', level: 'B1', topic: 'Работа', title: 'Homeoffice: Fluch oder Segen?',
+    body: `Seit einigen Jahren arbeiten viele Deutsche ganz oder teilweise von zu Hause aus. Was früher eine Ausnahme war, ist heute für Millionen Menschen normal geworden. Aber ist Homeoffice wirklich besser als die Arbeit im Büro?
+
+Die Vorteile liegen auf der Hand: Man spart sich den Weg zur Arbeit und damit Zeit und Geld. Viele können sich den Tag freier einteilen und Beruf und Familie leichter verbinden. Außerdem arbeiten manche Menschen zu Hause konzentrierter, weil sie nicht ständig von Kollegen gestört werden.
+
+Es gibt aber auch Nachteile. Wer allein zu Hause sitzt, fühlt sich schnell einsam. Der Kontakt zu den Kollegen fehlt, und spontane Gespräche in der Kaffeeküche, in denen oft gute Ideen entstehen, gibt es nicht mehr. Viele haben auch Probleme, nach der Arbeit abzuschalten, weil Büro und Wohnzimmer derselbe Raum sind.
+
+Deshalb wählen die meisten Firmen heute eine Mischung: zwei oder drei Tage im Büro, den Rest zu Hause. So kann man die Vorteile von beiden Modellen nutzen.`
+  },
+  {
+    id: 'de-weihnachtsmarkt', level: 'B1', topic: 'Традиции', title: 'Auf dem Weihnachtsmarkt',
+    body: `Wenn im Dezember die Tage kurz und kalt werden, öffnen in fast jeder deutschen Stadt die Weihnachtsmärkte. Die Tradition ist sehr alt: Der Dresdner Striezelmarkt, einer der bekanntesten, findet schon seit dem fünfzehnten Jahrhundert statt.
+
+Auf dem Weihnachtsmarkt stehen kleine Holzhäuser, die mit Lichtern und Tannenzweigen geschmückt sind. Dort kann man Geschenke kaufen: Kerzen, Holzspielzeug, Schmuck oder handgemachte Weihnachtsdekoration. Überall riecht es nach gebrannten Mandeln, Lebkuchen und Bratwurst.
+
+Das beliebteste Getränk ist der Glühwein, ein heißer Rotwein mit Zimt, Nelken und Orangen. Man trinkt ihn aus einer bunten Tasse, die man behalten oder gegen Pfand zurückgeben kann. Für Kinder gibt es Kinderpunsch ohne Alkohol.
+
+Viele Leute gehen nach der Arbeit mit Kollegen oder Freunden auf den Weihnachtsmarkt. Für sie gehört dieser Besuch genauso zur Adventszeit wie der Adventskranz und der Adventskalender.`
+  },
+  {
+    id: 'de-smartphone', level: 'B1', topic: 'Общество', title: 'Ein Leben ohne Smartphone?',
+    body: `Letzten Monat habe ich ein Experiment gemacht: Eine Woche lang habe ich mein Smartphone nicht benutzt. Ich hatte gemerkt, dass ich jeden Tag mehr als vier Stunden auf den Bildschirm schaue, und das hat mich erschreckt.
+
+Die ersten zwei Tage waren schwierig. Ich griff ständig in die Tasche, obwohl das Handy zu Hause in der Schublade lag. Ohne Navigation musste ich nach dem Weg fragen, und ohne den Wecker im Handy habe ich mir einen alten Wecker gekauft. Meine Freunde fanden die Idee verrückt, weil ich ihre Nachrichten nicht sofort beantworten konnte.
+
+Ab dem dritten Tag wurde es leichter. Ich habe abends wieder Bücher gelesen und bin früher eingeschlafen. In der U-Bahn habe ich die Menschen beobachtet, statt durch soziale Netzwerke zu scrollen. Ich hatte das Gefühl, dass ich mehr Zeit habe als vorher.
+
+Natürlich benutze ich mein Smartphone inzwischen wieder. Aber ich habe einige Regeln eingeführt: Beim Essen bleibt das Handy in einem anderen Zimmer, und nach zweiundzwanzig Uhr schaue ich keine Nachrichten mehr an. Wenn ich ehrlich bin, hätte ich das schon viel früher machen sollen.`
+  },
+  {
+    id: 'de-wohnungssuche', level: 'B1', topic: 'Город', title: 'Wohnungssuche in der Großstadt',
+    body: `Wer in München, Berlin oder Hamburg eine Wohnung sucht, braucht viel Geduld. Die Mieten sind in den letzten Jahren stark gestiegen, und auf eine Wohnung kommen oft hundert Bewerber.
+
+Zu einer Wohnungsbesichtigung bringt man am besten eine Mappe mit allen wichtigen Unterlagen mit: eine Kopie des Personalausweises, die letzten drei Gehaltsabrechnungen und eine Bestätigung vom alten Vermieter, dass man die Miete immer pünktlich bezahlt hat. Ohne diese Dokumente hat man kaum eine Chance.
+
+In den Anzeigen findet man viele Abkürzungen, die man zuerst verstehen muss. „Kaltmiete“ bedeutet die Miete ohne Heizung und Wasser, bei der „Warmmiete“ sind diese Nebenkosten schon enthalten. Außerdem verlangen die meisten Vermieter eine Kaution von bis zu drei Monatsmieten.
+
+Viele junge Leute ziehen deshalb in eine Wohngemeinschaft, kurz WG. Dort hat jeder sein eigenes Zimmer, aber Küche und Bad teilt man sich. Das ist günstiger, und man ist nicht allein. Manche Freundschaften, die in einer WG beginnen, halten ein Leben lang.`
+  },
+  {
+    id: 'de-maerchen', level: 'B1', topic: 'Культура', title: 'Die Brüder Grimm',
+    body: `Fast jedes Kind kennt die Geschichten von Rotkäppchen, Hänsel und Gretel oder Aschenputtel. Dass diese Märchen heute auf der ganzen Welt bekannt sind, verdanken wir zwei Brüdern aus Hessen: Jacob und Wilhelm Grimm.
+
+Die beiden lebten Anfang des neunzehnten Jahrhunderts und waren eigentlich Sprachwissenschaftler. Sie interessierten sich für die deutsche Sprache und Kultur und begannen deshalb, alte Geschichten zu sammeln, die man sich im Volk erzählte. Sie hörten den Erzählerinnen zu, schrieben die Märchen auf und veröffentlichten sie im Jahr 1812 in einem Buch mit dem Titel „Kinder- und Hausmärchen“.
+
+Die ersten Ausgaben waren eigentlich gar nicht für Kinder gedacht, denn viele Märchen waren ziemlich grausam. Erst später hat Wilhelm die Texte so verändert, dass man sie Kindern vorlesen konnte.
+
+Die Brüder Grimm haben aber nicht nur Märchen gesammelt. Sie begannen auch das „Deutsche Wörterbuch“, das größte Wörterbuch der deutschen Sprache. Es wurde erst über hundert Jahre nach ihrem Tod fertig.`
   }
 ];

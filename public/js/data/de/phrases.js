@@ -40,6 +40,28 @@ Ich lerne seit einem Jahr Deutsch.|Я учу немецкий уже год.
 Das Buch gefällt mir sehr.|Мне очень нравится эта книга.
 Bis morgen!|До завтра!
 Auf Wiedersehen!|До свидания!
-Tschüss!|Пока!`;
+Tschüss!|Пока!
+Ich würde gern einen Tisch für zwei Personen reservieren.|Я хотел бы забронировать столик на двоих.
+Könnten Sie das bitte noch einmal erklären?|Не могли бы вы объяснить это ещё раз?
+Wenn ich Zeit hätte, würde ich mehr lesen.|Если бы у меня было время, я бы больше читал.
+Ich bin müde, trotzdem gehe ich zum Sport.|Я устал, но всё равно иду на спорт.
+Obwohl es regnet, gehen wir spazieren.|Хотя идёт дождь, мы идём гулять.
+Als ich ein Kind war, wohnte ich auf dem Land.|Когда я был ребёнком, я жил в деревне.
+Das ist der Film, den ich dir empfohlen habe.|Это тот фильм, который я тебе советовал.
+Ich lerne Deutsch, um in Deutschland zu arbeiten.|Я учу немецкий, чтобы работать в Германии.
+Hast du Lust, am Samstag ins Kino zu gehen?|Хочешь в субботу пойти в кино?
+Ich freue mich auf das Wochenende.|Я жду выходных с радостью.
+Ich interessiere mich für Geschichte.|Я интересуюсь историей.
+Wir haben uns vor zwei Jahren kennengelernt.|Мы познакомились два года назад.
+Das Museum wurde im neunzehnten Jahrhundert gebaut.|Музей был построен в девятнадцатом веке.
+Hier wird der Müll getrennt.|Здесь сортируют мусор.
+Ich bin gestern mit dem Fahrrad zur Arbeit gefahren.|Вчера я поехал на работу на велосипеде.
+Die Wohnung ist schön, aber die Miete ist zu hoch.|Квартира хорошая, но аренда слишком высокая.
+Meiner Meinung nach ist das eine gute Idee.|По-моему, это хорошая идея.
+Ich bin nicht sicher, ob er heute kommt.|Я не уверен, придёт ли он сегодня.
+Kannst du mir sagen, wann der Zug abfährt?|Можешь сказать мне, когда отправляется поезд?
+Ich habe vergessen, meine Mutter anzurufen.|Я забыл позвонить маме.
+Wegen des Wetters bleiben wir heute zu Hause.|Из-за погоды мы сегодня остаёмся дома.
+Du solltest mehr Wasser trinken.|Тебе следует пить больше воды.`;
 
 export const PHRASES = RAW.split('\n').map(l => { const [w, ru] = l.split('|'); return { en: w, ru }; });

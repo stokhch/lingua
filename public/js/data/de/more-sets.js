@@ -226,7 +226,7 @@ zahlen|платить
 zählen|считать
 zeichnen|рисовать (карандашом)
 zeigen|показывать
-ziehen|тянуть|zog,gezogen
+ziehen|тянуть; переезжать (in eine Wohnung)|zog,gezogen
 zweifeln|сомневаться`,
 
 adjectives2: `alt|старый
@@ -1621,6 +1621,184 @@ abwaschen|мыть посуду|wäscht ab,wusch ab,abgewaschen
 aufräumen|наводить порядок
 einrichten|обставлять`,
 
+reading: `die Einkaufsliste|список покупок|Einkaufslisten
+das Kilo|килограмм|Kilos
+nebenan|по соседству, рядом
+die Kassiererin|кассирша|Kassiererinnen
+die Tüte|пакет|Tüten
+die Jahreszeit|время года|Jahreszeiten
+die Ostsee|Балтийское море
+das Blatt|лист|Blätter
+Süddeutschland|Южная Германия
+Norddeutschland|Северная Германия
+der Ski|лыжи|Skier
+das Lieblingswetter|любимая погода
+der Herbsttag|осенний день|Herbsttage
+zweiundzwanzig|двадцать два
+achtzehn|восемнадцать
+achtundzwanzig|двадцать восемь
+die Informatik|информатика
+Köln|Кёльн
+pro|в, за (pro Woche — в неделю)
+der Deutschkurs|курс немецкого|Deutschkurse
+die Hafenrundfahrt|экскурсия по порту на катере
+die Kiste|ящик, коробка|Kisten
+der Lieferwagen|фургон
+die Pizza|пицца|Pizzas,Pizzen
+aufhängen|вешать|hängt auf,hing auf,aufgehängt
+die Einweihungsparty|новоселье|Einweihungspartys
+die Ferienwohnung|квартира для отдыха|Ferienwohnungen
+direkt|прямо, непосредственно
+die Sandburg|замок из песка|Sandburgen
+ausmachen|выключать; иметь значение (das macht nichts aus)|macht aus,machte aus,ausgemacht
+das Fischbrötchen|булочка с рыбой
+wiederkommen|возвращаться, приезжать снова|kommt wieder,kam wieder,wiedergekommen
+Tschechien|Чехия
+Prag|Прага
+der Programmierer|программист
+international|международный|internationale,internationalen
+der Moment|момент|Momente
+das Niveau|уровень
+Englisch|английский язык
+fließend|свободно, бегло
+das Homeoffice|работа из дома
+Italienisch|итальянский язык
+italienisch|итальянский|italienische,italienisches,italienischen
+das Kochbuch|кулинарная книга|Kochbücher
+der Blumenstrauß|букет цветов|Blumensträuße
+das Buffet|шведский стол|Buffets
+der Schokoladenkuchen|шоколадный торт
+die Mitternacht|полночь
+die Kartoffelsuppe|картофельный суп
+die Person|человек, персона|Personen
+die Karotte|морковь|Karotten
+der Liter|литр
+die Gemüsebrühe|овощной бульон
+die Brühe|бульон
+die Petersilie|петрушка
+das Würstchen|сосиска
+etwa|примерно, около
+das Ende|конец
+pürieren|делать пюре, измельчать
+cremig|кремообразный, нежный
+würzen|приправлять
+die Scheibe|ломтик; стекло|Scheiben
+dazugeben|добавлять|gibt dazu,gab dazu,dazugegeben
+der Schluss|конец; вывод|Schlüsse
+streuen|посыпать
+darüber|над этим; об этом
+die Mülltonne|мусорный бак|Mülltonnen
+die Tonne|бак; тонна|Tonnen
+nämlich|а именно, дело в том, что
+das Papier|бумага
+die Pappe|картон
+der Sack|мешок|Säcke
+die Verpackung|упаковка|Verpackungen
+der Biomüll|органические отходы
+der Müll|мусор
+die Essensreste|остатки еды (мн. ч.)
+die Gartenabfälle|садовые отходы (мн. ч.)
+recyceln|перерабатывать
+die Restmülltonne|бак для несортированного мусора
+die Glasflasche|стеклянная бутылка|Glasflaschen
+der Glascontainer|контейнер для стекла
+zwar|правда, хотя; und zwar — а именно
+das Pfand|залог (за бутылку)
+zurückbringen|приносить обратно|bringt zurück,brachte zurück,zurückgebracht
+der Ausländer|иностранец
+das System|система|Systeme
+daran|об этом, к этому
+die Mülltrennung|сортировка мусора
+einige|несколько, некоторые|einigen,einiger
+teilweise|частично
+die Ausnahme|исключение|Ausnahmen
+normal|обычный, нормальный
+frei|свободный|freie,freien,freier
+einteilen|распределять|teilt ein,eingeteilt
+verbinden|соединять, совмещать|verband,verbunden
+manche|некоторые|mancher,manchen,manches
+konzentriert|сосредоточенный|konzentrierter,konzentrierte
+ständig|постоянно
+der Kontakt|контакт|Kontakte
+spontan|спонтанный|spontane,spontanen
+die Kaffeeküche|кухня в офисе
+entstehen|возникать|entstand,entstanden
+abschalten|выключать; отключаться (отдыхать)|schaltet ab,abgeschaltet,abzuschalten
+derselbe|тот же самый|dieselbe,dasselbe,denselben,demselben
+der Raum|помещение, комната; пространство|Räume
+die Mischung|смесь|Mischungen
+der Rest|остаток|Reste
+das Modell|модель|Modelle
+Dresden|Дрезден
+dresdner|дрезденский
+das Jahrhundert|век, столетие|Jahrhunderte,Jahrhunderts
+statt|вместо; stattfinden — проходить
+stattfinden|проходить, состояться|findet statt,fand statt,stattgefunden
+das Holzhaus|деревянный домик|Holzhäuser
+das Licht|свет; огонёк|Lichter
+der Tannenzweig|еловая ветка|Tannenzweige
+schmücken|украшать
+das Holzspielzeug|деревянная игрушка
+handgemacht|сделанный вручную|handgemachte,handgemachten
+die Weihnachtsdekoration|рождественские украшения
+die Mandel|миндаль|Mandeln
+gebrannt|жжёный, жареный|gebrannte,gebrannten
+der Lebkuchen|пряник
+das Getränk|напиток|Getränke
+der Glühwein|глинтвейн
+der Rotwein|красное вино
+der Zimt|корица
+die Nelke|гвоздика|Nelken
+die Orange|апельсин|Orangen
+zurückgeben|возвращать, отдавать обратно|gibt zurück,gab zurück,zurückgegeben
+der Kinderpunsch|детский пунш
+der Alkohol|алкоголь
+die Adventszeit|Адвент (время перед Рождеством)
+der Adventskranz|рождественский венок
+der Adventskalender|адвент-календарь
+erschrecken|пугать; пугаться|erschrickt,erschrak,erschreckt,erschrocken
+die Navigation|навигация
+der Wecker|будильник
+die App|приложение|Apps
+ab|с (какого-то момента); от
+sozial|социальный|soziale,sozialen
+scrollen|прокручивать (ленту)
+vorher|раньше, до этого
+einführen|вводить|führt ein,eingeführt
+die Wohnungsbesichtigung|просмотр квартиры
+die Mappe|папка|Mappen
+die Unterlagen|документы (мн. ч.)
+die Kopie|копия|Kopien
+der Personalausweis|удостоверение личности|Personalausweise,Personalausweises
+die Gehaltsabrechnung|расчётный лист по зарплате|Gehaltsabrechnungen
+die Bestätigung|подтверждение|Bestätigungen
+die Abkürzung|сокращение|Abkürzungen
+die Kaltmiete|аренда без коммунальных платежей
+die Warmmiete|аренда с коммунальными платежами
+enthalten|содержать, включать|enthält,enthielt
+verlangen|требовать
+die Kaution|залог (за квартиру)
+die Monatsmiete|месячная плата за квартиру|Monatsmieten
+die Wohngemeinschaft|квартира, где живут вместе соседи|Wohngemeinschaften
+WG|совместная квартира (Wohngemeinschaft)
+halten|держать; держаться, длиться|hält,hielt,gehalten
+das Rotkäppchen|Красная Шапочка
+das Aschenputtel|Золушка
+verdanken|быть обязанным (чем-то)
+Hessen|Гессен (земля Германии)
+neunzehnte|девятнадцатый|neunzehnten
+der Sprachwissenschaftler|лингвист
+die Erzählerin|рассказчица|Erzählerinnen
+veröffentlichen|публиковать
+der Titel|заглавие, название
+das Hausmärchen|домашняя сказка|Hausmärchen
+das Märchen|сказка
+gar|совсем, вовсе (gar nicht — совсем не)
+verändern|изменять
+vorlesen|читать вслух|liest vor,las vor,vorgelesen
+greifen|хватать, тянуться (рукой)|griff,griffen,gegriffen
+gewöhnen|приучать; привыкать (sich an)
+reservieren|бронировать`,
 school: `die Schule|школа
 die Grundschule|начальная школа
 das Gymnasium|гимназия
@@ -1699,5 +1877,6 @@ export const MORE_INFO = {
   celebrations: { title: 'Праздники', icon: 'emotions', desc: 'Дни рождения, Рождество, карнавал' },
   internet: { title: 'Компьютер и интернет', icon: 'work', desc: 'Сайты, пароли, приложения, файлы' },
   household: { title: 'Квартира и быт', icon: 'home', desc: 'Комнаты, мебель, ванная, аренда' },
+  reading: { title: 'Слова из текстов', icon: 'core', desc: 'Слова из текстов A1–B1: покупки, переезд, работа, традиции' },
   school: { title: 'Школа и университет', icon: 'work', desc: 'Уроки, экзамены, оценки, лекции' }
 };

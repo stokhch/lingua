@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import { lookup, DICT, SETS, SET_INFO } from '../public/js/data/de/dictionary.js';
 import { TEXTS } from '../public/js/data/de/texts.js';
 import { PHRASES } from '../public/js/data/de/phrases.js';
-import { ALL_LESSONS } from '../public/js/data/de/grammar.js';
+import { ALL_LESSONS, COURSES } from '../public/js/data/de/grammar.js';
 
 const TOKEN = /[\p{L}’'-]+/gu;
 // Имена людей и клички в текстах — их в словаре нет
-const NAMES = new Set(['Paul', 'Anna', 'Thomas', 'Maria', 'Bello', 'Weber']);
+const NAMES = new Set(['Paul', 'Anna', 'Thomas', 'Maria', 'Bello', 'Weber', 'Lena', 'Jonas', 'Sara', 'Schulz', 'Mila', 'Tim', 'Julia', 'Novak', 'Anja',
+  'Striezelmarkt', 'Hänsel', 'Gretel', 'Jacob', 'Wilhelm', 'Grimm', 'B']); // «B» — из «Niveau B eins»
 
 test('Немецкий: окончания и формы сводятся к словарной форме', () => {
   const cases = {
@@ -17,6 +18,7 @@ test('Немецкий: окончания и формы сводятся к с�
     aufgestanden: 'aufstehen', eingekauft: 'einkaufen', anzurufen: 'anrufen', verstanden: 'verstehen',
     größten: 'groß', älter: 'alt', besser: 'gut', großen: 'groß', meine: 'mein', keinen: 'kein', dem: 'der', mir: 'ich', "geht's": "wie geht's"
   };
+  Object.assign(cases, { zurückbringt: 'zurückbringen', griff: 'greifen', gewöhnen: 'gewöhnen', wurden: 'werden', dachte: 'denken' });
   for (const [form, base] of Object.entries(cases)) assert.equal(lookup(form).word, base, form);
 });
 
@@ -47,7 +49,8 @@ test('Немецкий: наборы непустые, у каждого сло�
 });
 
 test('Немецкий: в упражнениях с выбором правильный ответ есть среди вариантов', () => {
-  assert.ok(ALL_LESSONS.length >= 15);
+  assert.ok(ALL_LESSONS.length >= 30);
+  for (const lv of ['A0', 'A1', 'A2', 'B1']) assert.ok(COURSES.some(c => c.level === lv), lv);
   const ids = new Set();
   for (const l of ALL_LESSONS) {
     assert.ok(!ids.has(l.id)); ids.add(l.id);
@@ -57,6 +60,7 @@ test('Немецкий: в упражнениях с выбором правил
 
 test('Немецкий: тексты разных уровней с уникальными id', () => {
   assert.equal(new Set(TEXTS.map(t => t.id)).size, TEXTS.length);
-  assert.ok(new Set(TEXTS.map(t => t.level)).size >= 4);
-  assert.ok(PHRASES.length >= 40);
+  // до B1 включительно на каждом уровне есть что почитать
+  for (const lv of ['A0', 'A1', 'A2', 'B1']) assert.ok(TEXTS.filter(t => t.level === lv).length >= 4, lv);
+  assert.ok(PHRASES.length >= 60);
 });
