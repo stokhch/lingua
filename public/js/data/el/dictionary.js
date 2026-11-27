@@ -1,7 +1,7 @@
 // Новогреческо-русский словарь Лингвы: наборы слов, поиск начальной формы для перевода по клику.
 import { RAW } from './words.js';
 import { MORE_RAW, MORE_INFO } from './more-sets.js';
-import { LIBRARY_WORDS, LIBRARY_FORMS } from './library/index.js';
+import { LIBRARY_WORDS, LIBRARY_FORMS, SONG_SETS } from './library/index.js';
 
 export const SET_INFO = {
   start: { title: 'Первые слова', icon: 'core', desc: 'Приветствия и вежливость — с них начинаем' },
@@ -150,6 +150,11 @@ const EXTRA = `τον|артикль м. р. (вин. п.); его
 // Дополнительные тематические наборы (more-sets.js) — после основных
 Object.assign(RAW, MORE_RAW);
 Object.assign(SET_INFO, MORE_INFO);
+// Наборы слов из песен и стихов библиотеки — после тематических
+for (const [id, s] of Object.entries(SONG_SETS)) {
+  RAW[id] = s.words;
+  SET_INFO[id] = { title: s.title, icon: 'education', desc: s.desc };
+}
 
 export const DICT = new Map();      // слово -> перевод
 export const SETS = {};             // набор -> [слова]

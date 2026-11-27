@@ -90,3 +90,21 @@ test('Английские песни: карточки с короткой ци
     assert.deepEqual(miss, [], t.id);
   }
 });
+
+test('Греческие песни и стихи: карточки с цитатой, пересказом, переводом, ссылками, набором и рисунком', async () => {
+  const el = await import('../public/js/data/el/dictionary.js');
+  const items = EL.filter(t => t.set?.startsWith('song_el_'));
+  assert.ok(items.length >= 10);
+  assert.ok(new Set(items.map(t => t.level)).size >= 3, 'разных уровней');
+  for (const t of items) {
+    assert.ok(['song', 'poem'].includes(t.kind), t.id);
+    assert.equal(shelfOf(t), 'songs', t.id);
+    assert.ok(t.summary?.length > 80 && t.translation && t.note, t.id);
+    assert.ok(t.links?.length >= 1 && t.links.every(l => /^https:\/\//.test(l.href)), t.id);
+    assert.ok(t.art, t.id);
+    // у песен — не больше двух строк цитаты; у старинных стихов (общественное достояние) — до двух строф
+    const quote = t.body.split('\n\n')[0].split('\n').length;
+    assert.ok(t.kind === 'song' ? quote <= 2 : quote <= 8, t.id);
+    assert.ok(el.SETS[t.set]?.length >= 20 && el.SET_INFO[t.set]?.title, t.id);
+  }
+});
