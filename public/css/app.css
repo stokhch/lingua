@@ -1034,3 +1034,18 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .top .pill.offline{background:rgba(255,196,92,.22);color:#ffe6a8}
 .pill.offline .ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:520px){.pill.offline span{display:none}}
+/* Видеоматериалы: карточки фильмов и мультфильмов */
+.video-filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.video-card{display:grid;gap:4px;align-content:start;padding:0 0 16px;border-radius:var(--r);background:var(--card);border:2px solid var(--line);text-decoration:none;color:var(--ink);overflow:hidden;transition:transform .12s,border-color .12s}
+.video-card:hover{transform:translateY(-2px);border-color:var(--brand)}
+.video-card>*:not(.video-poster){margin-inline:16px}
+.video-poster{display:grid;place-items:center;height:96px;margin-bottom:8px;background:linear-gradient(135deg,#ffd37a,#ff8a5c)}
+.vk-film .video-poster{background:linear-gradient(135deg,#5b6bd8,#2a2f6b)}
+.vk-doc .video-poster{background:linear-gradient(135deg,#7fa88a,#2f5a43)}
+.video-poster svg{width:44px;height:44px;padding:10px;border-radius:50%;background:rgba(255,255,255,.9);fill:#2a1d14}
+.video-meta{display:flex;align-items:center;gap:8px}.video-kind{font-size:13px;font-weight:800;color:var(--muted)}
+.video-card b{font-size:18px;line-height:1.2}.video-ru{font-size:14px;color:var(--muted)}
+.video-card p{margin:4px 16px 0;font-size:15px;opacity:.85}
+.video-foot{margin-top:6px;font-size:13px;font-weight:800;color:var(--brand-ink)}
+.videos h3{margin:22px 0 8px;font-size:17px}

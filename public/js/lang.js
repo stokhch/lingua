@@ -15,6 +15,7 @@ import { TEXTS as krcTexts } from './data/krc/texts.js';
 import { COURSES as krcCourses, ALL_LESSONS as krcLessons } from './data/krc/grammar.js';
 import { PHRASES as krcPhrases } from './data/krc/phrases.js';
 import { RESOURCES as krcResources } from './data/krc/resources.js';
+import { VIDEOS as krcVideos, VIDEO_CATALOGS as krcVideoCatalogs } from './data/krc/videos.js';
 import { krcToTurkish, krcToKazakh } from './data/krc/translit.js';
 import * as elDict from './data/el/dictionary.js';
 import { TEXTS as elTexts } from './data/el/texts.js';
@@ -73,14 +74,15 @@ export const LANGS = {
   // Карачаево-балкарский: кириллица, своего голоса синтеза речи нет — читает казахский голос (близкий тюркский язык)
   // по переводу в казахскую кириллицу (къ → қ, ё → ө…); если казахского нет — турецкий (ttsFallback). Онлайн-переводчик его не знает.
   krc: {
-    id: 'krc', code: 'КБ', name: 'Карачаево-балкарский', acc: 'карачаево-балкарский', gen: 'карачаево-балкарского', flag: '🏔️',
+    id: 'krc', code: 'КБ', name: 'Карачаево-балкарский', acc: 'карачаево-балкарский', gen: 'карачаево-балкарского', prep: 'карачаево-балкарском', flag: '🏔️',
     tts: 'kk-KZ', voice: 'kk', ttsText: krcToKazakh, ttsFallback: { tts: 'tr-TR', voice: 'tr', ttsText: krcToTurkish }, online: false,
     beta: 'Бета: материалы требуют проверки носителем языка',
     letters: 'А-Яа-яЁёЎў', tokenRe: /[А-Яа-яЁёЎў’'-]+/g, extraKeys: [],
     sample: 'джол', sampleTr: 'алма;яблоко', firstSet: 'core',
     lower: krcDict.lower,
     DICT: krcDict.DICT, SETS: krcDict.SETS, SET_INFO: krcDict.SET_INFO, lemma: krcDict.lemma, lookup: krcDict.lookup,
-    TEXTS: krcTexts, COURSES: krcCourses, ALL_LESSONS: krcLessons, PHRASES: krcPhrases, RESOURCES: krcResources
+    TEXTS: krcTexts, COURSES: krcCourses, ALL_LESSONS: krcLessons, PHRASES: krcPhrases, RESOURCES: krcResources,
+    VIDEOS: krcVideos, VIDEO_CATALOGS: krcVideoCatalogs
   }
 };
 

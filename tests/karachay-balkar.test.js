@@ -116,3 +116,19 @@ test('Карачаево-балкарский: 50 новых уроков — 10
   }
   assert.ok(ALL_LESSONS.length >= 75);
 });
+
+test('Карачаево-балкарский: видеоматериалы — фильмы и мультфильмы с рабочими ссылками', async () => {
+  const { VIDEOS, VIDEO_KINDS, VIDEO_CATALOGS } = await import('../public/js/data/krc/videos.js');
+  assert.ok(VIDEOS.filter(v => v.kind === 'cartoon').length >= 10);
+  assert.ok(VIDEOS.filter(v => v.kind === 'film').length >= 5);
+  assert.equal(new Set(VIDEOS.map(v => v.id)).size, VIDEOS.length);
+  assert.equal(new Set(VIDEOS.map(v => v.href)).size, VIDEOS.length);
+  for (const v of [...VIDEOS, ...VIDEO_CATALOGS]) {
+    assert.match(v.href, /^https:\/\//, v.title);
+    assert.ok(v.title && v.desc, v.href);
+  }
+  for (const v of VIDEOS) {
+    assert.ok(VIDEO_KINDS[v.kind], v.id);
+    assert.match(v.level, /^(A1|A2|B1|B2)$/, v.id);
+  }
+});
