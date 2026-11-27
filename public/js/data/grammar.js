@@ -1,5 +1,6 @@
 // Грамматические курсы: теория + упражнения. Тексты написаны для проекта.
 // Тип упражнения: choice (выбрать вариант) или input (вписать ответ; допустимы варианты через "/").
+import { ADV_COURSES } from './en/grammar-advanced.js';
 export const COURSES = [
   {
     id: 'basics', title: 'Основы: глагол to be и времена Present', level: 'A1',
@@ -131,5 +132,8 @@ export const COURSES = [
     ]
   }
 ];
+
+// Курсы B1–C1 — после базовых
+COURSES.push(...ADV_COURSES);
 
 export const ALL_LESSONS = COURSES.flatMap(c => c.lessons.map(l => ({ ...l, course: c.id })));

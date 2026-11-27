@@ -38,6 +38,36 @@ Small habits can improve your mood.|Маленькие привычки могу
 Open the window, please.|Открой окно, пожалуйста.
 I have two brothers and one sister.|У меня два брата и одна сестра.
 The sea was calm in the morning.|Утром море было спокойным.
-Practice makes learning easier.|Практика облегчает обучение.`;
+Practice makes learning easier.|Практика облегчает обучение.
+I have been working here for three years.|Я работаю здесь уже три года.
+If I had known, I would have told you.|Если бы я знал, я бы тебе сказал.
+She said that she was feeling better.|Она сказала, что чувствует себя лучше.
+The bridge was built in the nineteenth century.|Мост был построен в девятнадцатом веке.
+I wish I had more free time.|Хотел бы я иметь больше свободного времени.
+I had my car repaired last week.|На прошлой неделе мне починили машину.
+He must have missed the train.|Он, наверное, опоздал на поезд.
+You should have told me earlier.|Тебе следовало сказать мне раньше.
+Despite the rain, we enjoyed the trip.|Несмотря на дождь, поездка нам понравилась.
+I am used to getting up early.|Я привык рано вставать.
+By the time you arrive, we will have finished.|К тому времени, как ты приедешь, мы уже закончим.
+Never have I seen such a beautiful view.|Никогда я не видел такого красивого вида.
+What I really need is a long holiday.|Что мне действительно нужно, так это долгий отпуск.
+It is high time we made a decision.|Давно пора принять решение.
+Having finished the report, she went home.|Закончив отчёт, она пошла домой.
+The painting is believed to be a fake.|Считается, что картина — подделка.
+Let's weigh up the pros and cons.|Давай взвесим все за и против.
+We need to strike a balance between work and life.|Нам нужно найти баланс между работой и жизнью.
+That is a fair point, but I see it differently.|Справедливое замечание, но я смотрю на это иначе.
+I'd rather not jump to conclusions.|Я бы не стал делать поспешных выводов.
+Could you spell out what you mean?|Не могли бы вы объяснить, что имеете в виду?
+The results suggest that the method works.|Результаты говорят о том, что метод работает.
+To be honest, it is not my cup of tea.|Честно говоря, это не в моём вкусе.
+Let's call it a day.|На сегодня хватит.
+This decision could undermine our credibility.|Это решение может подорвать доверие к нам.
+We should not overlook the risks.|Нам не следует упускать из виду риски.
+Her argument was clear and compelling.|Её аргумент был ясным и убедительным.
+The meeting has been put off until Friday.|Встречу перенесли на пятницу.
+I'm afraid the plan fell through.|Боюсь, план сорвался.
+It goes without saying that safety comes first.|Само собой разумеется, безопасность прежде всего.`;
 
 export const PHRASES = RAW.split('\n').map(l => { const [en, ru] = l.split('|'); return { en, ru }; });
