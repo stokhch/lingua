@@ -105,6 +105,26 @@ const booksHtml = lang => `
       <div class="book-grid">${lang.BOOKS.map(b => bookCard(b, lang.id)).join('')}</div>
     </section>`;
 
+// Достопримечательности: самые известные места края, где говорят на языке. Карточка — короткий рассказ, слова и ссылки,
+// а сам текст (10+ предложений) открывается в читалке с переводом по клику, переводом целиком и пояснениями.
+// В читалку тексты попадают через sightTexts(): у них своя «полка» landmarks, на полках библиотеки они не показываются.
+export const sightTexts = () => (L().LANDMARKS || []).map(s => ({ ...s, topic: s.region, shelf: 'landmarks', kind: 'text', sight: true, gloss: Object.fromEntries((s.words || []).map(([w, t]) => [L().lower(w), t])) }));
+const sightCard = (s, lang) => `<article class="book-card sight-card lv-${s.level}" id="sight-${esc(s.id)}">
+      <span class="book-meta"><span class="book-genre">${esc(s.region)}</span><span class="lv">${esc(s.level)}</span></span>
+      <b lang="${lang}">${esc(s.title)}</b>${s.ru && s.ru !== s.title ? `<span class="book-ru">${esc(s.ru)}</span>` : ''}
+      <p>${esc(s.desc)}</p>
+      <blockquote><q lang="${lang}">${esc(s.body.split(/(?<=[.!?])\s+/)[0])}</q><span>${esc(s.translation.split(/(?<=[.!?])\s+/)[0])}</span></blockquote>
+      ${s.words?.length ? `<dl class="book-words">${s.words.slice(0, 6).map(([w, t]) => `<div><dt lang="${lang}">${esc(w)}</dt><dd>${esc(t)}</dd></div>`).join('')}</dl>` : ''}
+      <a class="btn small sight-read" href="#read-${esc(s.id)}">${icon('read')} Читать с переводом по клику · ${s.body.split(/(?<=[.!?])\s+/).length} предл.</a>
+      <span class="book-links">${s.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a>`).join('')}</span>
+    </article>`;
+const sightsHtml = lang => `
+    <section class="band books sights" id="sights">
+      <h2>Достопримечательности</h2>
+      <p class="muted">${esc(lang.LANDMARKS_INTRO || '')} Откройте карточку — текст читается с переводом по клику, перевод целиком и пояснения раскрываются над текстом.</p>
+      <div class="book-grid">${lang.LANDMARKS.map(s => sightCard(s, lang.id)).join('')}</div>
+    </section>`;
+
 function statsFor(list) {
   const s = store.state, { lemma, tokenRe } = L();
   const has = k => !!s.words[k];
@@ -142,7 +162,7 @@ export function renderTexts(main) {
       <div class="toolbar"><h1>Тексты и материалы</h1><button class="btn" id="add-mat">${icon('plus')} Свой материал</button></div>
       <p class="lead">${L().name}: ${all.length} ${plural(all.length, 'материал', 'материала', 'материалов')} на ${shelves.filter(s => s.items.length).length} ${plural(shelves.filter(s => s.items.length).length, 'полке', 'полках', 'полках')}, прочитано ${done}. Нажимайте на незнакомые слова — появится перевод, а слово можно сразу отправить в словарь вместе с предложением. На других сайтах слова поможет собирать <a href="#extension">расширение для браузера</a>.</p>
       <label class="search lib-search">${icon('search')}<input id="lib-q" placeholder="Поиск по названию, теме и тексту" value="${esc(query)}" aria-label="Поиск по материалам"></label>
-      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a>${L().VIDEOS ? `<button class="chip" id="to-videos">Видеоматериалы <i>${L().VIDEOS.length}</i></button>` : ''}${L().HITS ? `<button class="chip" id="to-hits">Популярные песни <i>${L().HITS.length}</i></button>` : ''}${L().BOOKS ? `<button class="chip" id="to-books">Литература <i>${L().BOOKS.length}</i></button>` : ''}</nav>
+      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a>${L().VIDEOS ? `<button class="chip" id="to-videos">Видеоматериалы <i>${L().VIDEOS.length}</i></button>` : ''}${L().HITS ? `<button class="chip" id="to-hits">Популярные песни <i>${L().HITS.length}</i></button>` : ''}${L().BOOKS ? `<button class="chip" id="to-books">Литература <i>${L().BOOKS.length}</i></button>` : ''}${L().LANDMARKS ? `<button class="chip" id="to-sights">Достопримечательности <i>${L().LANDMARKS.length}</i></button>` : ''}</nav>
     </section>
     ${found ? `<section class="band"><h2>Найдено: ${found.length}</h2><div class="texts">${byRelevance(found).map(t => card(t, stats.get(t.id))).join('') || '<div class="empty"><p>Ничего не найдено.</p></div>'}</div></section>`
       : shelves.map(sh => {
@@ -156,10 +176,12 @@ export function renderTexts(main) {
     ${!found && L().VIDEOS ? videosHtml(L()) : ''}
     ${!found && L().HITS ? hitsHtml(L()) : ''}
     ${!found && L().BOOKS ? booksHtml(L()) : ''}
+    ${!found && L().LANDMARKS ? sightsHtml(L()) : ''}
     ${L().RESOURCES ? resourcesHtml(L()) : ''}`;
     $('#add-mat').onclick = addMaterial;
     $('#to-videos') && ($('#to-videos').onclick = () => $('#videos')?.scrollIntoView({ behavior: 'smooth' }));
     $('#to-books') && ($('#to-books').onclick = () => $('#books')?.scrollIntoView({ behavior: 'smooth' }));
+    $('#to-sights') && ($('#to-sights').onclick = () => $('#sights')?.scrollIntoView({ behavior: 'smooth' }));
     $('#to-hits') && ($('#to-hits').onclick = () => $('#hits')?.scrollIntoView({ behavior: 'smooth' }));
     $$('[data-vk]').forEach(b => b.onclick = () => { videoKind[L().id] = b.dataset.vk; const y = scrollY; draw(); scrollTo(0, y); });
     $('#add-own') && ($('#add-own').onclick = addMaterial);

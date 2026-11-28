@@ -260,3 +260,33 @@ test('Литература: у каждого языка 10 известных �
     }
   }
 });
+
+test('Достопримечательности: у каждого языка 10 карточек — текст 10+ предложений, перевод, пояснения, слова для перевода по клику и ссылки', async () => {
+  // конец предложения: . ! ? …, кроме точек после чисел и римских цифр (13. August, I. Ahmet)
+  const sentences = s => s.split(/(?<![0-9IVX])[.!?…](?=["»”]?\s|["»”]?$)/).filter(x => x.trim()).length;
+  const ids = new Set();
+  for (const lang of ['en', 'tr', 'de', 'el', 'krc']) {
+    const { LANDMARKS, LANDMARKS_INTRO } = await import(`../public/js/data/${lang}/landmarks.js`);
+    const { TEXTS } = await import(lang === 'en' ? '../public/js/data/texts.js' : `../public/js/data/${lang}/texts.js`);
+    const dict = await import(lang === 'en' ? '../public/js/data/dictionary.js' : `../public/js/data/${lang}/dictionary.js`);
+    const lower = dict.lower || (x => x.toLowerCase());
+    const textIds = new Set(TEXTS.map(t => t.id));
+    assert.equal(LANDMARKS.length, 10, lang);
+    assert.ok(LANDMARKS_INTRO, lang);
+    for (const s of LANDMARKS) {
+      assert.match(s.id, new RegExp(`^sight-${lang}-`), s.id);
+      assert.ok(!ids.has(s.id) && !textIds.has(s.id), `${s.id}: id уникален`); ids.add(s.id);
+      for (const k of ['title', 'ru', 'region', 'level', 'desc', 'body', 'translation']) assert.ok(s[k], `${s.id}: ${k}`);
+      assert.ok(sentences(s.body) >= 10, `${s.id}: в тексте ${sentences(s.body)} предложений`);
+      assert.ok(sentences(s.translation) >= 10, `${s.id}: перевод`);
+      assert.ok(/[а-яё]/i.test(s.translation) && !/[а-яё]/i.test(lang === 'krc' ? '' : s.body), `${s.id}: язык текста и перевода`);
+      assert.ok(s.explain?.length >= 4 && s.explain.every(([w, e]) => w && e), `${s.id}: пояснения`);
+      assert.ok(s.words?.length >= 8 && s.words.every(([w, t]) => w && t), `${s.id}: слова`);
+      // слова из списка встречаются в тексте — по ним работает перевод по клику
+      for (const [w] of s.words) assert.ok(lower(s.body).includes(lower(w)), `${s.id}: «${w}» нет в тексте`);
+      assert.ok(s.links?.length >= 2, `${s.id}: ссылки`);
+      for (const l of s.links) { assert.ok(l.title, s.id); assert.match(l.href, /^https:\/\/\S+$/, s.id); }
+    }
+    if (lang === 'krc') assert.ok(LANDMARKS.every(s => s.note && /\(\?\)/.test(s.body + JSON.stringify(s.explain))), 'КБ: пометки (?) и примечание');
+  }
+});
