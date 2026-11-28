@@ -1062,3 +1062,15 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .fr-state{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:800;color:var(--brand-ink)}.fr-state .ic{width:14px;height:14px;color:var(--coral)}
 @media (max-width:640px){.fr-reqs li{grid-template-columns:40px minmax(0,1fr)}.fr-reqs .fr-act{grid-column:1/-1;justify-content:flex-end}}
 .pill.msg[hidden]{display:none}
+
+/* ---------- Пим поёт (тап по ёжику на главной) ---------- */
+.hero-pic[role=button]{cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:50%}
+.hero-pic[role=button]:focus-visible{outline:3px solid var(--sun);outline-offset:4px}
+.mascot.sing{transform-origin:50% 92%;animation:sway .6s ease-in-out infinite alternate}
+.mascot .sing-mouth{transform-box:fill-box;transform-origin:center;animation:singmouth .2s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-5deg) translateY(0)}to{transform:rotate(5deg) translateY(-5px)}}
+@keyframes singmouth{to{transform:scaleY(.55)}}
+.sing-note{position:absolute;z-index:3;top:28%;font-size:26px;font-weight:900;color:var(--sun);text-shadow:0 2px 6px rgba(0,0,0,.25);opacity:0;pointer-events:none;animation:notefly 1.6s ease-out forwards}
+@keyframes notefly{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translate(var(--x),-90px) scale(1.15) rotate(12deg)}}
+@media (prefers-reduced-motion:reduce){.mascot.sing,.mascot .sing-mouth{animation:none}.sing-note{animation-duration:.01s}}
+.hero-pic.singing .rumble{display:none}
