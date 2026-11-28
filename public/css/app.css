@@ -1086,3 +1086,16 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 @keyframes notefly{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translate(var(--x),-90px) scale(1.15) rotate(12deg)}}
 @media (prefers-reduced-motion:reduce){.mascot.sing,.mascot .sing-mouth{animation:none}.sing-note{animation-duration:.01s}}
 .hero-pic.singing .rumble{display:none}
+/* Популярные песни: карточки с фразами и ссылками (в библиотеке, после видеоматериалов) */
+.hit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.hit-card{display:grid;gap:4px;align-content:start;padding:16px;border-radius:var(--r);background:var(--card);border:2px solid var(--line);color:var(--ink);border-top:6px solid #ff8a5c}
+.hit-meta{display:flex;align-items:center;gap:8px}.hit-year{font-size:13px;font-weight:800;color:var(--muted)}
+.hit-card b{font-size:18px;line-height:1.2}.hit-artist{font-weight:700;font-size:15px}
+.hit-card>p{margin:4px 0 0;font-size:15px;opacity:.85}
+.hit-phrases{margin-top:6px;border-radius:12px;background:var(--bg2)}
+.hit-phrases summary{cursor:pointer;padding:8px 12px;font-weight:800;font-size:14px}.hit-phrases summary i{font-style:normal;color:var(--muted)}
+.hit-phrases ul{list-style:none;margin:0;padding:0 12px 10px;display:grid;gap:10px}
+.hit-phrases li{display:grid;gap:2px}.hit-phrases q{font-weight:800;font-style:italic}.hit-tr{font-size:15px}
+.hit-phrases small{font-size:13px;color:var(--muted);line-height:1.35}
+.hit-links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.hit-links a{font-size:13px;font-weight:800;color:var(--brand-ink);text-decoration:none}.hit-links a:hover{text-decoration:underline}
