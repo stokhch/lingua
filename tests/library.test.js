@@ -243,10 +243,10 @@ test('Популярные песни: ссылки на YouTube, Яндекс �
   for (const l of a) assert.match(l.href, /^https:\/\/\S+$/);
 });
 
-test('Литература: у каждого языка 10 известных произведений с цитатой, переводом, пояснением и ссылками', async () => {
+test('Литература: у каждого языка 10 известных произведений (у КБ 15: балкарские и карачаевские) с цитатой, переводом, пояснением и ссылками', async () => {
   for (const lang of ['en', 'tr', 'de', 'el', 'krc']) {
     const { BOOKS, BOOKS_INTRO } = await import(`../public/js/data/${lang}/books.js`);
-    assert.equal(BOOKS.length, 10, lang);
+    assert.ok(lang === 'krc' ? BOOKS.length >= 15 : BOOKS.length === 10, lang);
     assert.ok(BOOKS_INTRO, lang);
     assert.equal(new Set(BOOKS.map(b => b.id)).size, BOOKS.length, lang);
     for (const b of BOOKS) {
