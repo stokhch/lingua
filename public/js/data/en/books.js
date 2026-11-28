@@ -44,7 +44,7 @@ export const BOOKS = [
     quote: 'You see, but you do not observe.', quoteRu: 'Вы смотрите, но не наблюдаете.',
     note: 'Холмс говорит Ватсону в рассказе «Скандал в Богемии»: видеть (see) — одно, а замечать детали (observe) — другое. В этом весь его метод.',
     words: [['observe', 'наблюдать, замечать'], ['see', 'видеть']],
-    links: [{ title: 'Текст (Project Gutenberg)', href: 'https://www.gutenberg.org/ebooks/1661' }, { title: 'Википедия', href: 'https://ru.wikipedia.org/wiki/Приключения_Шерлока_Холмса' }] },
+    links: [{ title: 'Текст (Project Gutenberg)', href: 'https://www.gutenberg.org/ebooks/1661' }, { title: 'Википедия', href: 'https://ru.wikipedia.org/wiki/Приключения_Шерлока_Холмса_(сборник)' }] },
   { id: 'moby-dick', genre: 'Роман', title: 'Moby-Dick', ru: 'Моби Дик', author: 'Герман Мелвилл', year: '1851',
     desc: 'Капитан Ахав одержимо преследует белого кита, который откусил ему ногу. Великий американский роман о море, гордыне и судьбе.',
     quote: 'Call me Ishmael.', quoteRu: 'Зовите меня Измаил.',
@@ -62,5 +62,5 @@ export const BOOKS = [
     quote: 'BIG BROTHER IS WATCHING YOU.', quoteRu: 'Старший Брат следит за тобой.',
     note: 'Надпись на плакатах повсюду в романе. Из книги в язык пришли слова Big Brother, thoughtcrime («мыслепреступление»), newspeak («новояз»). Watch — «смотреть, следить» (Present Continuous: is watching — прямо сейчас).',
     words: [['watch', 'следить, наблюдать'], ['thoughtcrime', 'мыслепреступление']],
-    links: [{ title: 'Википедия', href: 'https://ru.wikipedia.org/wiki/1984_(роман)' }, { title: 'Wikipedia (англ.)', href: 'https://en.wikipedia.org/wiki/Nineteen_Eighty-Four' }] }
+    links: [{ title: 'Википедия: Джордж Оруэлл', href: 'https://ru.wikipedia.org/wiki/Оруэлл,_Джордж' }, { title: 'Wikipedia (англ.)', href: 'https://en.wikipedia.org/wiki/Nineteen_Eighty-Four' }] }
 ];
