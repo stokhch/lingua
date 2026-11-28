@@ -209,3 +209,19 @@ test('Мифы Древней Греции: перевод, пояснения, 
   const cases = { Ολύμπου: 'Όλυμπος', Δία: 'Δίας', θεάς: 'θεά', ωμό: 'ωμός', νίκες: 'νίκη', φέρεις: 'φέρνω', ύφανε: 'υφαίνω', πολιορκούσαν: 'πολιορκώ', Γοργόνες: 'Γοργόνα' };
   for (const [f, w] of Object.entries(cases)) assert.equal(el.lookup(f).word, w, f);
 });
+
+test('Литература: у каждого языка 10 известных произведений с цитатой, переводом, пояснением и ссылками', async () => {
+  for (const lang of ['en', 'tr', 'de', 'el', 'krc']) {
+    const { BOOKS, BOOKS_INTRO } = await import(`../public/js/data/${lang}/books.js`);
+    assert.equal(BOOKS.length, 10, lang);
+    assert.ok(BOOKS_INTRO, lang);
+    assert.equal(new Set(BOOKS.map(b => b.id)).size, BOOKS.length, lang);
+    for (const b of BOOKS) {
+      for (const k of ['genre', 'title', 'author', 'year', 'desc', 'quote', 'quoteRu', 'note']) assert.ok(b[k], `${lang}/${b.id}: ${k}`);
+      assert.ok(b.note.length > 40, b.id);
+      assert.ok(b.words?.length >= 2 && b.words.every(([w, t]) => w && t), b.id);
+      assert.ok(b.links?.length >= 2, b.id);
+      for (const l of b.links) { assert.ok(l.title, b.id); assert.match(l.href, /^https:\/\/\S+$/, b.id); }
+    }
+  }
+});
