@@ -1,4 +1,4 @@
-// Друзья и дуэли: код для добавления в друзья, рейтинг среди друзей, вызов друга на дуэль по словам.
+// Друзья и дуэли: запросы в друзья, код для добавления, рейтинг среди друзей, вызов друга на дуэль по словам.
 import { store } from '../store.js';
 import { esc, $, $$, icon, toast, modal, shuffle, plural } from '../ui.js';
 import * as G from '../game.js';
@@ -6,6 +6,9 @@ import { L, LANGS } from '../lang.js';
 import { rankFor } from '../ranks.js';
 import { distractors } from './train.js';
 import { inviteLink } from '../invite.js';
+import { respondRequest, cancelRequest } from '../friendreq.js';
+
+const REQ_FROM = [['all', 'Все ученики'], ['class', 'Только одноклассники'], ['nobody', 'Никто']];
 
 const DUEL_N = 10;
 const fmtTime = ms => `${Math.floor(ms / 60000) ? Math.floor(ms / 60000) + ' мин ' : ''}${Math.round((ms % 60000) / 1000)} с`;
@@ -25,6 +28,7 @@ export function renderFriends(main) {
 
   const draw = data => {
     const { code, friends, duels, me } = data;
+    const reqs = data.requests || { in: [], out: [] };
     const table = [{ ...me, isMe: true }, ...friends].sort((a, b) => b.week - a.week || b.xp - a.xp);
     const toPlay = duels.filter(d => d.role === 'b' && !d.mine);
     const waiting = duels.filter(d => d.mine && !d.result);
@@ -32,7 +36,7 @@ export function renderFriends(main) {
     main.innerHTML = `
     <section class="band">
       <div class="toolbar"><h1>Друзья и дуэли</h1><span class="row gap"><a class="btn ghost small" href="#messages">${icon('mail')} Сообщения</a><a class="btn ghost small" href="#students">${icon('chart')} Все ученики</a><a class="btn ghost small" href="#classes">${icon('user')} Классы</a></span></div>
-      <p class="lead">Учитесь вместе: сравнивайте опыт за неделю и вызывайте друзей на дуэль по словам. Кто ответит верно на больше слов, тот и победил, а при равенстве побеждает тот, кто быстрее.</p>
+      <p class="lead">Учитесь вместе: отправляйте запросы в друзья, сравнивайте опыт за неделю и вызывайте друзей на дуэль по словам. Кто ответит верно на больше слов, тот и победил, а при равенстве побеждает тот, кто быстрее.</p>
       <div class="friend-code">
         <div><span class="muted">Ваш код для друзей</span><b id="my-code">${esc(code)}</b></div>
         <button class="btn ghost small" id="copy">${icon('check')} Скопировать</button>
@@ -43,6 +47,7 @@ export function renderFriends(main) {
         <input id="inv-link" readonly value="${esc(inviteLink(code))}" aria-label="Ваша ссылка-приглашение">
         <div class="row gap"><button class="btn small" id="inv-copy">${icon('check')} Скопировать ссылку</button>${navigator.share ? `<button class="btn ghost small" id="inv-share">${icon('heart')} Поделиться</button>` : ''}</div>
       </div>
+      ${reqs.in.length ? `<h2 class="sets-h" id="fr-in">Запросы в друзья</h2><ul class="fr-reqs">${reqs.in.map(r => reqRow(r, `<button class="btn small" data-acc="${esc(r.pid)}" data-name="${esc(r.name)}">${icon('heart')} Принять</button><button class="btn ghost small" data-dec="${esc(r.pid)}" data-name="${esc(r.name)}">Отклонить</button>`)).join('')}</ul>` : ''}
       ${toPlay.length ? `<h2 class="sets-h">Вас вызвали</h2><div class="duels">${toPlay.map(d => duelCard(d)).join('')}</div>` : ''}
     </section>
     <section class="band">
@@ -51,7 +56,13 @@ export function renderFriends(main) {
         <div class="fr-name"><b>${esc(f.name)}${f.isMe ? ' (вы)' : ''}</b><span>${esc(rankFor(f.level).title)} · ур. ${f.level} · ${LANGS[f.lang]?.code || ''} · ${ago(f.active)}</span></div>
         <span title="Дней подряд">${icon('fire')}${f.streak}</span><span class="num">${f.week} XP</span>
         ${f.isMe ? '<span></span>' : `<span class="fr-act"><a class="icon-btn" href="#messages-${esc(f.code)}" title="Написать" aria-label="Написать ${esc(f.name)}">${icon('mail')}</a><button class="btn small" data-duel="${esc(f.code)}" data-name="${esc(f.name)}">Дуэль</button><button class="icon-btn" data-rm="${esc(f.code)}" data-name="${esc(f.name)}" title="Удалить из друзей" aria-label="Удалить ${esc(f.name)} из друзей">${icon('x')}</button></span>`}</li>`).join('')}</ol>`
-        : `<div class="empty"><p>Пока никого. Отправьте другу ссылку-приглашение или код <b>${esc(code)}</b>, либо добавьте его код выше — дружба взаимная.</p></div>`}
+        : `<div class="empty"><p>Пока никого. Найдите ученика во <a href="#students">«Всех учениках»</a> и отправьте запрос в друзья, либо поделитесь ссылкой-приглашением или кодом <b>${esc(code)}</b>.</p></div>`}
+    </section>
+    <section class="band">
+      <div class="toolbar"><h2>Найти друзей</h2><a class="btn small" href="#students">${icon('search')} Все ученики</a></div>
+      <p class="muted">Откройте «Все ученики» или рейтинг недели и нажмите «В друзья» рядом с именем. Ученик получит запрос, и дружба начнётся, когда он его примет. Если он уже звал вас, вы сразу станете друзьями.</p>
+      ${reqs.out.length ? `<h3 class="sets-h">Отправленные запросы</h3><ul class="fr-reqs">${reqs.out.map(r => reqRow(r, `<button class="btn ghost small" data-cancel="${esc(r.pid)}">Отозвать</button>`)).join('')}</ul>` : ''}
+      <label class="fr-pref"><span>Кто может присылать вам запросы в друзья</span><select id="req-from">${REQ_FROM.map(([v, t]) => `<option value="${v}" ${data.reqFrom === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
     </section>
     ${waiting.length || done.length ? `<section class="band"><h2>Дуэли</h2><div class="duels">${[...waiting, ...done].slice(0, 20).map(d => duelCard(d)).join('')}</div></section>` : ''}`;
 
@@ -64,6 +75,13 @@ export function renderFriends(main) {
       e.preventDefault();
       try { const r = await store.api('POST', 'api/friends', { code: e.target.code.value }); toast(`${r.friend.name} теперь в друзьях`); load(); }
       catch (err) { toast(err.message); }
+    };
+    $$('[data-acc]').forEach(b => b.onclick = async () => { b.disabled = true; if (await respondRequest(b.dataset.acc, b.dataset.name, true) !== undefined) load(); else b.disabled = false; });
+    $$('[data-dec]').forEach(b => b.onclick = () => modal(`<h2>Отклонить запрос от ${esc(b.dataset.name)}?</h2><p class="muted">Ученик не узнает об отказе: у него запрос останется «отправленным», а повторить его можно будет только через месяц. Если вам пишут неприятное — заблокируйте ученика на странице «Сообщения».</p><div class="row gap"><button class="btn danger" id="yes">Отклонить</button><button class="btn ghost" data-close>Отмена</button></div>`,
+      (el, close) => { $('#yes', el).onclick = async () => { close(); if (await respondRequest(b.dataset.dec, b.dataset.name, false) !== undefined) load(); }; }));
+    $$('[data-cancel]').forEach(b => b.onclick = async () => { b.disabled = true; if (await cancelRequest(b.dataset.cancel) !== undefined) load(); else b.disabled = false; });
+    $('#req-from').onchange = async e => {
+      try { await store.api('POST', 'api/friends/settings', { reqFrom: e.target.value }); toast('Сохранено'); } catch (err) { toast(err.message); }
     };
     $$('[data-rm]').forEach(b => b.onclick = () => modal(`<h2>Удалить ${esc(b.dataset.name)} из друзей?</h2><p class="muted">Вы пропадёте из списков друг друга. Добавиться снова можно по коду.</p><div class="row gap"><button class="btn danger" id="yes">Удалить</button><button class="btn ghost" data-close>Отмена</button></div>`,
       (el, close) => { $('#yes', el).onclick = async () => { close(); try { await store.api('POST', 'api/friends/remove', { code: b.dataset.rm }); load(); } catch (err) { toast(err.message); } }; }));
@@ -79,6 +97,10 @@ export function renderFriends(main) {
   load();
   return () => { alive = false; };
 }
+
+const reqRow = (r, actions) => `<li><span class="ava">${esc(r.name.slice(0, 1).toUpperCase())}</span>
+  <div class="fr-name"><b>${esc(r.name)}</b><span>${esc(rankFor(r.level).title)} · ур. ${r.level} · ${LANGS[r.lang]?.code || ''} · ${r.week} XP за неделю${r.classmate ? ' · из вашего класса' : ''}</span></div>
+  <span class="fr-act row gap">${actions}</span></li>`;
 
 function duelCard(d) {
   const lang = LANGS[d.lang]?.code || d.lang;
