@@ -86,6 +86,24 @@ const hitsHtml = lang => `
       <div class="hit-grid">${lang.HITS.map(h => hitCard(h, lang)).join('')}</div>
     </section>`;
 
+// Литература: самые известные произведения языка — цитата в оригинале, перевод, пояснения и ссылки
+const bookCard = (b, lang) => `<article class="book-card">
+      <span class="book-meta"><span class="book-genre">${esc(b.genre)}</span><span>${esc(b.year)}</span></span>
+      <b lang="${lang}">${esc(b.title)}</b>${b.ru && b.ru !== b.title ? `<span class="book-ru">${esc(b.ru)}</span>` : ''}
+      <span class="book-author">${esc(b.author)}</span>
+      <p>${esc(b.desc)}</p>
+      <blockquote><q lang="${lang}">${esc(b.quote)}</q><span>${esc(b.quoteRu)}</span></blockquote>
+      <p class="book-note">${esc(b.note)}</p>
+      ${b.words?.length ? `<dl class="book-words">${b.words.map(([w, t]) => `<div><dt lang="${lang}">${esc(w)}</dt><dd>${esc(t)}</dd></div>`).join('')}</dl>` : ''}
+      <span class="book-links">${b.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a>`).join('')}</span>
+    </article>`;
+const booksHtml = lang => `
+    <section class="band books" id="books">
+      <h2>Литература</h2>
+      <p class="muted">${esc(lang.BOOKS_INTRO || `Известные произведения на ${lang.prep}.`)} Ссылки открываются на внешних сайтах.</p>
+      <div class="book-grid">${lang.BOOKS.map(b => bookCard(b, lang.id)).join('')}</div>
+    </section>`;
+
 function statsFor(list) {
   const s = store.state, { lemma, tokenRe } = L();
   const has = k => !!s.words[k];
@@ -123,7 +141,7 @@ export function renderTexts(main) {
       <div class="toolbar"><h1>Тексты и материалы</h1><button class="btn" id="add-mat">${icon('plus')} Свой материал</button></div>
       <p class="lead">${L().name}: ${all.length} ${plural(all.length, 'материал', 'материала', 'материалов')} на ${shelves.filter(s => s.items.length).length} ${plural(shelves.filter(s => s.items.length).length, 'полке', 'полках', 'полках')}, прочитано ${done}. Нажимайте на незнакомые слова — появится перевод, а слово можно сразу отправить в словарь вместе с предложением. На других сайтах слова поможет собирать <a href="#extension">расширение для браузера</a>.</p>
       <label class="search lib-search">${icon('search')}<input id="lib-q" placeholder="Поиск по названию, теме и тексту" value="${esc(query)}" aria-label="Поиск по материалам"></label>
-      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a>${L().VIDEOS ? `<button class="chip" id="to-videos">Видеоматериалы <i>${L().VIDEOS.length}</i></button>` : ''}${L().HITS ? `<button class="chip" id="to-hits">Популярные песни <i>${L().HITS.length}</i></button>` : ''}</nav>
+      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a>${L().VIDEOS ? `<button class="chip" id="to-videos">Видеоматериалы <i>${L().VIDEOS.length}</i></button>` : ''}${L().HITS ? `<button class="chip" id="to-hits">Популярные песни <i>${L().HITS.length}</i></button>` : ''}${L().BOOKS ? `<button class="chip" id="to-books">Литература <i>${L().BOOKS.length}</i></button>` : ''}</nav>
     </section>
     ${found ? `<section class="band"><h2>Найдено: ${found.length}</h2><div class="texts">${byRelevance(found).map(t => card(t, stats.get(t.id))).join('') || '<div class="empty"><p>Ничего не найдено.</p></div>'}</div></section>`
       : shelves.map(sh => {
@@ -136,9 +154,11 @@ export function renderTexts(main) {
       }).join('')}
     ${!found && L().VIDEOS ? videosHtml(L()) : ''}
     ${!found && L().HITS ? hitsHtml(L()) : ''}
+    ${!found && L().BOOKS ? booksHtml(L()) : ''}
     ${L().RESOURCES ? resourcesHtml(L()) : ''}`;
     $('#add-mat').onclick = addMaterial;
     $('#to-videos') && ($('#to-videos').onclick = () => $('#videos')?.scrollIntoView({ behavior: 'smooth' }));
+    $('#to-books') && ($('#to-books').onclick = () => $('#books')?.scrollIntoView({ behavior: 'smooth' }));
     $('#to-hits') && ($('#to-hits').onclick = () => $('#hits')?.scrollIntoView({ behavior: 'smooth' }));
     $$('[data-vk]').forEach(b => b.onclick = () => { videoKind[L().id] = b.dataset.vk; const y = scrollY; draw(); scrollTo(0, y); });
     $('#add-own') && ($('#add-own').onclick = addMaterial);

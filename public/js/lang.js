@@ -25,6 +25,11 @@ import * as trHits from './data/tr/hits.js';
 import * as deHits from './data/de/hits.js';
 import * as elHits from './data/el/hits.js';
 import * as krcHits from './data/krc/hits.js';
+import * as krcBooks from './data/krc/books.js';
+import * as enBooks from './data/en/books.js';
+import * as trBooks from './data/tr/books.js';
+import * as deBooks from './data/de/books.js';
+import * as elBooks from './data/el/books.js';
 import { krcToTurkish, krcToKazakh } from './data/krc/translit.js';
 import * as elDict from './data/el/dictionary.js';
 import { TEXTS as elTexts } from './data/el/texts.js';
@@ -42,6 +47,8 @@ const EL_LETTERS = 'Α-ΩΆΈΉΊΌΎΏΪΫα-ωάέήίόύώϊϋΐΰ';
 const videos = m => ({ VIDEOS: m.VIDEOS, VIDEO_INTRO: m.VIDEO_INTRO, VIDEO_CATALOGS: m.VIDEO_CATALOGS });
 // Популярные песни языка: карточки с фразами, переводом и ссылками
 const hits = m => ({ HITS: m.HITS, HITS_INTRO: m.HITS_INTRO });
+// Литература языка: карточки известных произведений с цитатой, переводом и ссылками
+const books = m => ({ BOOKS: m.BOOKS, BOOKS_INTRO: m.BOOKS_INTRO });
 
 export const LANGS = {
   en: {
@@ -53,7 +60,8 @@ export const LANGS = {
     DICT: enDict.DICT, SETS: enDict.SETS, SET_INFO: enDict.SET_INFO, lemma: enDict.lemma, lookup: enDict.lookup,
     TEXTS: enTexts, COURSES: enCourses, ALL_LESSONS: enLessons, PHRASES: enPhrases,
     ...videos(enVideos),
-    ...hits(enHits)
+    ...hits(enHits),
+    ...books(enBooks)
   },
   tr: {
     id: 'tr', code: 'TR', name: 'Турецкий', acc: 'турецкий', gen: 'турецкого', prep: 'турецком', flag: '🇹🇷',
@@ -64,7 +72,8 @@ export const LANGS = {
     DICT: trDict.DICT, SETS: trDict.SETS, SET_INFO: trDict.SET_INFO, lemma: trDict.lemma, lookup: trDict.lookup,
     TEXTS: trTexts, COURSES: trCourses, ALL_LESSONS: trLessons, PHRASES: trPhrases,
     ...videos(trVideos),
-    ...hits(trHits)
+    ...hits(trHits),
+    ...books(trBooks)
   },
   // Немецкий: латиница с умлаутами и ß. Существительные в словаре хранятся строчными (как все слова Лингвы),
   // а род показан в переводе: «haus — дом (das)». Ответ без умлаутов засчитывается с подсказкой (schon = schön).
@@ -77,7 +86,8 @@ export const LANGS = {
     DICT: deDict.DICT, SETS: deDict.SETS, SET_INFO: deDict.SET_INFO, lemma: deDict.lemma, lookup: deDict.lookup,
     TEXTS: deTexts, COURSES: deCourses, ALL_LESSONS: deLessons, PHRASES: dePhrases,
     ...videos(deVideos),
-    ...hits(deHits)
+    ...hits(deHits),
+    ...books(deBooks)
   },
   // Новогреческий: своя азбука. На клавиатуре у ученика её обычно нет, поэтому панель — весь алфавит
   // и кнопка ударения «´» (ставит тонос на предыдущую гласную). Ответ без ударений засчитывается с подсказкой.
@@ -91,7 +101,8 @@ export const LANGS = {
     DICT: elDict.DICT, SETS: elDict.SETS, SET_INFO: elDict.SET_INFO, lemma: elDict.lemma, lookup: elDict.lookup,
     TEXTS: elTexts, COURSES: elCourses, ALL_LESSONS: elLessons, PHRASES: elPhrases,
     ...videos(elVideos),
-    ...hits(elHits)
+    ...hits(elHits),
+    ...books(elBooks)
   },
   // Карачаево-балкарский: кириллица, своего голоса синтеза речи нет — читает казахский голос (близкий тюркский язык)
   // по переводу в казахскую кириллицу (къ → қ, ё → ө…); если казахского нет — турецкий (ttsFallback). Онлайн-переводчик его не знает.
@@ -105,7 +116,8 @@ export const LANGS = {
     DICT: krcDict.DICT, SETS: krcDict.SETS, SET_INFO: krcDict.SET_INFO, lemma: krcDict.lemma, lookup: krcDict.lookup,
     TEXTS: krcTexts, COURSES: krcCourses, ALL_LESSONS: krcLessons, PHRASES: krcPhrases, RESOURCES: krcResources,
     ...videos(krcVideos),
-    ...hits(krcHits)
+    ...hits(krcHits),
+    ...books(krcBooks)
   }
 };
 
