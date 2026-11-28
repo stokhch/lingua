@@ -9,6 +9,7 @@ import { KINDS, SHELVES, shelfOf, formatOf, wordTotal, newWordCount } from '../m
 import { openMaterialEditor } from './materials.js';
 import { textArt } from '../text-art.js';
 import { VIDEO_KINDS, VIDEO_GROUPS } from '../data/video-kinds.js';
+import { hitLinks } from '../data/hit-links.js';
 
 const ROW = 8; // карточек в ряду полки на главной странице библиотеки
 // Полки, которые на главной странице показываются целиком, без кнопки «Все N»
@@ -65,6 +66,26 @@ const videosHtml = lang => {
     </section>`;
 };
 
+// Популярные песни: карточки с годом, исполнителем, коротким рассказом, разбором фраз с переводом и ссылками.
+// Песни защищены авторским правом — текст целиком не показываем, только одну-две строки и ссылки на запись.
+const hitCard = (h, lang) => `<article class="hit-card lv-${h.level}" id="hit-${esc(h.id)}">
+      <span class="hit-meta"><span class="lv">${esc(h.level)}</span>${h.year ? `<span class="hit-year">${h.year}</span>` : ''}</span>
+      <b lang="${lang.id}">${esc(h.title)}</b>
+      <span class="hit-artist" lang="${lang.id}">${esc(h.artist)}</span>
+      <span class="video-ru">${esc(h.ru)}</span>
+      <p>${esc(h.desc)}</p>
+      <details class="hit-phrases"><summary>Фразы с переводом <i>${h.phrases.length}</i></summary>
+        <ul>${h.phrases.map(f => `<li><q lang="${lang.id}">${esc(f.text)}</q><span class="hit-tr">${esc(f.tr)}</span>${f.note ? `<small>${esc(f.note)}</small>` : ''}</li>`).join('')}</ul>
+      </details>
+      <span class="hit-links">${hitLinks(h, lang).map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a>`).join('')}</span>
+    </article>`;
+const hitsHtml = lang => `
+    <section class="band hits" id="hits">
+      <h2>Популярные песни</h2>
+      <p class="muted">${esc(lang.HITS_INTRO || '')} Тексты песен защищены авторским правом, поэтому здесь — только разбор названия и пары строк, а целиком песню слушайте по ссылкам.</p>
+      <div class="hit-grid">${lang.HITS.map(h => hitCard(h, lang)).join('')}</div>
+    </section>`;
+
 function statsFor(list) {
   const s = store.state, { lemma, tokenRe } = L();
   const has = k => !!s.words[k];
@@ -102,7 +123,7 @@ export function renderTexts(main) {
       <div class="toolbar"><h1>Тексты и материалы</h1><button class="btn" id="add-mat">${icon('plus')} Свой материал</button></div>
       <p class="lead">${L().name}: ${all.length} ${plural(all.length, 'материал', 'материала', 'материалов')} на ${shelves.filter(s => s.items.length).length} ${plural(shelves.filter(s => s.items.length).length, 'полке', 'полках', 'полках')}, прочитано ${done}. Нажимайте на незнакомые слова — появится перевод, а слово можно сразу отправить в словарь вместе с предложением. На других сайтах слова поможет собирать <a href="#extension">расширение для браузера</a>.</p>
       <label class="search lib-search">${icon('search')}<input id="lib-q" placeholder="Поиск по названию, теме и тексту" value="${esc(query)}" aria-label="Поиск по материалам"></label>
-      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a>${L().VIDEOS ? `<button class="chip" id="to-videos">Видеоматериалы <i>${L().VIDEOS.length}</i></button>` : ''}</nav>
+      <nav class="shelf-chips" aria-label="Полки">${shelves.map(sh => `<a class="chip" href="#shelf-${sh.id}">${icon(sh.icon)}${esc(sh.title)} <i>${sh.items.length}</i></a>`).join('')}<a class="chip" href="#shelf-all">Все материалы <i>${all.length}</i></a>${L().VIDEOS ? `<button class="chip" id="to-videos">Видеоматериалы <i>${L().VIDEOS.length}</i></button>` : ''}${L().HITS ? `<button class="chip" id="to-hits">Популярные песни <i>${L().HITS.length}</i></button>` : ''}</nav>
     </section>
     ${found ? `<section class="band"><h2>Найдено: ${found.length}</h2><div class="texts">${byRelevance(found).map(t => card(t, stats.get(t.id))).join('') || '<div class="empty"><p>Ничего не найдено.</p></div>'}</div></section>`
       : shelves.map(sh => {
@@ -114,9 +135,11 @@ export function renderTexts(main) {
         </section>`;
       }).join('')}
     ${!found && L().VIDEOS ? videosHtml(L()) : ''}
+    ${!found && L().HITS ? hitsHtml(L()) : ''}
     ${L().RESOURCES ? resourcesHtml(L()) : ''}`;
     $('#add-mat').onclick = addMaterial;
     $('#to-videos') && ($('#to-videos').onclick = () => $('#videos')?.scrollIntoView({ behavior: 'smooth' }));
+    $('#to-hits') && ($('#to-hits').onclick = () => $('#hits')?.scrollIntoView({ behavior: 'smooth' }));
     $$('[data-vk]').forEach(b => b.onclick = () => { videoKind[L().id] = b.dataset.vk; const y = scrollY; draw(); scrollTo(0, y); });
     $('#add-own') && ($('#add-own').onclick = addMaterial);
     const inp = $('#lib-q');

@@ -209,3 +209,36 @@ test('Мифы Древней Греции: перевод, пояснения, 
   const cases = { Ολύμπου: 'Όλυμπος', Δία: 'Δίας', θεάς: 'θεά', ωμό: 'ωμός', νίκες: 'νίκη', φέρεις: 'φέρνω', ύφανε: 'υφαίνω', πολιορκούσαν: 'πολιορκώ', Γοργόνες: 'Γοργόνα' };
   for (const [f, w] of Object.entries(cases)) assert.equal(el.lookup(f).word, w, f);
 });
+
+test('Популярные песни: по 10 карточек на язык, с годом, фразами, переводом и ссылками', async () => {
+  for (const id of ['en', 'tr', 'de', 'el', 'krc']) {
+    const { HITS, HITS_INTRO } = await import(`../public/js/data/${id}/hits.js`);
+    assert.equal(HITS.length, 10, id);
+    assert.ok(HITS_INTRO, id);
+    assert.equal(new Set(HITS.map(h => h.id)).size, 10, id);
+    for (const h of HITS) {
+      assert.ok(h.title && h.ru && h.artist && h.desc, h.id);
+      assert.match(h.level, /^(A1|A2|B1|B2|C1)$/, h.id);
+      if (id !== 'krc') assert.ok(h.year >= 1976 && h.year <= 2026, h.id + ': песня за последние 50 лет');
+      if (h.yt) assert.match(h.yt, /^[\w-]{11}$/, h.id);
+      assert.ok(h.phrases.length >= 1 && h.phrases.length <= 3, h.id);
+      for (const f of h.phrases) {
+        assert.ok(f.text && f.tr && f.note, h.id);
+        // Авторское право: цитата — не больше одной строки
+        assert.ok(f.text.length <= 80, h.id + ': цитата слишком длинная');
+      }
+    }
+  }
+});
+
+test('Популярные песни: ссылки на YouTube, Яндекс Музыку и Spotify', async () => {
+  const { hitLinks } = await import('../public/js/data/hit-links.js');
+  const { HITS } = await import('../public/js/data/de/hits.js');
+  const withVideo = HITS.find(h => h.yt), noVideo = HITS.find(h => !h.yt);
+  const a = hitLinks(withVideo, { id: 'de' });
+  assert.equal(a[0].href, `https://www.youtube.com/watch?v=${withVideo.yt}`);
+  assert.deepEqual(a.map(l => l.title), ['YouTube', 'Яндекс Музыка', 'Spotify']);
+  assert.match(hitLinks(noVideo, { id: 'de' })[0].href, /^https:\/\/www\.youtube\.com\/results\?search_query=/);
+  assert.equal(hitLinks(noVideo, { id: 'krc' }).length, 2);
+  for (const l of a) assert.match(l.href, /^https:\/\/\S+$/);
+});
