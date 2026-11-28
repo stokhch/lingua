@@ -95,6 +95,7 @@ const bookCard = (b, lang) => `<article class="book-card">
       <blockquote><q lang="${lang}">${esc(b.quote)}</q><span>${esc(b.quoteRu)}</span></blockquote>
       <p class="book-note">${esc(b.note)}</p>
       ${b.words?.length ? `<dl class="book-words">${b.words.map(([w, t]) => `<div><dt lang="${lang}">${esc(w)}</dt><dd>${esc(t)}</dd></div>`).join('')}</dl>` : ''}
+      ${b.more?.length ? `<details class="book-more"><summary>Ещё цитаты <i>${b.more.length}</i></summary>${b.more.map(m => `<blockquote><q lang="${lang}">${esc(m.q)}</q><span>${esc(m.ru)}</span><small>${esc(m.note)}</small></blockquote>`).join('')}</details>` : ''}
       <span class="book-links">${b.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a>`).join('')}</span>
     </article>`;
 const booksHtml = lang => `

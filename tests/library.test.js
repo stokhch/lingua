@@ -248,12 +248,14 @@ test('Литература: у каждого языка 10 известных �
     const { BOOKS, BOOKS_INTRO } = await import(`../public/js/data/${lang}/books.js`);
     assert.ok(lang === 'krc' ? BOOKS.length >= 15 : BOOKS.length === 10, lang);
     assert.ok(BOOKS_INTRO, lang);
+    assert.ok(BOOKS.filter(b => b.more?.length).length >= (lang === 'krc' ? 1 : 6), `${lang}: ещё цитаты`);
     assert.equal(new Set(BOOKS.map(b => b.id)).size, BOOKS.length, lang);
     for (const b of BOOKS) {
       for (const k of ['genre', 'title', 'author', 'year', 'desc', 'quote', 'quoteRu', 'note']) assert.ok(b[k], `${lang}/${b.id}: ${k}`);
       assert.ok(b.note.length > 40, b.id);
       assert.ok(b.words?.length >= 2 && b.words.every(([w, t]) => w && t), b.id);
       assert.ok(b.links?.length >= 2, b.id);
+      for (const m of b.more || []) assert.ok(m.q && m.ru && m.note?.length > 20, `${lang}/${b.id}: more`);
       for (const l of b.links) { assert.ok(l.title, b.id); assert.match(l.href, /^https:\/\/\S+$/, b.id); }
     }
   }

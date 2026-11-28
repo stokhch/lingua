@@ -1099,3 +1099,6 @@ a.pill{text-decoration:none;color:inherit}.top a.pill:hover{background:rgba(255,
 .hit-phrases small{font-size:13px;color:var(--muted);line-height:1.35}
 .hit-links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
 .hit-links a{font-size:13px;font-weight:800;color:var(--brand-ink);text-decoration:none}.hit-links a:hover{text-decoration:underline}
+.book-more{margin-top:4px}.book-more summary{cursor:pointer;font-size:14px;font-weight:800;color:var(--brand-ink)}.book-more summary i{font-style:normal;opacity:.7}
+.book-more blockquote{margin:8px 0 0;padding:10px 12px;border-left:4px solid var(--gold);border-radius:6px;background:var(--bg2);display:grid;gap:4px}
+.book-more q{font-weight:700;font-style:italic;quotes:none}.book-more span{font-size:14px;opacity:.85}.book-more small{font-size:13px;opacity:.75}
