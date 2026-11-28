@@ -1850,7 +1850,47 @@ studieren|учиться (в вузе)
 abschreiben|списывать|schrieb ab,abgeschrieben
 buchstabieren|произносить по буквам
 die Kunst|изобразительное искусство (предмет)
-die Sportstunde|урок физкультуры`
+die Sportstunde|урок физкультуры`,
+toponyms: `der Ortsname|название места, топоним|Ortsnamen
+erraten|угадать|errät,erriet,erraten
+die Mosel|Мозель (река)
+der Römer|римлянин|Römer
+zweitausend|две тысячи
+lateinisch|латинский|lateinische,lateinischen,lateinischem
+colonia|colonia (лат.) — поселение, колония
+die Siedlung|поселение|Siedlungen
+die Kolonie|колония|Kolonien
+Koblenz|Кобленц (лат. confluentes — «сливающиеся»)
+confluentes|confluentes (лат.) — сливающиеся
+zusammenfließen|сливаться|Zusammenfließenden,fließt zusammen
+die Furt|брод|Furten
+Frankfurt|Франкфурт («брод франков»)
+der Franke|франк (германское племя)|Franken
+die Festung|крепость|Festungen
+daher|поэтому, отсюда
+Magdeburg|Магдебург
+Würzburg|Вюрцбург
+Düsseldorf|Дюссельдорф («деревня на Дюсселе»)
+die Düssel|Дюссель (река)
+der Mönch|монах|Mönche,Mönchen
+das Wappen|герб
+das Kindl|дитя (бавар.); Münchner Kindl — «мюнхенское дитя», монах на гербе
+ing|-ing: суффикс «у людей такого-то»
+ingen|-ingen: суффикс «у людей такого-то»
+Freising|Фрайзинг
+Tübingen|Тюбинген
+die Endung|окончание|Endungen
+slawisch|славянский|slawische,slawischen
+sorbisch|лужицкий (сорбский)|sorbischen,sorbische
+die Linde|липа|Linden
+der Sumpfwald|болотистый лес
+der Sumpf|болото
+das Wortspiel|игра слов
+hinhören|прислушиваться
+Köln|Кёльн (лат. colonia)
+Leipzig|Лейпциг («место лип»)
+Dresden|Дрезден
+Berlin|Берлин (вероятно, слав. «болото»)`
 };
 
 export const MORE_INFO = {
@@ -1878,5 +1918,6 @@ export const MORE_INFO = {
   internet: { title: 'Компьютер и интернет', icon: 'work', desc: 'Сайты, пароли, приложения, файлы' },
   household: { title: 'Квартира и быт', icon: 'home', desc: 'Комнаты, мебель, ванная, аренда' },
   reading: { title: 'Слова из текстов', icon: 'core', desc: 'Слова из текстов A1–B1: покупки, переезд, работа, традиции' },
-  school: { title: 'Школа и университет', icon: 'work', desc: 'Уроки, экзамены, оценки, лекции' }
+  school: { title: 'Школа и университет', icon: 'work', desc: 'Уроки, экзамены, оценки, лекции' },
+  toponyms: { title: 'Названия мест', icon: 'travel', desc: 'Слова из текста о немецких топонимах: die Furt, die Burg, das Dorf, -ing, Köln, Berlin' }
 };

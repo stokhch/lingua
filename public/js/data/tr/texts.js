@@ -106,6 +106,54 @@ Akşam Deniz yorgundu ama mutluydu. Eve döndü ve annesini aradı. "İşimi ço
 Türkçede kelimeler ekler ile değişir. Örneğin "ev" kelimesi "evler", "evim", "evlerimizde" olur. İlk başta bu sistem garip görünür, ama aslında çok mantıklıdır. Ekleri öğrendikten sonra yeni kelimeleri kolayca anlarsınız.
 
 Uzmanlar, her gün kısa bir metin okumayı ve yeni kelimeleri tekrarlamayı öneriyor. Ayrıca Türkçe müzik dinlemek ve dizi izlemek de çok yardımcı olur. En önemlisi, hata yapmaktan korkmamak. Hatalar öğrenmenin doğal bir parçasıdır.`
+  },
+  {
+    id: 'tr-yer-adlari', level: 'B1', topic: 'Культура', title: 'Yer Adları Ne Anlatır?', set: 'toponyms',
+    note: 'Текст написан для Лингвы по общедоступным сведениям о топонимике Турции. Где происхождение названия спорно, это сказано прямо.',
+    summary: 'Что значат названия мест в Турции. Одни понятны из турецкого: Эскишехир — «старый город», Памуккале — «хлопковая крепость», Кушадасы — «птичий остров», Кызылырмак — «красная река». Чёрное и Средиземное море по-турецки — «чёрное» и «белое»; по одной версии, древние тюрки обозначали цветом стороны света, но это не доказано. Многие города носят переделанные греческие и латинские имена: Измир (Смирна), Трабзон («стол»), Анталья (в честь царя Аттала), Эдирне (в честь Адриана). Стамбул, скорее всего, от греческого «в город». Происхождение названий Анкара и Каппадокия спорно.',
+    explain: [
+      ['yer adı', 'название места, топоним (мн. ч. yer adları)'],
+      ['Eskişehir', '«старый город»: eski — старый, şehir — город'],
+      ['Pamukkale', '«хлопковая крепость»: pamuk — хлопок, kale — крепость; белые известковые террасы издали похожи на хлопок'],
+      ['Kuşadası', '«птичий остров»: kuş — птица, ada — остров'],
+      ['Kızılırmak, Yeşilırmak', '«красная река» (по красноватому илу) и «зелёная река»'],
+      ['Karadeniz, Akdeniz', '«Чёрное море» и «Белое море» — так по-турецки называют Средиземное. Версия, что у древних тюрок «чёрный» значил «север», а «белый» — «юг» или «запад», популярна, но не доказана'],
+      ['İzmir', 'из греческого Σμύρνη (Смирна)'],
+      ['Trabzon', 'из греческого Τραπεζούς, от τράπεζα — «стол»: древний город стоял на плоском холме'],
+      ['Antalya', 'основана пергамским царём Атталом II и названа Атталия (Attaleia)'],
+      ['Edirne', 'из Hadrianopolis — «город Адриана», римского императора'],
+      ['İstanbul', 'по самой распространённой версии — из греческого εἰς τὴν Πόλιν, «в город»: Константинополь греки называли просто «Город»'],
+      ['Ankara', 'античное Ἄγκυρα; по-гречески ἄγκυρα — «якорь», но название, вероятно, древнее греческого, его значение спорно'],
+      ['Kapadokya', 'часто объясняют из древнеперсидского Katpatuka как «страна красивых лошадей», но это толкование спорно'],
+      ['büyük ihtimalle', 'скорее всего, по всей вероятности'],
+      ['tartışmalı', 'спорный']
+    ],
+    translation: `Многие названия мест в Турции очень древние. Одни из них турецкие, а другие пришли из языков народов, которые жили в Анатолии до турок.
+
+Значение некоторых названий понятно каждому, кто знает турецкий. Эскишехир значит «старый город». Белые террасы Памуккале издали похожи на крепость из хлопка. Кушадасы значит «остров птиц». Кызылырмак получил своё название из-за красноватого цвета воды; а Ешилырмак — это «зелёная река».
+
+Названия морей тоже интересны. Карадениз значит «чёрное море», Акдениз — «белое море». По мнению некоторых учёных, древние тюрки обозначали стороны света цветами: чёрный значил север, а белый — юг (или запад). Это объяснение распространено, но не точно.
+
+Многие названия городов пришли из греческого. Старое название Измира было Смирна. Трабзон происходит от Трапезунт, что по-гречески значит «стол», потому что древний город стоял на плоском холме. Анталью основал пергамский царь Аттал II, и город назвали Атталия. Старое название Эдирне — Адрианополь, то есть «город Адриана».
+
+Название Стамбул тоже, скорее всего, пришло из греческого: «эйс тин Полин», то есть «в город». Раньше люди коротко называли Константинополь «Городом».
+
+А значение некоторых названий спорно. Старое название Анкары было Анкира; по-гречески это слово значит «якорь», но название, вероятно, ещё древнее. Говорят, что название Каппадокия значит по-персидски «страна красивых лошадей», но и это не точно.
+
+Тот, кто смотрит на карту, на самом деле читает долгую историю Анатолии.`,
+    body: `Türkiye'deki birçok yer adı çok eskidir. Bazıları Türkçedir, bazıları ise Türklerden önce Anadolu'da yaşayan halkların dillerinden gelir.
+
+Bazı adların anlamı Türkçe bilen herkes için açıktır. Eskişehir "eski şehir" demektir. Pamukkale'nin beyaz terasları uzaktan pamuktan bir kaleye benzer. Kuşadası "kuşların adası" anlamına gelir. Kızılırmak bu adı suyunun kırmızımsı renginden almıştır; Yeşilırmak ise "yeşil nehir"dir.
+
+Denizlerin adları da ilginçtir. Karadeniz "kara deniz", Akdeniz "ak deniz", yani "beyaz deniz" demektir. Bazı bilim insanlarına göre eski Türkler yönleri renklerle gösteriyordu: kara kuzey, ak ise güney (ya da batı) demekti. Bu açıklama yaygın ama kesin değil.
+
+Birçok şehir adı Yunancadan gelir. İzmir'in eski adı Smyrna'ydı. Trabzon, Yunanca "masa" anlamına gelen Trapezus'tan gelir, çünkü eski şehir düz bir tepenin üstündeydi. Antalya'yı Bergama kralı II. Attalos kurdu ve şehre Attaleia adı verildi. Edirne'nin eski adı Hadrianopolis'tir, yani "Hadrianus'un şehri".
+
+İstanbul adı da büyük ihtimalle Yunancadan gelir: "eis tin Polin", yani "şehre". Eskiden insanlar Konstantinopolis'e kısaca "Şehir" diyorlardı.
+
+Bazı adların anlamı ise tartışmalıdır. Ankara'nın eski adı Ankyra'ydı; bu kelime Yunancada "çapa" demektir, ama ad muhtemelen daha eskidir. Kapadokya adının Farsça "güzel atlar ülkesi" anlamına geldiği söylenir, fakat bu da kesin değildir.
+
+Haritaya bakan biri aslında Anadolu'nun uzun tarihini okur.`
   }
 ];
 
