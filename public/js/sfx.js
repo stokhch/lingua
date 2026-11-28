@@ -1,9 +1,10 @@
 // Звуки успеха: короткие фанфары, синтезированные в Web Audio (без файлов и чужих сэмплов).
-// done — задание выполнено, big — дневная цель или новый уровень, chime — маленький шаг.
+// done — задание выполнено, big — дневная цель или новый уровень, chime — маленький шаг,
+// catch — слово поймано в водопаде (короткое и весёлое, чтобы не мешать озвучке).
 // Выключаются в профиле: store.state.mute = true.
 import { store } from './store.js';
 
-const RANK = { chime: 1, done: 2, big: 3 };
+const RANK = { chime: 1, catch: 1, done: 2, big: 3 };
 let ctx = null, pending = null, timer = null;
 
 export const soundOn = () => !store.state?.mute;
@@ -69,6 +70,12 @@ export function play(kind, a = audio()) {
 
   if (kind === 'chime') { // два колокольчика вверх
     bell(a, out, 84, 0, 0.35, 0.16); bell(a, out, 91, 0.08, 0.5, 0.14);
+    return;
+  }
+  if (kind === 'catch') { // быстрое «тинь-тинь-тинь» вверх по до-мажорному аккорду с искоркой
+    [[79, 0], [84, 0.055], [88, 0.11]].forEach(([n, t]) => bell(a, out, n, t, 0.22, 0.15));
+    note(a, out, { n: 91, t: 0.165, d: 0.4, vol: 0.13, type: 'triangle' });
+    bell(a, out, 96, 0.2, 0.35, 0.06);
     return;
   }
   if (kind === 'done') { // соль-до-ми-соль → аккорд до мажор
