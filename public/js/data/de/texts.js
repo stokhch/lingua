@@ -275,6 +275,52 @@ Die beiden lebten Anfang des neunzehnten Jahrhunderts und waren eigentlich Sprac
 Die ersten Ausgaben waren eigentlich gar nicht für Kinder gedacht, denn viele Märchen waren ziemlich grausam. Erst später hat Wilhelm die Texte so verändert, dass man sie Kindern vorlesen konnte.
 
 Die Brüder Grimm haben aber nicht nur Märchen gesammelt. Sie begannen auch das „Deutsche Wörterbuch“, das größte Wörterbuch der deutschen Sprache. Es wurde erst über hundert Jahre nach ihrem Tod fertig.`
+  },
+  {
+    id: 'de-ortsnamen', level: 'B1', topic: 'Культура', title: 'Was Ortsnamen erzählen', set: 'toponyms',
+    note: 'Текст написан для Лингвы по общедоступным сведениям о немецкой топонимике. Где происхождение названия спорно, это сказано прямо.',
+    summary: 'Что значат названия немецких городов. Кёльн и Кобленц основаны римлянами (лат. colonia — «поселение», confluentes — «сливающиеся»). Франкфурт — «брод франков», города на -burg выросли у крепостей, Дюссельдорф — «деревня на реке Дюссель». Мюнхен значит «у монахов». Окончания -ing и -ingen означают «у людей такого-то». На востоке много славянских названий: Лейпциг — от слова «липа», Дрезден — «жители болотистого леса». Название Берлин, скорее всего, тоже славянское и значит «болото», а медведь на гербе — просто игра слов.',
+    explain: [
+      ['der Ortsname', 'название населённого пункта, топоним'],
+      ['Köln', 'от лат. colonia — «поселение, колония» (римская Colonia Claudia Ara Agrippinensium). Общепринятое толкование'],
+      ['Koblenz', 'от лат. confluentes — «сливающиеся»: город стоит при впадении Мозеля в Рейн'],
+      ['die Furt', 'брод. Frankfurt am Main — «брод франков на Майне»'],
+      ['die Burg', 'крепость, замок. Hamburg, Magdeburg, Würzburg выросли у крепостей; значение первой части в каждом названии своё и не всегда ясно'],
+      ['das Dorf', 'деревня. Düsseldorf — «деревня на реке Дюссель»'],
+      ['München', '«у монахов» (древнее Munichen): на гербе города — фигурка монаха, «Münchner Kindl»'],
+      ['-ing, -ingen', 'суффикс принадлежности: «у людей (рода) такого-то». Freising, Tübingen, Sigmaringen; особенно часты на юге Германии'],
+      ['Leipzig', 'от лужицкого (сорбского) lipsk — «место, где растут липы»'],
+      ['Dresden', 'от лужицкого слова, примерно «жители болотистого леса»'],
+      ['Berlin', 'по самой распространённой версии — от древнего славянского слова со значением «болото, топь». Народная связь с Bär (медведь, он на гербе) — игра слов. Вопрос до конца не решён'],
+      ['sich einig sein', 'быть единодушными, соглашаться (die Forscher sind sich nicht einig — исследователи расходятся во мнениях)'],
+      ['das Wortspiel', 'игра слов']
+    ],
+    translation: `Многие немецкие названия мест очень старые. Кто знает несколько старых слов, часто может угадать, как возник город.
+
+На Рейне и Мозеле почти две тысячи лет назад римляне основывали города. Кёльн происходит от латинского слова colonia, то есть «поселение» или «колония». Кобленц лежит там, где Мозель впадает в Рейн, а название происходит от латинского confluentes — «сливающиеся».
+
+Многие названия описывают, как выглядело поселение или где оно находилось. Брод — это мелкое место в реке, через которое можно пройти или проехать. Значит, Франкфурт был «бродом франков» на Майне. Бург был крепостью; отсюда названия вроде Гамбург, Магдебург или Вюрцбург. Дюссельдорф когда-то был маленькой деревней на реке Дюссель.
+
+Люди тоже давали городам свои имена. Мюнхен значит «у монахов», потому что вначале здесь жили монахи. Поэтому на гербе города до сих пор виден маленький монах — «мюнхенское дитя». На юге Германии многие названия оканчиваются на -ing или -ingen, например Фрайзинг или Тюбинген. Это окончание означает примерно «у людей такого-то…».
+
+На востоке Германии раньше жили славянские народы, поэтому у многих городов там славянские названия. Лейпциг происходит от лужицкого слова «липа», Дрезден значит примерно «люди в болотистом лесу».
+
+Насчёт Берлина исследователи не вполне единодушны. Большинство считает, что название происходит из славянского языка и значит «болото». С медведем на гербе оно, вероятно, никак не связано — это просто игра слов.
+
+Так почти каждое название места рассказывает маленькую историю. Надо только внимательно прислушаться.`,
+    body: `Viele deutsche Ortsnamen sind sehr alt. Wer ein paar alte Wörter kennt, kann oft erraten, wie eine Stadt entstanden ist.
+
+Am Rhein und an der Mosel gründeten die Römer vor fast zweitausend Jahren Städte. Köln kommt vom lateinischen Wort colonia, also „Siedlung“ oder „Kolonie“. Koblenz liegt dort, wo die Mosel in den Rhein fließt, und der Name kommt vom lateinischen confluentes – „die Zusammenfließenden“.
+
+Viele Namen beschreiben, wie eine Siedlung aussah oder wo sie lag. Eine Furt ist eine flache Stelle in einem Fluss, durch die man gehen oder fahren kann. Frankfurt war also die „Furt der Franken“ am Main. Eine Burg war eine Festung; daher kommen Namen wie Hamburg, Magdeburg oder Würzburg. Düsseldorf war einmal ein kleines Dorf an dem Fluss Düssel.
+
+Auch Menschen gaben Städten ihre Namen. München bedeutet „bei den Mönchen“, denn am Anfang lebten hier Mönche. Deshalb sieht man auf dem Wappen der Stadt bis heute einen kleinen Mönch, das „Münchner Kindl“. In Süddeutschland enden viele Namen auf -ing oder -ingen, zum Beispiel Freising oder Tübingen. Diese Endung bedeutet ungefähr „bei den Leuten von …“.
+
+Im Osten Deutschlands lebten früher slawische Völker, deshalb haben viele Städte dort slawische Namen. Leipzig kommt von einem sorbischen Wort für „Linde“, Dresden bedeutet ungefähr „die Leute im Sumpfwald“.
+
+Bei Berlin sind sich die Forscher nicht ganz einig. Die meisten glauben, dass der Name aus einer slawischen Sprache kommt und „Sumpf“ bedeutet. Mit dem Bären auf dem Wappen hat er wahrscheinlich nichts zu tun – das ist nur ein Wortspiel.
+
+So erzählt fast jeder Ortsname eine kleine Geschichte. Man muss nur genau hinhören.`
   }
 ];
 
