@@ -44,11 +44,12 @@ const P = {
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[name] || ''}</svg>`;
 
 // Маскот проекта — ёжик Пим (оригинальный рисунок).
-// mood: happy | calm | sleepy | hungry (умоляющие глаза и пустая миска) | sad (давно не кормили) | eating (жуёт яблоко)
+// mood: happy | calm | sing (поёт: глаза зажмурены, рот открыт) | sleepy | hungry (умоляющие глаза и пустая миска) | sad (давно не кормили) | eating (жуёт яблоко)
 const INK = '#2a1d14';
 export function mascot(mood = 'calm', size = 160) {
   const EYES = {
     sleepy: `<path d="M70 92q6 4 12 0M98 92q6 4 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    sing: `<path d="M70 92q6-6 12 0M98 92q6-6 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
     eating: `<path d="M70 92q6-6 12 0M98 92q6-6 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
     hungry: `<path d="M67 83l13-6M113 83l-13-6" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/><circle cx="76" cy="91" r="8.5" fill="${INK}"/><circle cx="104" cy="91" r="8.5" fill="${INK}"/><circle cx="79" cy="87.5" r="3.4" fill="#fff"/><circle cx="107" cy="87.5" r="3.4" fill="#fff"/><circle cx="73.5" cy="94.5" r="1.5" fill="#fff"/><circle cx="101.5" cy="94.5" r="1.5" fill="#fff"/>`,
     sad: `<path d="M67 85l13-6M113 85l-13-6" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/><path d="M70 92q6 4 12 0M98 92q6 4 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/><path class="tear" d="M70 98q-3 5 0 8q3-3 0-8z" fill="#7cc4ff"/>`
@@ -58,6 +59,7 @@ export function mascot(mood = 'calm', size = 160) {
     : mood === 'sleepy' ? `<ellipse cx="90" cy="110" rx="4" ry="3" fill="${INK}"/>`
     : mood === 'hungry' ? `<ellipse cx="90" cy="111" rx="5" ry="6" fill="${INK}"/><ellipse cx="90" cy="114" rx="3" ry="2.2" fill="#ff8a7a"/>`
     : mood === 'sad' ? `<path d="M83 113q7-6 14 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`
+    : mood === 'sing' ? `<ellipse class="sing-mouth" cx="90" cy="111" rx="6" ry="7" fill="${INK}"/><ellipse cx="90" cy="115" rx="3.6" ry="2.4" fill="#ff8a7a"/><ellipse cx="64" cy="104" rx="10" ry="7" fill="#ffb3a1" opacity=".85"/><ellipse cx="116" cy="104" rx="10" ry="7" fill="#ffb3a1" opacity=".85"/>`
     : mood === 'eating' ? `<ellipse class="chew" cx="90" cy="110" rx="7" ry="4" fill="${INK}"/><ellipse cx="64" cy="104" rx="10" ry="7" fill="#ffb3a1" opacity=".85"/><ellipse cx="116" cy="104" rx="10" ry="7" fill="#ffb3a1" opacity=".85"/>`
     : `<path d="M84 108q6 4 12 0" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
   // что Пим держит в лапках: книгу, пустую миску или яблоко

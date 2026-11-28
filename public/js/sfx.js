@@ -92,3 +92,52 @@ export function play(kind, a = audio()) {
   brass(a, out, 48, 0.72, 1.1, 0.2); brass(a, out, 55, 0.72, 1.1, 0.12);
   [96, 100, 103, 108].forEach((n, i) => bell(a, out, n, 0.76 + i * 0.07, 0.6, 0.07));
 }
+
+// Песенка ёжика Пима — своя мелодия (≈3 с), до мажор, бодрый шаг 150 ударов в минуту.
+// Голос — треугольник с вибрато через мягкий фильтр, внизу — щипковый бас.
+// Возвращает длительность в секундах; при выключенном звуке молчит и возвращает её же,
+// чтобы анимация «пения» шла одинаково.
+const E = 0.2; // восьмая
+export const SONG = [ // [MIDI-нота, длительность в восьмых]
+  [67, 1], [72, 1], [76, 2], [74, 1], [72, 1], [76, 2],
+  [79, 1], [77, 1], [76, 1], [74, 1], [72, 2], [74, 1], [71, 1],
+  [72, 4]
+];
+const BASS = [[48, 0], [55, 2], [48, 4], [55, 6], [53, 8], [57, 10], [55, 12], [43, 14], [48, 16]];
+export const songLength = () => SONG.reduce((t, [, d]) => t + d * E, 0) + 0.3;
+
+function voice(a, out, n, t, d) {
+  const o = a.createOscillator(), g = a.createGain(), f = a.createBiquadFilter();
+  const lfo = a.createOscillator(), depth = a.createGain();
+  o.type = 'triangle'; o.frequency.value = hz(n);
+  f.type = 'lowpass'; f.frequency.value = 2400; f.Q.value = 2;
+  lfo.frequency.value = 5.5; depth.gain.value = d > 0.3 ? 14 : 5; // вибрато в центах, на долгих нотах сильнее
+  lfo.connect(depth).connect(o.detune);
+  const t0 = a.currentTime + t, end = t0 + d * 0.92;
+  o.frequency.setValueAtTime(hz(n) * 0.97, t0); // лёгкий «подъезд» к ноте, как у голоса
+  o.frequency.exponentialRampToValueAtTime(hz(n), t0 + 0.04);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(0.36, t0 + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.24, t0 + Math.min(0.1, d * 0.5));
+  g.gain.setValueAtTime(0.24, Math.max(t0 + 0.1, end - 0.06));
+  g.gain.exponentialRampToValueAtTime(0.0001, end);
+  o.connect(f).connect(g).connect(out);
+  o.start(t0); lfo.start(t0); o.stop(end + 0.05); lfo.stop(end + 0.05);
+}
+
+export function sing(a) {
+  const len = songLength();
+  if (!soundOn() || typeof document === 'undefined') return len;
+  a = a || audio();
+  if (!a) return len;
+  if (a.state === 'suspended') a.resume?.().catch(() => {});
+  const out = a.createGain();
+  out.gain.value = 0.5;
+  const comp = a.createDynamicsCompressor();
+  out.connect(comp).connect(a.destination);
+  let t = 0;
+  for (const [n, d] of SONG) { voice(a, out, n, t, d * E); t += d * E; }
+  for (const [n, at] of BASS) note(a, out, { n, t: at * E, d: at === 16 ? 0.8 : 0.3, vol: 0.22 });
+  bell(a, out, 96, t - 0.7, 0.6, 0.06); bell(a, out, 100, t - 0.6, 0.6, 0.05);
+  return len;
+}
