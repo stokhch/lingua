@@ -30,6 +30,11 @@ import * as enBooks from './data/en/books.js';
 import * as trBooks from './data/tr/books.js';
 import * as deBooks from './data/de/books.js';
 import * as elBooks from './data/el/books.js';
+import * as enSights from './data/en/landmarks.js';
+import * as trSights from './data/tr/landmarks.js';
+import * as deSights from './data/de/landmarks.js';
+import * as elSights from './data/el/landmarks.js';
+import * as krcSights from './data/krc/landmarks.js';
 import { krcToTurkish, krcToKazakh } from './data/krc/translit.js';
 import * as elDict from './data/el/dictionary.js';
 import { TEXTS as elTexts } from './data/el/texts.js';
@@ -49,6 +54,8 @@ const videos = m => ({ VIDEOS: m.VIDEOS, VIDEO_INTRO: m.VIDEO_INTRO, VIDEO_CATAL
 const hits = m => ({ HITS: m.HITS, HITS_INTRO: m.HITS_INTRO });
 // Литература языка: карточки известных произведений с цитатой, переводом и ссылками
 const books = m => ({ BOOKS: m.BOOKS, BOOKS_INTRO: m.BOOKS_INTRO });
+// Достопримечательности: карточки известных мест края языка, у каждой — текст для чтения с переводом по клику
+const sights = m => ({ LANDMARKS: m.LANDMARKS, LANDMARKS_INTRO: m.LANDMARKS_INTRO });
 
 export const LANGS = {
   en: {
@@ -61,7 +68,8 @@ export const LANGS = {
     TEXTS: enTexts, COURSES: enCourses, ALL_LESSONS: enLessons, PHRASES: enPhrases,
     ...videos(enVideos),
     ...hits(enHits),
-    ...books(enBooks)
+    ...books(enBooks),
+    ...sights(enSights)
   },
   tr: {
     id: 'tr', code: 'TR', name: 'Турецкий', acc: 'турецкий', gen: 'турецкого', prep: 'турецком', flag: '🇹🇷',
@@ -73,7 +81,8 @@ export const LANGS = {
     TEXTS: trTexts, COURSES: trCourses, ALL_LESSONS: trLessons, PHRASES: trPhrases,
     ...videos(trVideos),
     ...hits(trHits),
-    ...books(trBooks)
+    ...books(trBooks),
+    ...sights(trSights)
   },
   // Немецкий: латиница с умлаутами и ß. Существительные в словаре хранятся строчными (как все слова Лингвы),
   // а род показан в переводе: «haus — дом (das)». Ответ без умлаутов засчитывается с подсказкой (schon = schön).
@@ -87,7 +96,8 @@ export const LANGS = {
     TEXTS: deTexts, COURSES: deCourses, ALL_LESSONS: deLessons, PHRASES: dePhrases,
     ...videos(deVideos),
     ...hits(deHits),
-    ...books(deBooks)
+    ...books(deBooks),
+    ...sights(deSights)
   },
   // Новогреческий: своя азбука. На клавиатуре у ученика её обычно нет, поэтому панель — весь алфавит
   // и кнопка ударения «´» (ставит тонос на предыдущую гласную). Ответ без ударений засчитывается с подсказкой.
@@ -102,7 +112,8 @@ export const LANGS = {
     TEXTS: elTexts, COURSES: elCourses, ALL_LESSONS: elLessons, PHRASES: elPhrases,
     ...videos(elVideos),
     ...hits(elHits),
-    ...books(elBooks)
+    ...books(elBooks),
+    ...sights(elSights)
   },
   // Карачаево-балкарский: кириллица, своего голоса синтеза речи нет — читает казахский голос (близкий тюркский язык)
   // по переводу в казахскую кириллицу (къ → қ, ё → ө…); если казахского нет — турецкий (ttsFallback). Онлайн-переводчик его не знает.
@@ -117,7 +128,8 @@ export const LANGS = {
     TEXTS: krcTexts, COURSES: krcCourses, ALL_LESSONS: krcLessons, PHRASES: krcPhrases, RESOURCES: krcResources,
     ...videos(krcVideos),
     ...hits(krcHits),
-    ...books(krcBooks)
+    ...books(krcBooks),
+    ...sights(krcSights)
   }
 };
 

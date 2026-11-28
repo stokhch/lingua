@@ -8,7 +8,7 @@ import { examRow } from './exam.js';
 import { L, lower, splitRe, keysBar, fold } from '../lang.js';
 import { KINDS, SHELVES, youtubeId } from '../materials.js';
 import { openMaterialEditor, deleteMaterial } from './materials.js';
-import { allTexts } from './library.js';
+import { allTexts, sightTexts } from './library.js';
 import { textArt } from '../text-art.js';
 import * as D from '../grammar-drill.js';
 import { grammarCards, grammarState } from './grammar-train.js';
@@ -24,7 +24,7 @@ export { renderTexts } from './library.js';
 
 export function renderReader(main, id) {
   const { lemma } = L();
-  const t = allTexts().find(x => x.id === id); if (!t) { location.hash = 'texts'; return; }
+  const t = allTexts().find(x => x.id === id) || sightTexts().find(x => x.id === id); if (!t) { location.hash = 'texts'; return; }
   if (!store.state.readTexts[t.id] && !store.state.openedTexts?.[t.id]) { (store.state.openedTexts ||= {})[t.id] = Date.now(); store.save(); }
   const vid = youtubeId(t.video);
   const src = /^https?:[/][/]/.test(t.source || '') ? t.source : '';
@@ -38,7 +38,7 @@ export function renderReader(main, id) {
   }).join('');
   main.innerHTML = `
   <section class="band reader-wrap">
-    <a class="back" href="#shelf-${t.shelf}">${icon('back')} ${esc(SHELVES.find(x => x.id === t.shelf)?.title || 'Все материалы')}</a>
+    <a class="back" href="${t.sight ? '#texts' : `#shelf-${t.shelf}`}">${icon('back')} ${esc(t.sight ? 'Библиотека' : SHELVES.find(x => x.id === t.shelf)?.title || 'Все материалы')}</a>
     <article class="reader">
       <div class="meta"><span class="lv">${t.level}</span> ${t.kind && t.kind !== 'text' ? `${KINDS[t.kind]} · ` : ''}${esc(t.topic || '')}${t.own ? ` · <button class="link" id="edit-mat">изменить</button> · <button class="link danger" id="del-mat">удалить</button>` : ''}</div>
       ${textArt(t)}
@@ -47,7 +47,9 @@ export function renderReader(main, id) {
       ${t.summary ? `<p class="text-note"><b>О чём ${t.kind === 'song' ? 'песня' : t.kind === 'poem' ? 'стихотворение' : 'текст'}:</b> ${esc(t.summary)}</p>` : ''}
       ${t.translation ? `<details class="text-note"><summary><b>Перевод</b></summary><p style="white-space:pre-line;margin:8px 0 0">${esc(t.translation)}</p></details>` : ''}
       ${t.explain?.length ? `<details class="text-note"><summary><b>Пояснения</b> · ${t.explain.length}</summary><ul style="margin:8px 0 0;padding-left:18px">${t.explain.map(([w, e]) => `<li><b>${esc(w)}</b> — ${esc(e)}</li>`).join('')}</ul></details>` : ''}
-      ${t.links?.length ? `<p class="text-note"><b>Полный текст и запись:</b> ${t.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener nofollow">${esc(l.label)}</a>`).join(' · ')}</p>` : ''}
+      ${t.sight && t.words?.length ? `<details class="text-note"><summary><b>Слова</b> · ${t.words.length}</summary><ul style="margin:8px 0 0;padding-left:18px">${t.words.map(([w, e]) => `<li><b>${esc(w)}</b> — ${esc(e)}</li>`).join('')}</ul></details>` : ''}
+      ${t.sight ? `<p class="text-note"><b>Подробнее:</b> ${t.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.title)}</a>`).join(' · ')}</p>` : ''}
+      ${!t.sight && t.links?.length ? `<p class="text-note"><b>Полный текст и запись:</b> ${t.links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener nofollow">${esc(l.label)}</a>`).join(' · ')}</p>` : ''}
       ${t.set && L().SET_INFO[t.set] ? `<p class="text-note"><b>Слова из ${t.kind === 'song' ? 'песни' : 'текста'}:</b> <a href="#set-${esc(t.set)}">набор «${esc(L().SET_INFO[t.set].title)}» · ${L().SETS[t.set]?.length || 0} слов</a></p>` : ''}
       ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
       ${src ? `<p class="muted small">Источник: <a href="${esc(src)}" target="_blank" rel="noopener nofollow">${esc(src.replace(/^https?:[/][/](www[.])?/, '').slice(0, 60))}</a></p>` : ''}
@@ -92,6 +94,8 @@ export function renderReader(main, id) {
     const myPop = pop;
     const res = await translateWord(raw);
     if (pop !== myPop) return;
+    // у текстов о достопримечательностях есть свой список слов — он выручает, если слова нет во встроенном словаре
+    if (!res.translation && t.gloss?.[lower(raw)]) Object.assign(res, { word: res.word || lower(raw), translation: t.gloss[lower(raw)], source: 'dict' });
     const have = store.state.words[res.word];
     $('.pop-head b', pop).textContent = res.word;
     $('.pop-body', pop).classList.remove('muted');
