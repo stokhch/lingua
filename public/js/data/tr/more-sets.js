@@ -1796,7 +1796,45 @@ heceleme|произношение по буквам
 kütüphaneci|библиотекарь
 müdür yardımcısı|завуч
 öğrenci yurdu|общежитие
-kampüs|кампус`
+kampüs|кампус`,
+toponyms: `yer adı|название места, топоним
+bazı|некоторые
+bazısı|некоторые из них (bazıları)
+eskişehir|Эскишехир («старый город»)
+pamukkale|Памуккале («хлопковая крепость»)
+kuşadası|Кушадасы («птичий остров»)
+kızılırmak|Кызылырмак («красная река»)
+yeşilırmak|Ешилырмак («зелёная река»)
+teras|терраса
+renk|цвет
+ak|белый (книжн.)
+yön|направление; сторона света
+yunanca|греческий язык
+izmir|Измир (греч. Смирна)
+smyrna|Смирна (старое название Измира)
+trabzon|Трабзон (греч. Трапезунт, «стол»)
+trapezus|Трапезунт
+antalya|Анталья (Атталия, в честь царя Аттала)
+bergama|Пергам
+kral|король, царь
+attalos|Аттал (пергамский царь)
+verilmek|быть данным
+edirne|Эдирне (Адрианополь)
+hadrianopolis|Адрианополь («город Адриана»)
+hadrianus|Адриан (римский император)
+ihtimal|вероятность (büyük ihtimalle — скорее всего)
+istanbul|Стамбул
+eis|eis (греч.) — в
+tin|tin (греч.) — артикль
+polin|Polin (греч.) — город (вин. п.)
+konstantinopolis|Константинополь
+ankara|Анкара (античная Анкира)
+ankyra|Анкира (античное название Анкары)
+çapa|якорь; мотыга
+kapadokya|Каппадокия
+tartışmalı|спорный
+dir|-dir: аффикс сказуемого («есть, является»)
+ıı|II — второй (римская цифра)`
 };
 
 export const MORE_INFO = {
@@ -1824,5 +1862,6 @@ export const MORE_INFO = {
   celebrations: { title: 'Праздники', icon: 'time', desc: 'Байрамы, дни рождения, свадьба' },
   internet: { title: 'Компьютер и интернет', icon: 'work', desc: 'Сайты, пароли, приложения, файлы' },
   household: { title: 'Квартира и быт', icon: 'home', desc: 'Комнаты, мебель, ванная, аренда' },
-  school: { title: 'Школа и университет', icon: 'work', desc: 'Уроки, экзамены, оценки' }
+  school: { title: 'Школа и университет', icon: 'work', desc: 'Уроки, экзамены, оценки' },
+  toponyms: { title: 'Названия мест', icon: 'travel', desc: 'Слова из текста о топонимах Турции: Eskişehir, Pamukkale, Karadeniz, İstanbul' }
 };

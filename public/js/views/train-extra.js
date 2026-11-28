@@ -7,6 +7,7 @@ import { L, lower, fold, lettersOnly, keysBar, cellForm } from '../lang.js';
 import { distractors } from './train.js';
 import { buildCrossword } from '../crossword.js';
 import { resultBlock } from '../pimfx.js';
+import { fanfare } from '../sfx.js';
 
 export const EXTRA_INFO = {
   storm: { title: 'Мозговой штурм', desc: '5 новых слов: знакомство и три тренировки подряд', ic: 'brain' },
@@ -186,7 +187,7 @@ function fall(main) {
     const ok = val === item.t; n++;
     G.recordAnswer(ok);
     $$('.opt', fo).forEach(b => { b.disabled = true; if (b.dataset.v === item.t) b.classList.add('right'); else if (b.dataset.v === val) b.classList.add('wrong'); });
-    if (ok) { score++; dur = Math.max(2600, dur * 0.94); fw.classList.add('ok'); speak(item.w, store.state.rate); }
+    if (ok) { score++; dur = Math.max(2600, dur * 0.94); fw.classList.add('ok'); fanfare('catch'); speak(item.w, store.state.rate); }
     else { lives--; fw.classList.add('bad'); hearts(); }
     $('#fs').textContent = score;
     timer = setTimeout(nextWord, ok ? 500 : 1300);

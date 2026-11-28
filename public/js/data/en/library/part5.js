@@ -146,6 +146,52 @@ Tutor: So perhaps the question isn't whether one format is superior, but which a
 Oliver: Exactly. I'd keep lectures online and use the time on campus for seminars and practical work.
 Priya: I could live with that, provided that students who can't travel aren't excluded altogether.
 Tutor: A fair compromise. Let's look at the reading for next week with that in mind.`
+  },
+  {
+    id: 'en-l-place-names', level: 'B1', topic: 'Культура', title: "What's in a Name? Place Names in Britain", set: 'toponyms',
+    note: 'Текст написан для Лингвы по общедоступным сведениям об английской топонимике (словари английских топонимов, напр. A. D. Mills, «A Dictionary of British Place Names»). Где происхождение названия спорно, это сказано прямо.',
+    summary: 'Как по названию британского города угадать его историю. Окончания -chester/-caster/-cester остались от римских военных лагерей (лат. castra), -ton и -ham — от англосаксонских хуторов и сёл, -ford — от бродов (Oxford — «бычий брод»), -by — от поселений викингов. Самые древние названия кельтские: Avon значит просто «река». Происхождение слова London до сих пор неясно. В Северной Америке поселенцы приносили названия из дома (New York, Boston) и сохраняли индейские (Mississippi — «большая река»).',
+    explain: [
+      ['place name', 'название места, топоним'],
+      ['-chester, -caster, -cester', 'от лат. castra — «военный лагерь»: Manchester, Lancaster, Gloucester, Leicester. Общепринятое толкование'],
+      ['-ton', 'от древнеанглийского tūn — «огороженный двор, хутор», позже «селение»: Brighton, Southampton, Preston (Preston — «хутор священника»)'],
+      ['-ham', 'от древнеанглийского hām — «дом, усадьба, селение»: Birmingham, Nottingham. В части названий -ham происходит от другого слова, hamm — «пойменный луг», и различить их бывает трудно'],
+      ['-ford', '«брод». Oxford — «брод, где переходили быки» через Темзу; Stratford — «брод у мощёной (римской) дороги»'],
+      ['-mouth', '«устье»: Plymouth — город в устье реки Плим, Portsmouth — «гавань в устье»'],
+      ['-by', 'древнескандинавское слово «хутор, деревня»: Derby, Whitby, Grimsby — бывшие поселения викингов. Kirkby — «деревня с церковью»'],
+      ['Avon', 'кельтское слово «река» (ср. валлийское afon), поэтому River Avon — буквально «река Река»'],
+      ['aber-, pen-', 'кельтские слова: aber — «устье» (Aberdeen, Aberystwyth), pen — «голова, вершина, мыс» (Penzance — «святой мыс»)'],
+      ['London', 'римляне называли город Londinium, но название, скорее всего, древнее римлян. Его значение неизвестно, версий много, общепринятой нет'],
+      ['Mississippi, Massachusetts', 'индейские названия: Mississippi — из языка оджибве, «большая река»; Massachusetts — «у большого холма»'],
+      ['leave one’s mark', 'оставить след'],
+      ['scholars argue about', 'учёные спорят о…']
+    ],
+    translation: `У каждого города, реки и холма в Британии есть название, и многим из них больше тысячи лет. Если знать несколько старых слов, часто можно угадать историю места по его названию.
+
+Римляне строили военные лагеря по всей Британии. Латинское слово «лагерь» звучало как castra, и англосаксы превратили его в «chester». Вот почему многие города с римскими корнями оканчиваются на -chester, -caster или -cester: Манчестер, Ланкастер, Глостер и Лестер.
+
+Англосаксы пришли позже и дали нам самые частые окончания. «Tun» — это хутор или маленькое поселение, и сегодня мы видим его в виде -ton: Брайтон, Саутгемптон, Престон. «Ham» — это дом или деревня, как в Бирмингеме и Ноттингеме. «Ford» — место, где люди могли перейти реку вброд: Оксфорд был просто местом, где быки переходили Темзу. Окончание -mouth показывает, что город лежит там, где река впадает в море, как Плимут в устье реки Плим.
+
+Викинги оставили свой след на севере и востоке Англии. В древнескандинавском языке «by» означало хутор или деревню, так что Дерби, Уитби и Гримсби когда-то были поселениями викингов. «Kirkby» означает «деревня с церковью».
+
+Некоторые названия ещё древнее и происходят из кельтских языков. «Avon» — старое кельтское слово «река», так что название «River Avon» на самом деле значит «река Река». В Уэльсе и Шотландии «aber» означает «устье реки» (Абердин, Аберистуит), а «pen» — «голова» или «холм» (Пензанс).
+
+Не каждое название легко объяснить. Никто точно не знает, что значит «London». Римляне называли город Лондиниум, но название, вероятно, старше римлян, и учёные до сих пор спорят о его происхождении.
+
+Названия мест путешествовали и через океан. В Северной Америке поселенцы давали названия из родных мест, например Нью-Йорк и Бостон, но сохранили и много индейских названий: Миссисипи значит «большая река», а Массачусетс — «у большого холма».`,
+    body: `Every town, river and hill in Britain has a name, and many of these names are more than a thousand years old. If you know a few old words, you can often guess the history of a place from its name.
+
+The Romans built military camps all over Britain. The Latin word for a camp was castra, and the Anglo-Saxons changed it to "chester". That is why many towns with Roman roots end in -chester, -caster or -cester: Manchester, Lancaster, Gloucester and Leicester.
+
+The Anglo-Saxons came later and gave us the most common endings. A "tun" was a farm or a small settlement, and today we see it as -ton: Brighton, Southampton, Preston. A "ham" was a home or a village, as in Birmingham and Nottingham. A "ford" was a place where people could cross a river: Oxford was simply the place where oxen crossed the Thames. The ending -mouth shows that a town lies where a river meets the sea, like Plymouth at the mouth of the River Plym.
+
+The Vikings left their mark in the north and east of England. In Old Norse, a "by" was a farm or a village, so Derby, Whitby and Grimsby were once Viking settlements. "Kirkby" means "the village with a church".
+
+Some names are even older and come from Celtic languages. "Avon" is an old Celtic word for "river", so the name "River Avon" really means "River River". In Wales and Scotland, "aber" means "the mouth of a river" (Aberdeen, Aberystwyth), and "pen" means "head" or "hill" (Penzance).
+
+Not every name is easy to explain. Nobody knows for sure what "London" means. The Romans called the city Londinium, but the name is probably older than the Romans, and scholars still argue about its origin.
+
+Place names also travelled across the ocean. In North America, settlers used names from home, such as New York and Boston, but they also kept many Native American names: Mississippi means "big river", and Massachusetts means "at the great hill".`
   }
 ];
 

@@ -1760,7 +1760,64 @@ stream|трансляция
 code|код
 program|программа
 robot|робот
-artificial intelligence|искусственный интеллект`
+artificial intelligence|искусственный интеллект`,
+toponyms: `place name|название места, топоним
+military|военный
+camp|лагерь
+latin|латинский; латынь
+castra|castra (лат.) — военный лагерь
+anglo-saxons|англосаксы
+chester|-chester: от лат. castra, «лагерь»
+cester|-cester: от лат. castra, «лагерь»
+caster|-caster: от лат. castra, «лагерь»
+ending|окончание
+tun|tūn (др.-англ.) — хутор, огороженный двор
+ton|-ton: от др.-англ. tūn, «хутор, селение»
+settlement|поселение
+ham|-ham: от др.-англ. hām, «дом, селение»
+ford|брод
+ox|бык, вол (мн. ч. oxen)
+oxen|быки, волы
+thames|Темза
+mouth|рот; устье (реки)
+plymouth|Плимут («устье реки Плим»)
+plym|Плим (река)
+viking|викинг
+leave one's mark|оставить след
+mark|след, отметка
+norse|древнескандинавский (Old Norse)
+by|у, около; -by (др.-сканд.) — хутор, деревня
+kirkby|Кирби («деревня с церковью»)
+celtic|кельтский
+avon|Эйвон (кельт. «река»)
+wales|Уэльс
+aber|aber- (кельт.) — устье реки
+pen|ручка; pen- (кельт.) — голова, вершина, мыс
+penzance|Пензанс («святой мыс»)
+london|Лондон
+londinium|Лондиниум (римское название Лондона)
+origin|происхождение
+scholar|учёный
+argue|спорить
+settler|поселенец
+manchester|Манчестер
+lancaster|Ланкастер
+gloucester|Глостер
+leicester|Лестер
+brighton|Брайтон
+southampton|Саутгемптон
+preston|Престон («хутор священника»)
+birmingham|Бирмингем
+nottingham|Ноттингем
+oxford|Оксфорд («бычий брод»)
+derby|Дерби
+whitby|Уитби
+grimsby|Гримсби
+aberdeen|Абердин («устье реки Дон»)
+aberystwyth|Аберистуит («устье реки Истуит»)
+boston|Бостон
+mississippi|Миссисипи (оджибве «большая река»)
+massachusetts|Массачусетс («у большого холма»)`
 };
 
 export const MORE_INFO = {
@@ -1786,5 +1843,6 @@ export const MORE_INFO = {
   people: { title: 'Люди и отношения', icon: 'family', desc: 'Дружба, любовь, общение, гости' },
   car: { title: 'Машина и транспорт', icon: 'travel', desc: 'Вождение, дорога, авария, рейсы' },
   celebrations: { title: 'Праздники', icon: 'emotions', desc: 'Дни рождения, Новый год, подарки' },
-  internet: { title: 'Компьютер и интернет', icon: 'tech', desc: 'Сайты, пароли, приложения, файлы' }
+  internet: { title: 'Компьютер и интернет', icon: 'tech', desc: 'Сайты, пароли, приложения, файлы' },
+  toponyms: { title: 'Названия мест', icon: 'travel', desc: 'Слова из текста о британских топонимах: -chester, -ton, -ham, -ford, -by, Avon' }
 };

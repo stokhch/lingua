@@ -25,7 +25,7 @@ import { renderGrammarTraining, grammarState } from './views/grammar-train.js';
 import { grammarPlan } from './grammar-drill.js';
 import { satiety, appleRow, APPLES, plea } from './pim.js';
 import { initPim, onRoute, feedHref } from './pimfx.js';
-import { initSfx, fanfare } from './sfx.js';
+import { initSfx, fanfare, sing, soundOn } from './sfx.js';
 import { L, LANGS, switchLang, wordCount, toggleAccent } from './lang.js';
 import { flagsFor } from './flags.js';
 import { dayPlanHtml } from './views/dayplan.js';
@@ -194,6 +194,39 @@ function route() {
   window.scrollTo(0, 0);
 }
 
+// Тап по ёжику на главной: Пим зажмуривается и поёт песенку, вокруг взлетают ноты.
+// Пока поёт — повторные нажатия не перебивают. При выключенном звуке только танцует.
+function pimSings(pic, mood) {
+  if (!pic) return;
+  let busy = false;
+  const go = () => {
+    if (busy) return;
+    busy = true;
+    const svg = pic.querySelector('.mascot');
+    const len = sing();
+    if (!soundOn()) toast('Звук выключен в профиле — Пим поёт беззвучно');
+    if (svg) svg.outerHTML = mascot('sing', 150);
+    pic.classList.add('singing');
+    const notes = [];
+    for (let i = 0; i < 7; i++) {
+      const n = document.createElement('span');
+      n.className = 'sing-note'; n.setAttribute('aria-hidden', 'true');
+      n.textContent = i % 3 ? '♪' : '♫';
+      n.style.cssText = `--x:${(i % 2 ? 1 : -1) * (14 + (i * 9) % 30)}px;left:${48 + (i % 2 ? 14 : -14)}%;animation-delay:${(i * len / 8).toFixed(2)}s`;
+      pic.append(n); notes.push(n);
+    }
+    setTimeout(() => {
+      pic.classList.remove('singing');
+      notes.forEach(n => n.remove());
+      const cur = pic.querySelector('.mascot');
+      if (cur) cur.outerHTML = mascot(mood, 150);
+      busy = false;
+    }, len * 1000 + 600);
+  };
+  pic.addEventListener('click', go);
+  pic.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+}
+
 // ---------- Главная ----------
 function renderHome(main) {
   const plan = dayPlanHtml(); // первым: награды за выполненные задания должны попасть в счётчики ниже
@@ -208,7 +241,7 @@ function renderHome(main) {
   main.innerHTML = `
   <section class="hero">
     ${lianas(11)}${fernBush(170, 2)}${fernBush(150, 9, 'right')}
-    <div class="hero-pic pim-${pim.state}">
+    <div class="hero-pic pim-${pim.state}" role="button" tabindex="0" title="Нажмите — Пим споёт песенку" aria-label="Ёжик Пим: нажмите, чтобы он спел песенку">
       <svg class="ring" viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="${R}" class="ring-bg"/><circle cx="90" cy="90" r="${R}" class="ring-fg" stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC * (1 - goalPct / 100)}"/></svg>
       ${mascot(mood, 150)}${pim.state === 'hungry' || pim.state === 'starving' ? '<span class="rumble" aria-hidden="true">урр…</span>' : ''}
     </div>
@@ -246,6 +279,7 @@ function renderHome(main) {
     ${c.total === 0 ? `<div class="empty"><p>В словаре пока пусто. Начните с набора «${SET_INFO[firstSet].title}» или откройте текст и нажимайте на незнакомые слова.</p><a class="btn" href="#set-${firstSet}">Открыть набор</a></div>` : ''}
   </section>`;
   $('#home-lang').onclick = pickLang;
+  pimSings($('.hero-pic'), mood);
   fillHomeRating();
   return fillInstallCard();
 }
